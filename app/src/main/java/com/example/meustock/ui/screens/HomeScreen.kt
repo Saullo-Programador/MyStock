@@ -79,34 +79,11 @@ fun HomeContent(){
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                ListProduct()
+                Text("Tela Home")
             }
-        }
-    }
-}
-
-@Composable
-fun ListProduct(
-    viewModel: ListProductViewModel = hiltViewModel()
-){
-    val products by viewModel.product.collectAsState()
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 128.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ){
-        items(products.size){ index ->
-            val product = products[index]
-            ItemProduct(
-                nameProduct = product.name,
-                quantity = product.currentStock,
-                price = product.sellingPrice
-            )
         }
     }
 }

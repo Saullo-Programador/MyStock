@@ -13,6 +13,22 @@ class SaveProductUseCase @Inject constructor(
     }
 }
 
+class GetNextProductCodeUseCase @Inject constructor(
+    private val productRepository: ProductRepository
+){
+    suspend operator fun invoke(): String{
+        return productRepository.getNextProductCode()
+    }
+}
+
+class DetailProductUseCase @Inject constructor(
+    private val productRepository: ProductRepository
+){
+    suspend operator fun invoke(productId: String): Flow<Product>{
+        return productRepository.detailProduct(productId)
+    }
+}
+
 class GetProductsUseCase @Inject constructor(
     private val productRepository: ProductRepository
 ){

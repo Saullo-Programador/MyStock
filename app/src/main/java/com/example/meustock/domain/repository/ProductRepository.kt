@@ -7,7 +7,10 @@ import javax.inject.Inject
 
 interface ProductRepository{
     suspend fun getProducts(): Flow<List<Product>>
+    suspend fun getNextProductCode(): String
     suspend fun addProduct(product: Product)
     suspend fun deleteProduct(product: Product)
     suspend fun updateProduct(product: Product)
+    suspend fun detailProduct(productId: String): Flow<Product>
+
 }

@@ -1,4 +1,4 @@
-package com.example.meustock.ui.screens
+package com.example.meustock.ui.screens.product
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.TopBar
 import com.example.meustock.R
@@ -167,7 +166,7 @@ fun RegisterProductFormScreen(
 
 @Composable
 fun RegisterProductFrom(
-    uiState: ProductUiState, // Recebe o uiState completo
+    uiState: ProductUiState,
     onNameProductChange: (String) -> Unit,
     onDescriptionChange: (String) -> Unit,
     onBarcodeSkuChange: (String) -> Unit,
@@ -228,7 +227,7 @@ fun RegisterProductFrom(
         // Preço de Custo e Venda (em uma Row)
         Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TextFeldComponent(
-                value = uiState.costPrice.toString(),
+                value = uiState.costPrice,
                 onValueChange = onCostPriceChange,
                 label = "Preço de Custo*",
                 placeholder = "0.00",
@@ -237,7 +236,7 @@ fun RegisterProductFrom(
                 shape = RoundedCornerShape(20.dp)
             )
             TextFeldComponent(
-                value = uiState.sellingPrice.toString(),
+                value = uiState.sellingPrice,
                 onValueChange = onSellingPriceChange,
                 label = "Preço de Venda*",
                 placeholder = "0.00",
@@ -250,7 +249,7 @@ fun RegisterProductFrom(
         // Estoque Atual e Mínimo (em uma Row)
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TextFeldComponent(
-                value = uiState.currentStock.toString(),
+                value = uiState.currentStock,
                 onValueChange = onCurrentStockChange,
                 label = "Estoque Atual*",
                 placeholder = "0",
@@ -259,7 +258,7 @@ fun RegisterProductFrom(
                 shape = RoundedCornerShape(20.dp)
             )
             TextFeldComponent(
-                value = uiState.minimumStock.toString(),
+                value = uiState.minimumStock,
                 onValueChange = onMinimumStockChange,
                 label = "Estoque Mínimo*",
                 placeholder = "0",

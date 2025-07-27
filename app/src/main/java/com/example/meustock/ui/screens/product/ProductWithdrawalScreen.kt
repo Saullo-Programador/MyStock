@@ -1,4 +1,4 @@
-package com.example.meustock.ui.screens
+package com.example.meustock.ui.screens.product
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ProductListScreen() {
+fun ProductWithdrawalScreen() {
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -21,7 +21,7 @@ fun ProductListScreen() {
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Lista de Produtos")
+            Text(text = "Retirada de Produto")
         }
     }
 }

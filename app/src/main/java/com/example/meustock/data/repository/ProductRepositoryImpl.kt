@@ -1,11 +1,13 @@
 package com.example.meustock.data.repository
 
+import android.util.Log
 import com.example.meustock.data.mappers.toDomain
 import com.example.meustock.data.mappers.toDto
 import com.example.meustock.data.models.ProductDto
 import com.example.meustock.domain.model.Product
 import com.example.meustock.domain.repository.ProductRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -37,9 +39,53 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addProduct(product: Product){
-        collection.add(product.toDto()).await()
+    override suspend fun getNextProductCode(): String{
+        val querySnapshot = collection
+            .orderBy("idProduct", Query.Direction.DESCENDING)
+            .limit(1)
+            .get()
+            .await()
+
+        val lastCode = querySnapshot.documents.firstOrNull()
+            ?.getString("idProduct")
+            ?.filter { it.isDigit() }
+            ?.toIntOrNull() ?: 0
+
+        val nextCode = lastCode + 1
+        return "PROD-"+nextCode.toString().padStart(4, '0')
     }
+
+    override suspend fun addProduct(product: Product){
+        collection.document(product.id)
+            .set(product.toDto())
+            .await()
+    }
+
+    override suspend fun detailProduct(productId: String): Flow<Product> = callbackFlow {
+        val listener = collection.document(productId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.e("ProductRepo", "Erro ao escutar documento", error)
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    val dto = snapshot.toObject(ProductDto::class.java)
+                    if (dto != null) {
+                        trySend(dto.toDomain())
+                    } else {
+                        Log.w("ProductRepo", "DTO convertido é null")
+                    }
+                } else {
+                    Log.w("ProductRepo", "Documento não existe para ID: $productId")
+                }
+            }
+
+        awaitClose { listener.remove() }
+    }
+
+
+
 
     override suspend fun updateProduct(product: Product){
         collection.document(product.id)

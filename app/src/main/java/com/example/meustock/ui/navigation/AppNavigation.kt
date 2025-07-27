@@ -6,15 +6,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.meustock.ui.screens.HomeScreen
-import com.example.meustock.ui.screens.ProductListScreen
-import com.example.meustock.ui.screens.ProductWithdrawalScreen
-import com.example.meustock.ui.screens.RegisterProductFormScreen
-import com.example.meustock.ui.screens.RegisterProductScreen
-import com.example.meustock.ui.screens.ScannerInvoiceScreen
+import com.example.meustock.ui.screens.product.ProductListScreen
+import com.example.meustock.ui.screens.product.ProductWithdrawalScreen
+import com.example.meustock.ui.screens.product.RegisterProductFormScreen
+import com.example.meustock.ui.screens.product.RegisterProductScreen
+import com.example.meustock.ui.screens.product.ScannerInvoiceScreen
 import com.example.meustock.ui.screens.SettingsScreen
+import com.example.meustock.ui.screens.product.ProductDetailScreen
+import com.example.meustock.ui.viewModel.ListProductViewModel
+import com.example.meustock.ui.viewModel.ProductDetailViewModel
 import com.example.meustock.ui.viewModel.RegisterProductFormViewModel
 
 @Composable
@@ -75,7 +80,28 @@ fun AppNavigation(
         }
 
         composable(Screen.ProductList.route) {
-            ProductListScreen()
+            val viewModel: ListProductViewModel = hiltViewModel()
+            ProductListScreen(
+                viewModel = viewModel,
+                onDetailProduct = { productId ->
+                    navController.navigate(Screen.ProductDetail.createRoute(productId))
+                }
+            )
+        }
+
+        composable(
+            route = Screen.ProductDetail.route,
+            arguments = listOf(navArgument("productId"){type = NavType.StringType})
+        ){
+            val viewModel: ProductDetailViewModel = hiltViewModel()
+            val productId = it.arguments?.getString("productId") ?: return@composable
+            ProductDetailScreen(
+                productId = productId,
+                viewModel = viewModel,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable(Screen.ProductWithdrawal.route){
