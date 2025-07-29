@@ -46,6 +46,10 @@ android {
 
 dependencies {
 
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
+
+
     //CameraX
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)

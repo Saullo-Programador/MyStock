@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.meustock.domain.model.Product
 import com.example.meustock.ui.components.DetailItem
@@ -209,35 +208,4 @@ fun ProductDetailForm(
 fun formatTimestamp(timestamp: Long): String {
     val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
     return sdf.format(Date(timestamp))
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProductDetailScreenPreview() {
-    val sampleProduct = Product(
-        id = "123-abc",
-        idProduct = "PROD001",
-        name = "Smart TV 55 polegadas 4K",
-        description = "Televisão de última geração com resolução 4K, Smart TV, e borda infinita. Ideal para filmes e jogos.",
-        barcodeSku = "7891234567890",
-        costPrice = "2500.00".toDouble(),
-        sellingPrice = "3999.99".toDouble(),
-        currentStock = "15".toInt(),
-        minimumStock = "5".toInt(),
-        category = "Eletrônicos",
-        brand = "TechVision",
-        unitOfMeasurement = "Unidade",
-        supplier = "Eletrônicos LTDA",
-        stockLocation = "Corredor A, Prateleira 3",
-        status = "Ativo",
-        notes = "Este produto está em alta demanda. Considerar pedido maior no próximo reabastecimento."
-    )
-
-    MaterialTheme {
-        val viewModel: ProductDetailViewModel = viewModel()
-        ProductDetailScreen(
-            productId = sampleProduct.id,
-            viewModel = viewModel
-        )
-    }
 }
