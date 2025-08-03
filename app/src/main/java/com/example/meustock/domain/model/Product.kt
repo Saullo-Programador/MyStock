@@ -5,6 +5,7 @@ import java.util.UUID
 data class Product(
     val id: String = UUID.randomUUID().toString(),
     val idProduct: String,
+    val imageUrl: String? = null,
     val name: String,
     val description: String? = null,
     val barcodeSku: String? = null,

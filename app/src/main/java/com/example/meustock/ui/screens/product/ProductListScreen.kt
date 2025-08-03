@@ -19,18 +19,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.ItemProduct
-import com.example.meustock.ui.viewModel.ListProductViewModel
+import com.example.meustock.ui.viewModel.ProductListViewModel
 
 @Composable
 fun ProductListScreen(
-    viewModel: ListProductViewModel,
-    onDetailProduct: (String) -> Unit = {}
+    viewModel: ProductListViewModel,
+    onDetailProduct: (String) -> Unit = {},
+    onNavigatorEdit: (String) -> Unit = {}
 ) {
     val openAlertDialog = remember { mutableStateOf(false) }
-    val productToDelete = remember { mutableStateOf<String?>(null) }
+    val productId = remember { mutableStateOf<String?>(null) }
 
     Scaffold(
         modifier = Modifier
@@ -48,18 +48,18 @@ fun ProductListScreen(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ){
-                if (openAlertDialog.value && productToDelete.value != null) {
+                if (openAlertDialog.value && productId.value != null) {
                     AlertDialogComponent(
                         onDismissRequest = {
                             openAlertDialog.value = false
-                            productToDelete.value = null
+                            productId.value = null
                         },
                         textDismiss = "Cancelar",
                         onConfirmation = {
                             openAlertDialog.value = false
-                            productToDelete.value?.let { id ->
+                            productId.value?.let { id ->
                                 viewModel.deleteProduct(id)
-                                productToDelete.value = null
+                                productId.value = null
                             }
                         },
                         textConfirmation = "Excluir",
@@ -75,8 +75,11 @@ fun ProductListScreen(
                     viewModel = viewModel,
                     onDetailProduct = onDetailProduct,
                     onDeleteProduct = { id ->
-                        productToDelete.value = id
+                        productId.value = id
                         openAlertDialog.value = true
+                    },
+                    onEditProduct = {id ->
+                        onNavigatorEdit(id)
                     }
                 )
             }
@@ -86,9 +89,10 @@ fun ProductListScreen(
 
 @Composable
 fun ListProduct(
-    viewModel: ListProductViewModel,
+    viewModel: ProductListViewModel,
     onDetailProduct: (String) -> Unit = {},
-    onDeleteProduct: (String) -> Unit = {}
+    onDeleteProduct: (String) -> Unit = {},
+    onEditProduct: (String) -> Unit = {}
 ){
     val products by viewModel.product.collectAsState()
     LazyVerticalGrid(
@@ -107,6 +111,9 @@ fun ListProduct(
                 price = product.sellingPrice,
                 detailItemProduct = {
                     onDetailProduct(product.id)
+                },
+                onEdit = {
+                    onEditProduct(product.id)
                 },
                 onDelete = {
                     onDeleteProduct(product.id)

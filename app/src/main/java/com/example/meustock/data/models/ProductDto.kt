@@ -3,6 +3,7 @@ package com.example.meustock.data.models
 data class ProductDto(
     val id: String = "",
     val idProduct: String = "",
+    val imageUrl: String? = null,
     val name: String = "",
     val description: String? = null,
     val barcodeSku: String? = null,

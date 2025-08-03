@@ -85,6 +85,23 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
 
+    override suspend fun getProductById(id: String): Product? {
+        return try {
+            val snapshot = firestore.collection("products")
+                .document(id)
+                .get()
+                .await()
+
+            if (snapshot.exists()) {
+                snapshot.toObject(ProductDto::class.java)?.toDomain()
+            } else null
+        } catch (e: Exception) {
+            Log.e("ProductRepository", "Erro ao buscar produto por ID", e)
+            null
+        }
+    }
+
+
 
 
     override suspend fun updateProduct(product: Product){

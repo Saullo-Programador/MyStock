@@ -1,5 +1,6 @@
 package com.example.meustock.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -22,7 +24,11 @@ fun RecentActivityCard() {
             .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.surface)
+                .padding(16.dp),
+        ) {
             Text(
                 text = "Atividade Recente",
                 style = MaterialTheme.typography.titleMedium
@@ -57,7 +63,7 @@ fun RecentActivityItem(
     quantity: Int,
     date: String
 ) {
-    val typeColor = if (type == "Entrada") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+    val typeColor = if (type == "Entrada") Color.Green else Color.Red
 
     Row(
         modifier = Modifier

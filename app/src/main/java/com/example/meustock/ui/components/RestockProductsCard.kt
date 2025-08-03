@@ -1,5 +1,6 @@
 package com.example.meustock.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 
@@ -24,7 +26,11 @@ fun RestockProductsCard() {
             .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+        ) {
             Text(
                 text = "Produtos para Reabastecer",
                 style = MaterialTheme.typography.titleMedium
@@ -46,7 +52,7 @@ fun RestockProductItem(name: String, stock: Int) {
             .padding(vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = name, style = MaterialTheme.typography.bodyMedium)
-        Text(text = "Estoque atual: $stock", style = MaterialTheme.typography.bodyMedium)
+        Text(text = name, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onBackground)
+        Text(text = "Estoque atual: $stock", style = MaterialTheme.typography.bodyMedium, color = Color.Red)
     }
 }

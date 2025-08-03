@@ -52,3 +52,11 @@ class UpdateProductUseCase @Inject constructor(
         productRepository.updateProduct(product)
     }
 }
+
+class GetProductByIdUseCase @Inject constructor(
+    private val productRepository: ProductRepository
+){
+    suspend operator fun invoke(id: String): Product?{
+        return productRepository.getProductById(id)
+    }
+}

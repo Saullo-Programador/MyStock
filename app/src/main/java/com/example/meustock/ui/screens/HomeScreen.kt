@@ -1,6 +1,7 @@
 package com.example.meustock.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,12 +15,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -83,12 +86,14 @@ fun HomeContent(state: DashboardUiState) {
                     title = "Produtos",
                     value = "${state.totalProducts}",
                     img = R.drawable.icon_product,
+                    colorIcon = Color.White,
                     modifier = Modifier.weight(1f)
                 )
                 DashboardSummaryCard(
                     title = "Valor Estoque",
                     value = "R$ ${String.format("%.2f", state.totalStockValue)}",
                     img = R.drawable.icon_money,
+                    colorIcon = Color.White,
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -99,6 +104,7 @@ fun HomeContent(state: DashboardUiState) {
                 title = "Estoque Baixo",
                 value = "${state.totalItemsInStock}",
                 img = R.drawable.icon_alert,
+                colorIcon = Color.White,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -119,7 +125,13 @@ fun HomeContent(state: DashboardUiState) {
 }
 
 @Composable
-fun DashboardSummaryCard(title: String, value: String, img: Int, modifier: Modifier = Modifier) {
+fun DashboardSummaryCard(
+    title: String,
+    value: String,
+    img: Int,
+    colorIcon: Color = MaterialTheme.colorScheme.primary,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier
             .height(100.dp),
@@ -127,12 +139,14 @@ fun DashboardSummaryCard(title: String, value: String, img: Int, modifier: Modif
     ) {
         Row(
             modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.primary)
                 .padding(12.dp)
                 .fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
+            Icon(
                 painter = painterResource(img),
+                tint = colorIcon,
                 contentDescription = null,
                 modifier = Modifier
                     .padding(end = 8.dp)

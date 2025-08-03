@@ -18,8 +18,10 @@ import com.example.meustock.ui.screens.product.RegisterProductScreen
 import com.example.meustock.ui.screens.product.ScannerInvoiceScreen
 import com.example.meustock.ui.screens.SettingsScreen
 import com.example.meustock.ui.screens.product.ProductDetailScreen
-import com.example.meustock.ui.viewModel.ListProductViewModel
+import com.example.meustock.ui.screens.product.ProductEditScreen
+import com.example.meustock.ui.viewModel.ProductListViewModel
 import com.example.meustock.ui.viewModel.ProductDetailViewModel
+import com.example.meustock.ui.viewModel.ProductEditViewModel
 import com.example.meustock.ui.viewModel.RegisterProductFormViewModel
 
 @Composable
@@ -80,11 +82,14 @@ fun AppNavigation(
         }
 
         composable(Screen.ProductList.route) {
-            val viewModel: ListProductViewModel = hiltViewModel()
+            val viewModel: ProductListViewModel = hiltViewModel()
             ProductListScreen(
                 viewModel = viewModel,
                 onDetailProduct = { productId ->
                     navController.navigate(Screen.ProductDetail.createRoute(productId))
+                },
+                onNavigatorEdit = { productId ->
+                    navController.navigate(Screen.ProductEdit.createRoute(productId))
                 }
             )
         }
@@ -99,6 +104,29 @@ fun AppNavigation(
                 productId = productId,
                 viewModel = viewModel,
                 onBackClick = {
+                    navController.popBackStack()
+                },
+                onEditProduct ={productId ->
+                    navController.navigate(Screen.ProductEdit.createRoute(productId))
+                }
+            )
+        }
+
+        composable (
+            route = Screen.ProductEdit.route,
+            arguments = listOf(navArgument("productId") {type = NavType.StringType})
+        ){
+            val viewModel: ProductEditViewModel = hiltViewModel()
+            val uiState by viewModel.uiState.collectAsState()
+            val productId = it.arguments?.getString("productId") ?: return@composable
+            ProductEditScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                productId = productId,
+                viewModel = viewModel,
+                uiState = uiState,
+                onSuccessEdit = {
                     navController.popBackStack()
                 }
             )

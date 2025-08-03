@@ -5,12 +5,13 @@ import java.util.UUID
 data class ProductUiState(
     // Campos de identificação e metadados, geralmente gerados internamente
     val id: String = UUID.randomUUID().toString(),
-    val codeProduct: String = "", // Código do Produto
+    val idProduct: String = "", // Código do Produto
 
     val registrationDate: Long = System.currentTimeMillis(),
     val lastUpdateDate: Long = System.currentTimeMillis(),
 
     // Campos do formulário (valores atuais)
+    val imageUrl: String? = null, // URL da Imagem do Produto
     val nameProduct: String = "", // Nome do Produto
     val description: String? = "", // Descrição do Produto
     val barcodeSku: String? = "", // Código de Barras do Produto
@@ -27,3 +28,10 @@ data class ProductUiState(
     val notes: String? = "", // Observações
 
 )
+
+sealed class ProductFormEvent {
+    object Loading : ProductFormEvent()
+    object Success : ProductFormEvent()
+    data class Error(val message: String) : ProductFormEvent()
+    object Idle : ProductFormEvent() // Estado inicial ou reset
+}

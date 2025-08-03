@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
@@ -23,10 +24,11 @@ fun TopBar(
     trailingIconVector: ImageVector? = null,
     trailingIconPainter: Painter? = null,
     onTrailingIconClick: () -> Unit = {},
+    colorBackground: Color = MaterialTheme.colorScheme.primary
 ) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            containerColor = colorBackground,
             titleContentColor = MaterialTheme.colorScheme.onBackground,
         ),
         title = {

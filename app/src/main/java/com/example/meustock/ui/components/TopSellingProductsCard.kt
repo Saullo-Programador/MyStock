@@ -1,5 +1,6 @@
 package com.example.meustock.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +24,11 @@ fun TopSellingProductsCard() {
             .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .background(color = MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+        ) {
             Text(
                 text = "Produtos Mais Vendidos",
                 style = MaterialTheme.typography.titleMedium

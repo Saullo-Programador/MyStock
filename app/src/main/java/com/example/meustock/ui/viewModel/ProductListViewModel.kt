@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.meustock.domain.model.Product
 import com.example.meustock.domain.usecase.DeleteProductUseCase
 import com.example.meustock.domain.usecase.GetProductsUseCase
+import com.example.meustock.domain.usecase.UpdateProductUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,9 +15,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ListProductViewModel @Inject constructor(
+class ProductListViewModel @Inject constructor(
     private val getProductsUseCase: GetProductsUseCase,
-    private val deleteProductUseCase: DeleteProductUseCase
+    private val deleteProductUseCase: DeleteProductUseCase,
+    private val updateProductUseCase: UpdateProductUseCase
 ): ViewModel() {
     private val _product = MutableStateFlow<List<Product>>(emptyList())
     val product: StateFlow<List<Product>> = _product.asStateFlow()
@@ -48,6 +50,5 @@ class ListProductViewModel @Inject constructor(
             }
         }
     }
-
 
 }
