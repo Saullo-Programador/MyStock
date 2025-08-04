@@ -39,5 +39,9 @@ sealed class Screen(val route: String) {
     //Vendas de Produtos
     object ProductWithdrawal : Screen("ProductWithdrawal")
 
+    object ProductMovements : Screen("ProductMovements/{productId}"){
+        fun createRoute(productId: String) = "ProductMovements/$productId"
+    }
+
 
 }

@@ -12,16 +12,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.meustock.ui.screens.HomeScreen
 import com.example.meustock.ui.screens.product.ProductListScreen
-import com.example.meustock.ui.screens.product.ProductWithdrawalScreen
 import com.example.meustock.ui.screens.product.RegisterProductFormScreen
 import com.example.meustock.ui.screens.product.RegisterProductScreen
 import com.example.meustock.ui.screens.product.ScannerInvoiceScreen
 import com.example.meustock.ui.screens.SettingsScreen
 import com.example.meustock.ui.screens.product.ProductDetailScreen
 import com.example.meustock.ui.screens.product.ProductEditScreen
+import com.example.meustock.ui.screens.product.ProductMovementsScreen
+import com.example.meustock.ui.screens.product.ProductWithdrawalScreen
 import com.example.meustock.ui.viewModel.ProductListViewModel
 import com.example.meustock.ui.viewModel.ProductDetailViewModel
 import com.example.meustock.ui.viewModel.ProductEditViewModel
+import com.example.meustock.ui.viewModel.ProductMovementViewModel
+import com.example.meustock.ui.viewModel.ProductStockViewModel
 import com.example.meustock.ui.viewModel.RegisterProductFormViewModel
 
 @Composable
@@ -131,9 +134,26 @@ fun AppNavigation(
                 }
             )
         }
+        composable(
+            route = Screen.ProductMovements.route,
+            arguments = listOf(navArgument("productId") {type = NavType.StringType})
+        ) {
+            val viewModel: ProductMovementViewModel = hiltViewModel()
+            val productId = it.arguments?.getString("productId") ?: return@composable
+            ProductMovementsScreen(
+                viewModel = viewModel,
+                productId = productId,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
 
         composable(Screen.ProductWithdrawal.route){
-            ProductWithdrawalScreen()
+            val viewModel: ProductStockViewModel = hiltViewModel()
+            ProductWithdrawalScreen(
+                viewModel = viewModel
+            )
         }
     }
 }

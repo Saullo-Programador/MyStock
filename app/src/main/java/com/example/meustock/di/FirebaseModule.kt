@@ -1,6 +1,8 @@
 package com.example.meustock.di
 
+import com.example.meustock.data.repository.ProductMovementRepositoryImpl
 import com.example.meustock.data.repository.ProductRepositoryImpl
+import com.example.meustock.domain.repository.ProductMovementRepository
 import com.example.meustock.domain.repository.ProductRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -23,5 +25,13 @@ class FirebaseModule {
     fun provideProductRepository(
         iml: ProductRepositoryImpl
     ): ProductRepository = iml
+
+
+    @Provides
+    @Singleton
+    fun provideMovementRepository(
+        iml: ProductMovementRepositoryImpl
+    ): ProductMovementRepository = iml
+
 
 }
