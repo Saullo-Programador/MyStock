@@ -1,5 +1,6 @@
 package com.example.meustock.data.repository
 
+import android.util.Log
 import com.example.meustock.data.mappers.toDomain
 import com.example.meustock.data.models.ProductDto
 import com.example.meustock.data.models.MovementDto
@@ -43,12 +44,12 @@ class ProductMovementRepositoryImpl @Inject constructor(
     }
 
 
-    suspend fun registerProductMovement(
+    override suspend fun registerProductMovement(
         productId: String,
         quantity: Int,
         type: String,
-        responsible: String? = null,
-        notes: String? = null
+        responsible: String?,
+        notes: String?
     ) {
         val movement = MovementDto(
             id = UUID.randomUUID().toString(),
@@ -81,11 +82,6 @@ class ProductMovementRepositoryImpl @Inject constructor(
             )
             transaction.set(docRef, updatedStock)
         }.await()
-        registerProductMovement(
-            productId = productId,
-            quantity = quantity,
-            type = "entrada"
-        )
     }
 
     // Remover estoque de um produto
@@ -107,11 +103,6 @@ class ProductMovementRepositoryImpl @Inject constructor(
             )
             transaction.set(docRef, updatedStock)
         }.await()
-        registerProductMovement(
-            productId = productId,
-            quantity = quantity,
-            type = "saida"
-        )
     }
 
     // Buscar produto por código ou nome
@@ -125,6 +116,19 @@ class ProductMovementRepositoryImpl @Inject constructor(
             ?: collection.whereEqualTo("name", query).get().await().documents.firstOrNull()
 
         return first?.toObject(ProductDto::class.java)?.toDomain()
+    }
+
+
+    override suspend fun getAllProducts(): List<Product> {
+        return try {
+            val snapshot = collection.get().await()
+            snapshot.documents.mapNotNull { doc ->
+                doc.toObject(ProductDto::class.java)?.toDomain()
+            }
+        } catch (e: Exception) {
+            Log.e("ProductRepository", "Erro ao buscar todos os produtos", e)
+            emptyList()
+        }
     }
 
 

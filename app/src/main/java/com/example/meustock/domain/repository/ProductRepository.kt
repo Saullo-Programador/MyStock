@@ -1,9 +1,8 @@
 package com.example.meustock.domain.repository
 
-import com.example.meustock.data.repository.ProductRepositoryImpl
 import com.example.meustock.domain.model.Product
+import com.example.meustock.domain.model.ProductMovement
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
 interface ProductRepository{
     suspend fun getProducts(): Flow<List<Product>>
@@ -13,6 +12,7 @@ interface ProductRepository{
     suspend fun updateProduct(product: Product)
     suspend fun detailProduct(productId: String): Flow<Product>
     suspend fun getProductById(id: String): Product?
+
 
 
 }

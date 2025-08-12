@@ -19,6 +19,7 @@ class ProductRepositoryImpl @Inject constructor(
 ): ProductRepository {
     private val collection = firestore.collection("products")
 
+    // Obter todos os produtos
     override suspend fun getProducts(): Flow<List<Product>> = callbackFlow {
         val registration = collection.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -39,6 +40,7 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
+    // Obter o próximo código de produto
     override suspend fun getNextProductCode(): String{
         val querySnapshot = collection
             .orderBy("idProduct", Query.Direction.DESCENDING)
@@ -55,12 +57,14 @@ class ProductRepositoryImpl @Inject constructor(
         return "PROD-"+nextCode.toString().padStart(4, '0')
     }
 
+    // Adicionar um novo produto
     override suspend fun addProduct(product: Product){
         collection.document(product.id)
             .set(product.toDto())
             .await()
     }
 
+    // Obter detalhes(mais informações) de um produto
     override suspend fun detailProduct(productId: String): Flow<Product> = callbackFlow {
         val listener = collection.document(productId)
             .addSnapshotListener { snapshot, error ->
@@ -84,7 +88,7 @@ class ProductRepositoryImpl @Inject constructor(
         awaitClose { listener.remove() }
     }
 
-
+    // Obter um produto por ID
     override suspend fun getProductById(id: String): Product? {
         return try {
             val snapshot = firestore.collection("products")
@@ -101,15 +105,14 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-
-
-
+    // Atualizar um produto
     override suspend fun updateProduct(product: Product){
         collection.document(product.id)
             .set(product.toDto())
             .await()
     }
 
+    // Deletar um produto
     override suspend fun deleteProduct(product: Product){
         collection.document(product.id)
             .delete()
