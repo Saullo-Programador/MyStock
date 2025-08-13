@@ -67,7 +67,7 @@ fun ProductDetailScreen(
                 title = "Detalhes do Produto", // Título genérico para a TopBar
                 onNavigationIconClick = onBackClick,
                 onTrailingIconClick = {
-                    productState?.id?.let { id ->
+                    productState?.idProduct?.let { id ->
                         onEditProduct(id)
                     }
                 },

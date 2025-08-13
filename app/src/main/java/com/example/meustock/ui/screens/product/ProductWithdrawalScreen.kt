@@ -1,5 +1,7 @@
 package com.example.meustock.ui.screens.product
 
+import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,20 +11,37 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.meustock.R
+import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.SearchComponents
 import com.example.meustock.ui.states.ProductStockUiState
 import com.example.meustock.ui.viewModel.ProductStockViewModel
@@ -30,8 +49,12 @@ import com.example.meustock.ui.viewModel.ProductStockViewModel
 @Composable
 fun ProductWithdrawalScreen(
     viewModel: ProductStockViewModel,
+    onNavMovements: (String) -> Unit = {}
 ) {
     val uiState = viewModel.uiState
+    var showDialog by remember { mutableStateOf(false) }
+    var isEntrada by remember { mutableStateOf(true) }
+
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
@@ -59,83 +82,175 @@ fun ProductWithdrawalScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            ProductStockContent(
-                viewModel,
-                uiState
-            )
+            uiState.selectedProduct?.let { product ->
+                ProductStockContent(
+                    name = product.name,
+                    brand = product.brand ?: "",
+                    price = product.costPrice,
+                    stock = product.currentStock,
+                    onEntradaClick = {
+                        isEntrada = true
+                        showDialog = true
+                    },
+                    onSaidaClick = {
+                        isEntrada = false
+                        showDialog = true
+                    },
+                    uiState = uiState
+                )
+            }
+
+            if (showDialog) {
+                QuantityDialog(
+                    isEntrada = isEntrada,
+                    quantity = uiState.quantity,
+                    onQuantityChange = viewModel::onQuantityChange,
+                    onConfirm = {
+                        viewModel.applyStockMovement(isEntrada)
+                        showDialog = false
+                    },
+                    onDismiss = { showDialog = false }
+                )
+            }
         }
     }
 }
 
 
+
 @Composable
 fun ProductStockContent(
-    viewModel: ProductStockViewModel,
-    uiState: ProductStockUiState
+    uiState: ProductStockUiState,
+    name: String,
+    brand: String,
+    price: Double,
+    stock: Int,
+    onEntradaClick: () -> Unit,
+    onSaidaClick: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize()
-    ) {
-
-        Spacer(modifier = Modifier.height(8.dp))
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            if (uiState.selectedProduct == null) {
-                Text("Nenhum produto selecionado")
-            } else {
-                Text("ID do Produto: ${uiState.selectedProduct?.idProduct ?: ""}")
-            }
+    when{
+        uiState.errorMessage != null -> {
+            Toast.makeText(LocalContext.current, uiState.errorMessage, Toast.LENGTH_SHORT).show()
         }
-
-        uiState.selectedProduct?.let { product ->
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Produto: ${product.name}")
-            Text("Estoque atual: ${product.currentStock}")
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
-                value = uiState.quantity,
-                onValueChange = viewModel::onQuantityChange,
-                label = { Text("Quantidade") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row (
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(
-                    onClick = { viewModel.applyStockMovement(isEntrada = true) },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
-                ) {
-                    Text("Entrada")
-                }
-
-                Button(
-                    onClick = { viewModel.applyStockMovement(isEntrada = false) },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336))
-                ) {
-                    Text("Saída")
-                }
-            }
-        }
-
-        uiState.errorMessage?.let {
-            Spacer(Modifier.height(16.dp))
-            Text(it, color = Color.Red)
-        }
-
-        uiState.successMessage?.let {
-            Spacer(Modifier.height(16.dp))
-            Text(it, color = Color(0xFF388E3C))
+        uiState.successMessage != null -> {
+            Toast.makeText(LocalContext.current, uiState.successMessage, Toast.LENGTH_SHORT).show()
         }
     }
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        ProductCard(
+            name = name,
+            brand = brand,
+            price = price,
+            stock = stock
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(
+                onClick = onEntradaClick,
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+            ) {
+                Text("Entrada", color = Color.White)
+            }
+            Button(
+                onClick = onSaidaClick,
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336))
+            ) {
+                Text("Saída", color = Color.White)
+            }
+        }
+    }
+
+
+
+
+
+
+        //Button(
+        //    onClick ={ onNavMovements(uiState.selectedProduct.idProduct) }
+        //) {
+        //    Text("Movimentações")
+        //}
+}
+
+
+@Composable
+fun ProductCard(
+    name: String,
+    brand: String,
+    price: Double,
+    stock: Int,
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // Imagem do produto
+            Image(
+                painter = painterResource(id = R.drawable._4), // substitua por a imagem real
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(Modifier.height(8.dp))
+
+            Text(name, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Row (
+                modifier = Modifier
+                    .padding(top = 8.dp, end = 8.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
+                Text(brand, fontSize = 14.sp, color = Color.Gray)
+                Text("R$ %.2f".format(price), fontSize = 14.sp, color = Color.Gray)
+                Text("Estoque: $stock", fontSize = 14.sp, color = Color.Gray)
+            }
+        }
+    }
+}
+
+@Composable
+fun QuantityDialog(
+    isEntrada: Boolean,
+    quantity: String,
+    onQuantityChange: (String) -> Unit,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialogComponent(
+        onDismissRequest = onDismiss,
+        textDismiss = "Cancelar",
+        onConfirmation = onConfirm,
+        textConfirmation = if (isEntrada) "Adicionar" else "Retirar",
+        dialogTitle = if (isEntrada) "Adicionar ao Estoque" else "Retirar do Estoque",
+        icon = if (isEntrada) painterResource(id = R.drawable.icon_register_add) else painterResource(id = R.drawable.icon_remove),
+        tint = if (isEntrada) Color(0xFF4CAF50) else Color(0xFFF44336),
+        colorButtonConfirmation = if (isEntrada) Color(0xFF4CAF50) else Color(0xFFF44336),
+        dialogText = {
+            OutlinedTextField(
+                value = quantity,
+                onValueChange = onQuantityChange,
+                label = { Text("Quantidade") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+        }
+    )
 }

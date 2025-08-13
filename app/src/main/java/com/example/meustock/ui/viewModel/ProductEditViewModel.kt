@@ -37,7 +37,6 @@ class ProductEditViewModel @Inject constructor(
     fun editProduct(){
         val state = _uiState.value
         val productEdit = Product(
-            id = state.id,
             idProduct = state.idProduct,
             name = state.nameProduct,
             description = state.description,
@@ -80,7 +79,6 @@ class ProductEditViewModel @Inject constructor(
                 product?.let {
                     _uiState.update { state ->
                         state.copy(
-                            id = it.id,
                             idProduct = it.idProduct,
                             nameProduct = it.name,
                             description = it.description,

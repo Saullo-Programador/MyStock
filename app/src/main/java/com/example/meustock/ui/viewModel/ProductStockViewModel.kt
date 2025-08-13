@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.meustock.domain.repository.ProductMovementRepository
 import com.example.meustock.domain.usecase.GetProductsByCodeOrNameUseCase
+import com.example.meustock.domain.usecase.ListenProductByIdUseCase
 import com.example.meustock.ui.states.ProductStockUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ import javax.inject.Inject
 class ProductStockViewModel @Inject constructor(
     private val repository: ProductMovementRepository,
     private val getProductsByCodeOrName: GetProductsByCodeOrNameUseCase,
-
+    private val listenProductById: ListenProductByIdUseCase
 ) : ViewModel() {
 
     var uiState by mutableStateOf(ProductStockUiState())
@@ -38,6 +39,7 @@ class ProductStockViewModel @Inject constructor(
         fetchSearchSuggestions(query)
     }
 
+    // Função para buscar sugestões de pesquisa
     private fun fetchSearchSuggestions(query: String) {
         viewModelScope.launch {
             val allProducts = repository.getAllProducts() // Função que retorna todos os produtos
@@ -47,6 +49,7 @@ class ProductStockViewModel @Inject constructor(
         }
     }
 
+    // Função para lidar com o clique em um resultado de pesquisa
     fun onSearchResultClick(resultText: String) {
         val productCode = resultText.substringBefore(" - ").trim()
         uiState = uiState.copy(query = productCode)
@@ -56,20 +59,35 @@ class ProductStockViewModel @Inject constructor(
         )
     }
 
-
+    // Função para buscar um produto por código ou nome
     fun searchProduct(query: String) {
         uiState = uiState.copy(query = query)
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true, errorMessage = null)
             val product = getProductsByCodeOrName(query)
             if (product != null) {
-                uiState = uiState.copy(selectedProduct = product, isLoading = false)
+                listenProductById(product.idProduct).collect { updatedProduct ->
+                    if (updatedProduct != null) {
+                        uiState = uiState.copy(
+                            selectedProduct = updatedProduct,
+                            query = updatedProduct.idProduct, // garante que exibe o código certo
+                            isLoading = false
+                        )
+                    } else {
+                        uiState = uiState.copy(
+                            errorMessage = "Produto não encontrado",
+                            isLoading = false
+                        )
+                    }
+                }
             } else {
                 uiState = uiState.copy(errorMessage = "Produto não encontrado", isLoading = false)
             }
         }
     }
 
+
+    // Função para aplicar o movimento de estoque
     fun applyStockMovement(isEntrada: Boolean) {
         val product = uiState.selectedProduct ?: return
         val quantity = uiState.quantity.toIntOrNull() ?: return
@@ -78,18 +96,14 @@ class ProductStockViewModel @Inject constructor(
             uiState = uiState.copy(isLoading = true, errorMessage = null, successMessage = null)
             try {
                 if (isEntrada) {
-                    repository.addProductStock(product.id, quantity)
+                    repository.addProductStock(product.idProduct, quantity)
                 } else {
-                    repository.removeProductStock(product.id, quantity)
+                    repository.removeProductStock(product.idProduct, quantity)
                 }
                 uiState = uiState.copy(
                     successMessage = "Movimentação realizada com sucesso",
                     isLoading = false,
                     quantity = ""
-                )
-                // Atualiza o produto
-                searchProduct(
-                    query = product.id
                 )
             } catch (e: Exception) {
                 uiState = uiState.copy(errorMessage = e.message, isLoading = false)

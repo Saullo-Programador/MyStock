@@ -4,7 +4,6 @@ import com.example.meustock.domain.model.Product
 import java.util.UUID
 
 data class ProductEditUiState(
-    val id: String = UUID.randomUUID().toString(),
     val idProduct: String = "", // Código do Produto
     val registrationDate: Long = System.currentTimeMillis(),
     val lastUpdateDate: Long = System.currentTimeMillis(),
@@ -47,7 +46,6 @@ data class ProductEditUiState(
 
 fun Product.toEditUiState(onUpdate: (ProductEditUiState) -> Unit): ProductEditUiState {
     return ProductEditUiState(
-        id = id,
         idProduct = idProduct,
         registrationDate = registrationDate,
         lastUpdateDate = lastUpdateDate,

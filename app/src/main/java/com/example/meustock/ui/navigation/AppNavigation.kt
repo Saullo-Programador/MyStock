@@ -152,7 +152,10 @@ fun AppNavigation(
         composable(Screen.ProductWithdrawal.route){
             val viewModel: ProductStockViewModel = hiltViewModel()
             ProductWithdrawalScreen(
-                viewModel = viewModel
+                viewModel = viewModel,
+                onNavMovements = { productId ->
+                    navController.navigate(Screen.ProductMovements.createRoute(productId))
+                }
             )
         }
     }

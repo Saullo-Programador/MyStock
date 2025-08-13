@@ -59,7 +59,7 @@ class ProductRepositoryImpl @Inject constructor(
 
     // Adicionar um novo produto
     override suspend fun addProduct(product: Product){
-        collection.document(product.id)
+        collection.document(product.idProduct)
             .set(product.toDto())
             .await()
     }
@@ -107,14 +107,14 @@ class ProductRepositoryImpl @Inject constructor(
 
     // Atualizar um produto
     override suspend fun updateProduct(product: Product){
-        collection.document(product.id)
+        collection.document(product.idProduct)
             .set(product.toDto())
             .await()
     }
 
     // Deletar um produto
     override suspend fun deleteProduct(product: Product){
-        collection.document(product.id)
+        collection.document(product.idProduct)
             .delete()
             .await()
     }

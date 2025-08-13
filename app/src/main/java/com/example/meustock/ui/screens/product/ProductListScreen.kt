@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,7 +19,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.meustock.R
 import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.ItemProduct
 import com.example.meustock.ui.viewModel.ProductListViewModel
@@ -64,8 +67,10 @@ fun ProductListScreen(
                         },
                         textConfirmation = "Excluir",
                         dialogTitle = "Excluir Produto",
-                        dialogText = "Tem certeza que deseja excluir este produto?",
-                        icon = Icons.Default.Delete,
+                        dialogText = {
+                            Text("Tem certeza que deseja excluir este produto?")
+                        },
+                        icon = painterResource(R.drawable.icon_delete),
                         colorButtonConfirmation = Color.Red,
                         tint = Color.Red
                     )
@@ -110,13 +115,13 @@ fun ListProduct(
                 quantity = product.currentStock,
                 price = product.sellingPrice,
                 detailItemProduct = {
-                    onDetailProduct(product.id)
+                    onDetailProduct(product.idProduct)
                 },
                 onEdit = {
-                    onEditProduct(product.id)
+                    onEditProduct(product.idProduct)
                 },
                 onDelete = {
-                    onDeleteProduct(product.id)
+                    onDeleteProduct(product.idProduct)
                 }
             )
         }

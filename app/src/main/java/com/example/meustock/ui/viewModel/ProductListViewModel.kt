@@ -44,7 +44,7 @@ class ProductListViewModel @Inject constructor(
     fun deleteProduct(productId: String) {
         viewModelScope.launch {
             try {
-                deleteProductUseCase.invoke(product = product.value.first { it.id == productId })
+                deleteProductUseCase.invoke(product = product.value.first { it.idProduct == productId })
             } catch (e: Exception) {
                 Log.e("ListProductViewModel", "Erro ao deletar produto: ${e.message}", e)
             }

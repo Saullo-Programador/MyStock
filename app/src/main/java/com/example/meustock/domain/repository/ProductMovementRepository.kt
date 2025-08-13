@@ -17,4 +17,5 @@ interface ProductMovementRepository{
         notes: String? = null
     )
     suspend fun getAllProducts(): List<Product>
+    fun listenProductById(productId: String): Flow<Product?>
 }

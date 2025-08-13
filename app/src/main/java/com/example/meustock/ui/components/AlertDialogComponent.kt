@@ -12,6 +12,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.DefaultTintColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -24,8 +25,8 @@ fun AlertDialogComponent(
     onConfirmation: () -> Unit,
     textConfirmation: String,
     dialogTitle: String,
-    dialogText: String,
-    icon: ImageVector,
+    dialogText: @Composable () -> Unit,
+    icon: Painter,
     tint: Color = MaterialTheme.colorScheme.primary,
     colorButtonConfirmation: Color = MaterialTheme.colorScheme.primary,
 ){
@@ -42,7 +43,7 @@ fun AlertDialogComponent(
             Text(text = dialogTitle)
         },
         text = {
-            Text(text = dialogText)
+            dialogText()
         },
         onDismissRequest = {
             onDismissRequest()

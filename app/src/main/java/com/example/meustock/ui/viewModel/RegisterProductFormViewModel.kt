@@ -74,7 +74,6 @@ class RegisterProductFormViewModel @Inject constructor(
                 val nextProductCode = getNextProductCodeUseCase()
 
                 val productToSave = Product(
-                    id = currentProductUiState.id,
                     idProduct = nextProductCode,
                     name = currentProductUiState.nameProduct,
                     description = currentProductUiState.description.takeIf { it?.isNotBlank() ?: false },

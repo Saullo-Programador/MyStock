@@ -131,5 +131,22 @@ class ProductMovementRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun listenProductById(productId: String): Flow<Product?> = callbackFlow {
+        val listener = collection.document(productId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                if (snapshot != null && snapshot.exists()) {
+                    trySend(snapshot.toObject(ProductDto::class.java)?.toDomain())
+                } else {
+                    trySend(null)
+                }
+            }
+        awaitClose { listener.remove() }
+    }
+
+
 
 }

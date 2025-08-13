@@ -64,3 +64,9 @@ class GetAllProductsUseCase @Inject constructor(
 ) {
     suspend operator fun invoke() = productRepository.getAllProducts()
 }
+
+class ListenProductByIdUseCase @Inject constructor(
+    private val productRepository: ProductMovementRepository
+) {
+    operator fun invoke(productId: String) = productRepository.listenProductById(productId)
+}

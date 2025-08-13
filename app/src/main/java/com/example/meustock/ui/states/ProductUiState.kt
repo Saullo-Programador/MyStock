@@ -4,7 +4,6 @@ import java.util.UUID
 
 data class ProductUiState(
     // Campos de identificação e metadados, geralmente gerados internamente
-    val id: String = UUID.randomUUID().toString(),
     val idProduct: String = "", // Código do Produto
 
     val registrationDate: Long = System.currentTimeMillis(),
