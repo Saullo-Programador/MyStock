@@ -51,11 +51,11 @@ class ProductStockViewModel @Inject constructor(
 
     // Função para lidar com o clique em um resultado de pesquisa
     fun onSearchResultClick(resultText: String) {
-        val productCode = resultText.substringBefore(" - ").trim()
-        uiState = uiState.copy(query = productCode)
+        val idProduct = resultText.substringBefore(" - ").trim()
+        uiState = uiState.copy(query = idProduct)
         expanded = false
         searchProduct(
-            query = productCode
+            query = idProduct
         )
     }
 

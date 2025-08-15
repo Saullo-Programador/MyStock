@@ -1,9 +1,8 @@
-package com.example.meustock.ui.screens.product
+package com.example.meustock.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -23,7 +21,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,12 +35,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.meustock.R
 import com.example.meustock.ui.components.AlertDialogComponent
+import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.SearchComponents
+import com.example.meustock.ui.navigation.Screen
 import com.example.meustock.ui.states.ProductStockUiState
+import com.example.meustock.ui.theme.MeuStockTheme
 import com.example.meustock.ui.viewModel.ProductStockViewModel
 
 @Composable
@@ -79,14 +81,15 @@ fun ProductWithdrawalScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             uiState.selectedProduct?.let { product ->
                 ProductStockContent(
                     name = product.name,
                     brand = product.brand ?: "",
-                    price = product.costPrice,
+                    price = product.sellingPrice,
                     stock = product.currentStock,
                     onEntradaClick = {
                         isEntrada = true
@@ -139,7 +142,8 @@ fun ProductStockContent(
     Column(
         modifier = Modifier
             .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
         ProductCard(
@@ -151,33 +155,28 @@ fun ProductStockContent(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Button(
+            ButtonComponent(
+                text = "Entrada",
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surface),
+                fontColor = Color(0xFF4CAF50),
                 onClick = onEntradaClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
-            ) {
-                Text("Entrada", color = Color.White)
-            }
-            Button(
+                cornerRadius = 14,
+                modifier = Modifier
+                    .weight(1f)
+            )
+            ButtonComponent(
+                text = "Saida",
+                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surface),
+                fontColor = Color(0xFFF44336),
                 onClick = onSaidaClick,
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF44336))
-            ) {
-                Text("Saída", color = Color.White)
-            }
+                cornerRadius = 14,
+                modifier = Modifier
+                    .weight(1f)
+            )
         }
     }
-
-
-
-
-
-
-        //Button(
-        //    onClick ={ onNavMovements(uiState.selectedProduct.idProduct) }
-        //) {
-        //    Text("Movimentações")
-        //}
 }
 
 
@@ -190,8 +189,7 @@ fun ProductCard(
 ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+            .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp)
     ) {

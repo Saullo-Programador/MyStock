@@ -19,7 +19,7 @@ import com.example.meustock.ui.screens.SettingsScreen
 import com.example.meustock.ui.screens.product.ProductDetailScreen
 import com.example.meustock.ui.screens.product.ProductEditScreen
 import com.example.meustock.ui.screens.product.ProductMovementsScreen
-import com.example.meustock.ui.screens.product.ProductWithdrawalScreen
+import com.example.meustock.ui.screens.ProductWithdrawalScreen
 import com.example.meustock.ui.viewModel.ProductListViewModel
 import com.example.meustock.ui.viewModel.ProductDetailViewModel
 import com.example.meustock.ui.viewModel.ProductEditViewModel
@@ -38,6 +38,7 @@ fun AppNavigation(
         navController = navController,
         startDestination = startDestination
     ){
+
         composable(Screen.Home.route){
             HomeScreen()
         }

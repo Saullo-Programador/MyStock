@@ -89,10 +89,10 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     // Obter um produto por ID
-    override suspend fun getProductById(id: String): Product? {
+    override suspend fun getProductById(productId: String): Product? {
         return try {
             val snapshot = firestore.collection("products")
-                .document(id)
+                .document(productId)
                 .get()
                 .await()
 

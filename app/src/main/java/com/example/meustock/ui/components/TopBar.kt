@@ -14,12 +14,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     title: String,
+    colorTitle: Color = Color.White,
     onNavigationIconClick: () -> Unit= {},
     trailingIconVector: ImageVector? = null,
     trailingIconPainter: Painter? = null,
@@ -35,7 +37,10 @@ fun TopBar(
             Text(
                 text = title,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                style = TextStyle(
+                    color = colorTitle,
+                )
             )
         },
         navigationIcon = {
