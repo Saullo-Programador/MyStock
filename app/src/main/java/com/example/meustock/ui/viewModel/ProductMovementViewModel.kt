@@ -10,6 +10,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel para a tela de histórico de movimentos de um produto.
+ * Escuta em tempo real os movimentos de um produto específico.
+ */
 @HiltViewModel
 class ProductMovementViewModel @Inject constructor(
     private val repository: ProductMovementRepository
@@ -18,10 +22,9 @@ class ProductMovementViewModel @Inject constructor(
     private val _movements = MutableStateFlow<List<ProductMovement>>(emptyList())
     val movements: StateFlow<List<ProductMovement>> = _movements
 
-    
-
-
-
+    /**
+     * Carrega os movimentos de um produto com base no seu ID.
+     */
     fun loadMovements(productId: String) {
         viewModelScope.launch {
             repository.getProductMovements(productId)

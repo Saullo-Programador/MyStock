@@ -14,34 +14,43 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
+/**
+ * Implementação do repositório para gerenciar produtos no Firestore.
+ */
 class ProductRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
-): ProductRepository {
+) : ProductRepository {
+
+    // Referência à coleção de produtos no Firestore
     private val collection = firestore.collection("products")
 
-    // Obter todos os produtos
+    /**
+     * Obtém uma lista de todos os produtos em tempo real.
+     * Ideal para UI que precisa de atualizações constantes.
+     */
     override suspend fun getProducts(): Flow<List<Product>> = callbackFlow {
         val registration = collection.addSnapshotListener { snapshot, e ->
             if (e != null) {
-                close(e)
+                close(e) // Emite o erro e fecha o flow
+                Log.e("ProductRepo", "Erro ao buscar produtos", e)
                 return@addSnapshotListener
             }
-            if (snapshot != null && !snapshot.isEmpty) {
-                val products = snapshot.documents.mapNotNull {
-                    it.toObject(ProductDto::class.java)?.toDomain()
-                }
-                trySend(products) // Emita a nova lista de produtos
-            } else {
-                trySend(emptyList()) // Nenhum produto ou snapshot vazio
-            }
+
+            // Mapeia os documentos para objetos de domínio
+            val products = snapshot?.documents?.mapNotNull {
+                it.toObject(ProductDto::class.java)?.toDomain()
+            } ?: emptyList()
+
+            trySend(products) // Emite a nova lista de produtos
         }
-        awaitClose {
-            registration.remove()
-        }
+        awaitClose { registration.remove() } // Remove o listener ao fechar o flow
     }
 
-    // Obter o próximo código de produto
-    override suspend fun getNextProductCode(): String{
+    /**
+     * Gera o próximo código de produto.
+     * Busca o último código e incrementa.
+     */
+    override suspend fun getNextProductCode(): String {
         val querySnapshot = collection
             .orderBy("idProduct", Query.Direction.DESCENDING)
             .limit(1)
@@ -50,73 +59,71 @@ class ProductRepositoryImpl @Inject constructor(
 
         val lastCode = querySnapshot.documents.firstOrNull()
             ?.getString("idProduct")
-            ?.filter { it.isDigit() }
+            ?.removePrefix("PROD-")
             ?.toIntOrNull() ?: 0
 
         val nextCode = lastCode + 1
-        return "PROD-"+nextCode.toString().padStart(4, '0')
+        return "PROD-${nextCode.toString().padStart(4, '0')}"
     }
 
-    // Adicionar um novo produto
-    override suspend fun addProduct(product: Product){
+    /**
+     * Adiciona um novo produto ao Firestore.
+     */
+    override suspend fun addProduct(product: Product) {
         collection.document(product.idProduct)
             .set(product.toDto())
             .await()
     }
 
-    // Obter detalhes(mais informações) de um produto
-    override suspend fun detailProduct(productId: String): Flow<Product> = callbackFlow {
+    /**
+     * Obtém um produto específico em tempo real.
+     */
+    override suspend fun detailProduct(productId: String): Flow<Product?> = callbackFlow {
         val listener = collection.document(productId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Log.e("ProductRepo", "Erro ao escutar documento", error)
+                    close(error)
+                    Log.e("ProductRepo", "Erro ao escutar produto $productId", error)
                     return@addSnapshotListener
                 }
 
-                if (snapshot != null && snapshot.exists()) {
-                    val dto = snapshot.toObject(ProductDto::class.java)
-                    if (dto != null) {
-                        trySend(dto.toDomain())
-                    } else {
-                        Log.w("ProductRepo", "DTO convertido é null")
-                    }
-                } else {
-                    Log.w("ProductRepo", "Documento não existe para ID: $productId")
-                }
+                val product = snapshot?.toObject(ProductDto::class.java)?.toDomain()
+                trySend(product)
             }
-
         awaitClose { listener.remove() }
     }
 
-    // Obter um produto por ID
+    /**
+     * Obtém um produto específico uma única vez por ID.
+     */
     override suspend fun getProductById(productId: String): Product? {
         return try {
-            val snapshot = firestore.collection("products")
-                .document(productId)
-                .get()
-                .await()
-
+            val snapshot = collection.document(productId).get().await()
             if (snapshot.exists()) {
                 snapshot.toObject(ProductDto::class.java)?.toDomain()
             } else null
         } catch (e: Exception) {
-            Log.e("ProductRepository", "Erro ao buscar produto por ID", e)
+            Log.e("ProductRepo", "Erro ao buscar produto por ID $productId", e)
             null
         }
     }
 
-    // Atualizar um produto
-    override suspend fun updateProduct(product: Product){
+    /**
+     * Atualiza um produto existente.
+     * Usa o mesmo metodo `set` com o ID do documento.
+     */
+    override suspend fun updateProduct(product: Product) {
         collection.document(product.idProduct)
             .set(product.toDto())
             .await()
     }
 
-    // Deletar um produto
-    override suspend fun deleteProduct(product: Product){
+    /**
+     * Deleta um produto pelo seu ID.
+     */
+    override suspend fun deleteProduct(product: Product) {
         collection.document(product.idProduct)
             .delete()
             .await()
     }
-
 }

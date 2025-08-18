@@ -7,7 +7,6 @@ import com.example.meustock.domain.model.Product
 import com.example.meustock.domain.usecase.GetProductByIdUseCase
 import com.example.meustock.domain.usecase.UpdateProductUseCase
 import com.example.meustock.ui.states.ProductEditUiState
-import com.example.meustock.ui.states.ProductFormEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,70 +15,49 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+/**
+ * Eventos para a UI durante a edição de um produto.
+ */
 sealed class ProductEditFormEvent {
     object Loading : ProductEditFormEvent()
     object Success : ProductEditFormEvent()
     data class Error(val message: String) : ProductEditFormEvent()
-    object Idle : ProductEditFormEvent() // Estado inicial ou reset
+    object Idle : ProductEditFormEvent()
 }
+
+/**
+ * ViewModel para a tela de edição de um produto.
+ * Gerencia o estado do formulário e as operações de atualização.
+ */
 @HiltViewModel
 class ProductEditViewModel @Inject constructor(
     private val updateProductUseCase: UpdateProductUseCase,
     private val getProductByIdUseCase: GetProductByIdUseCase
 ) : ViewModel() {
+
     private val _uiState = MutableStateFlow(ProductEditUiState())
     val uiState: StateFlow<ProductEditUiState> = _uiState.asStateFlow()
 
     private val _productFormEvent = MutableStateFlow<ProductEditFormEvent>(ProductEditFormEvent.Idle)
     val productFormEvent: StateFlow<ProductEditFormEvent> = _productFormEvent.asStateFlow()
 
-    fun editProduct(){
-        val state = _uiState.value
-        val productEdit = Product(
-            idProduct = state.idProduct,
-            name = state.nameProduct,
-            description = state.description,
-            barcodeSku = state.barcodeSku,
-            costPrice = state.costPrice.toDouble(),
-            sellingPrice = state.sellingPrice.toDouble(),
-            currentStock = state.currentStock.toInt(),
-            minimumStock = state.minimumStock.toInt(),
-            category = state.category,
-            brand = state.brand,
-            unitOfMeasurement = state.unitOfMeasurement,
-            supplier = state.supplier,
-            stockLocation = state.stockLocation,
-            status = state.status,
-            notes = state.notes,
-            registrationDate = state.registrationDate,
-            lastUpdateDate = state.lastUpdateDate,
-            imageUrl = state.imageUrl,
-        )
-        viewModelScope.launch{
-            _productFormEvent.value = ProductEditFormEvent.Loading
-            try {
-                updateProductUseCase(productEdit)
-                _productFormEvent.value = ProductEditFormEvent.Success
-                _uiState.update { ProductEditUiState() }
-            }catch (e: Exception){
-                Log.e("ProductEditViewModel","erro ao editar o produto: ${e.message}", e)
-                _productFormEvent.value = ProductEditFormEvent.Error("Erro ao editar o produto: ${e.message}")
-            }
-        }
-    }
-
-    fun loadProduct(productId: String){
+    /**
+     * Inicia a edição de um produto com base no seu ID.
+     * Carrega os dados do produto e preenche o estado da UI.
+     */
+    fun loadProduct(productId: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
                 val product = getProductByIdUseCase(productId)
-
-
                 product?.let {
                     _uiState.update { state ->
                         state.copy(
+                            // Mapeia o modelo de domínio para o estado da UI
                             idProduct = it.idProduct,
+                            registrationDate = it.registrationDate,
+                            lastUpdateDate = it.lastUpdateDate,
+                            imageUrl = it.imageUrl,
                             nameProduct = it.name,
                             description = it.description,
                             barcodeSku = it.barcodeSku,
@@ -94,107 +72,61 @@ class ProductEditViewModel @Inject constructor(
                             stockLocation = it.stockLocation,
                             status = it.status,
                             notes = it.notes,
-                            registrationDate = it.registrationDate,
-                            lastUpdateDate = it.lastUpdateDate,
-                            imageUrl = it.imageUrl,
-                            onRegistrationDateChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(registrationDate = newValue)
-                                }
-                            },
-                            onLastUpdateDateChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(lastUpdateDate = newValue)
-                                }
-                            },
-                            onImageUrlChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(imageUrl = newValue)
-                                }
-                            },
-                            onNameProductChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(nameProduct = newValue)
-                                }
-                            },
-                            onDescriptionChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(description = newValue)
-                                }
-                            },
-                            onBarcodeSkuChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(barcodeSku = newValue)
-                                }
-                            },
-                            onCostPriceChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(costPrice = newValue)
-                                }
-                            },
-                            onSellingPriceChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(sellingPrice = newValue)
-                                }
-                            },
-                            onCurrentStockChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(currentStock = newValue)
-                                }
-                            },
-                            onMinimumStockChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(minimumStock = newValue)
-                                }
-                            },
-                            onCategoryChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(category = newValue)
-                                }
-                            },
-                            onBrandChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(brand = newValue)
-                                }
-                            },
-                            onUnitOfMeasurementChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(unitOfMeasurement = newValue)
-                                }
-                            },
-                            onSupplierChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(supplier = newValue)
-                                }
-                            },
-                            onStockLocationChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(stockLocation = newValue)
-                                }
-                            },
-                            onStatusChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(status = newValue)
-                                }
-                            },
-                            onNotesChange = { newValue ->
-                                _uiState.update { state ->
-                                    state.copy(notes = newValue)
-                                }
-                            },
                             isLoading = false
                         )
                     }
                 }
-
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 _productFormEvent.value = ProductEditFormEvent.Error("Erro ao carregar o produto: ${e.message}")
-                Log.e("ProductEditViewModel", "Erro ao carregar o produto: ${e.message}", e)
+                Log.e("ProductEditViewModel", "Erro ao carregar o produto", e)
                 _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
-    fun resetProductFormEvent (){
+
+    /**
+     * Salva as alterações de um produto.
+     * Mapeia o estado da UI de volta para o modelo de domínio e chama o caso de uso.
+     */
+    fun editProduct() {
+        viewModelScope.launch {
+            _productFormEvent.value = ProductEditFormEvent.Loading
+            try {
+                val state = _uiState.value
+                val productToUpdate = Product(
+                    idProduct = state.idProduct,
+                    name = state.nameProduct,
+                    description = state.description,
+                    barcodeSku = state.barcodeSku,
+                    costPrice = state.costPrice.toDoubleOrNull() ?: 0.0,
+                    sellingPrice = state.sellingPrice.toDoubleOrNull() ?: 0.0,
+                    currentStock = state.currentStock.toIntOrNull() ?: 0,
+                    minimumStock = state.minimumStock.toIntOrNull() ?: 0,
+                    category = state.category,
+                    brand = state.brand,
+                    unitOfMeasurement = state.unitOfMeasurement,
+                    supplier = state.supplier,
+                    stockLocation = state.stockLocation,
+                    status = state.status,
+                    notes = state.notes,
+                    registrationDate = state.registrationDate,
+                    lastUpdateDate = System.currentTimeMillis(),
+                    imageUrl = state.imageUrl,
+                )
+                updateProductUseCase(productToUpdate)
+                _productFormEvent.value = ProductEditFormEvent.Success
+                _uiState.update { ProductEditUiState() } // Limpa o estado após o sucesso
+            } catch (e: Exception) {
+                Log.e("ProductEditViewModel", "Erro ao editar o produto: ${e.message}", e)
+                _productFormEvent.value = ProductEditFormEvent.Error("Erro ao editar o produto: ${e.message}")
+            }
+        }
+    }
+
+    /**
+     * Reinicia o estado do evento do formulário.
+     */
+    fun resetProductFormEvent() {
         _productFormEvent.value = ProductEditFormEvent.Idle
     }
 }

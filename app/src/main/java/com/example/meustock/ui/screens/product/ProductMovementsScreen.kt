@@ -87,7 +87,7 @@ fun MovementItem(movement: ProductMovement) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = movement.type.uppercase(),
-                color = if (movement.type == "entrada") Color(0xFF388E3C) else Color(0xFFD32F2F),
+                color = if (movement.type == "Entrada" || movement.type == "entrada" || movement.type == "ENTRADA") Color(0xFF388E3C) else Color(0xFFD32F2F),
                 fontWeight = FontWeight.Bold
             )
             Spacer(Modifier.height(4.dp))

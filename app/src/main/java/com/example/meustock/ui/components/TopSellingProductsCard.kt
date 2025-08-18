@@ -15,9 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.meustock.domain.model.Product
 
 @Composable
-fun TopSellingProductsCard() {
+fun TopSellingProductsCard( topProducts: List<Pair<Product, Int>>) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -35,9 +36,12 @@ fun TopSellingProductsCard() {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            TopSellingProductItem(name = "Smartphone X", quantity = 150)
-            TopSellingProductItem(name = "Fone de Ouvido Y", quantity = 120)
-            TopSellingProductItem(name = "Carregador Z", quantity = 90)
+            topProducts.forEach { (product, totalSold) ->
+                TopSellingProductItem(
+                    name = product.name,
+                    quantity = totalSold
+                )
+            }
         }
     }
 }

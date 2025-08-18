@@ -15,12 +15,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.meustock.domain.model.ProductMovement
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
-fun RecentActivityCard() {
-    Card (
-        modifier = Modifier
-            .fillMaxWidth(),
+fun RecentActivityCard(movements: List<ProductMovement>) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(
@@ -36,7 +39,7 @@ fun RecentActivityCard() {
             Spacer(modifier = Modifier.height(12.dp))
 
             // Cabeçalho
-            Row (modifier = Modifier.fillMaxWidth()) {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 Text("Tipo", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelMedium)
                 Text("Item", modifier = Modifier.weight(2f), style = MaterialTheme.typography.labelMedium)
                 Text("Qtd.", modifier = Modifier.weight(1f), style = MaterialTheme.typography.labelMedium)
@@ -45,15 +48,18 @@ fun RecentActivityCard() {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Linhas de movimentações
-            RecentActivityItem("Entrada", "Smartphone X", 10, "28/07/2024")
-            RecentActivityItem("Saída", "Fone de Ouvido Y", 5, "27/07/2024")
-            RecentActivityItem("Entrada", "Carregador Z", 20, "27/07/2024")
-            RecentActivityItem("Saída", "Mouse Pad A", 15, "26/07/2024")
-            RecentActivityItem("Entrada", "Teclado B", 8, "26/07/2024")
+            movements.forEach { movement ->
+                RecentActivityItem(
+                    type = movement.type,
+                    item = "Desconhecido",
+                    quantity = movement.quantity,
+                    date = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(movement.date))
+                )
+            }
         }
     }
 }
+
 
 @Composable
 fun RecentActivityItem(
@@ -62,7 +68,7 @@ fun RecentActivityItem(
     quantity: Int,
     date: String
 ) {
-    val typeColor = if (type == "Entrada") Color.Green else Color.Red
+    val typeColor = if (type == "Entrada" || type == "entrada") Color.Green else Color.Red
 
     Row(
         modifier = Modifier

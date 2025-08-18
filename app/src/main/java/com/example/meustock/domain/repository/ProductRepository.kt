@@ -10,7 +10,7 @@ interface ProductRepository{
     suspend fun addProduct(product: Product)
     suspend fun deleteProduct(product: Product)
     suspend fun updateProduct(product: Product)
-    suspend fun detailProduct(productId: String): Flow<Product>
+    suspend fun detailProduct(productId: String): Flow<Product?>
     suspend fun getProductById(id: String): Product?
 
 

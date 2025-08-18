@@ -16,35 +16,47 @@ import kotlinx.coroutines.tasks.await
 import java.util.UUID
 import javax.inject.Inject
 
+/**
+ * Implementação do repositório para gerenciar movimentos de produtos no Firestore.
+ */
 class ProductMovementRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore
-): ProductMovementRepository {
+) : ProductMovementRepository {
 
-    private val collection = firestore.collection("products")
+    // Referência à coleção de produtos no Firestore
+    private val productsCollection = firestore.collection("products")
 
+    /**
+     * Obtém uma lista de movimentos de um produto específico em tempo real.
+     * Usa `callbackFlow` para escutar mudanças no Firestore.
+     */
     override suspend fun getProductMovements(productId: String): Flow<List<ProductMovement>> = callbackFlow {
-    val listener = collection.document(productId)
-            .collection("movements")
+        val movementsCollection = productsCollection.document(productId).collection("movements")
+        val listener = movementsCollection
             .orderBy("date", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    close(error)
+                    close(error) // Emite um erro e fecha o flow
+                    Log.e("ProductMovementRepo", "Erro ao obter movimentos para o produto $productId", error)
                     return@addSnapshotListener
                 }
 
-                if (snapshot != null) {
-                    val movements = snapshot.documents.mapNotNull { doc ->
-                        doc.toObject(MovementDto::class.java)?.toDomain()
-                    }
-                    Log.d("Firestore", "Movements recebidos: ${movements.size}")
-                    trySend(movements)
-                }
+                // Mapeia os documentos para objetos de domínio
+                val movements = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(MovementDto::class.java)?.toDomain()
+                } ?: emptyList()
+
+                trySend(movements) // Emite a lista de movimentos
+                Log.d("ProductMovementRepo", "Movimentos recebidos: ${movements.size}")
             }
 
+        // Aguarda o fechamento do flow para remover o listener
         awaitClose { listener.remove() }
     }
 
-
+    /**
+     * Registra um novo movimento de estoque para um produto.
+     */
     override suspend fun registerProductMovement(
         productId: String,
         quantity: Int,
@@ -52,8 +64,9 @@ class ProductMovementRepositoryImpl @Inject constructor(
         responsible: String?,
         notes: String?
     ) {
+        val movementId = UUID.randomUUID().toString()
         val movement = MovementDto(
-            id = UUID.randomUUID().toString(),
+            id = movementId,
             productId = productId,
             quantity = quantity,
             type = type,
@@ -62,94 +75,156 @@ class ProductMovementRepositoryImpl @Inject constructor(
             notes = notes
         )
 
-        Log.d("Firestore", "Salvando movimento: $movement")
+        Log.d("ProductMovementRepo", "Salvando movimento: $movement")
 
-        collection.document(productId)
+        productsCollection.document(productId)
             .collection("movements")
-            .document(movement.id)
+            .document(movementId)
             .set(movement)
-            .await()
+            .await() // Suspende a execução até a conclusão da operação
     }
 
-    // Adicionar estoque a um produto
+    /**
+     * Adiciona uma quantidade ao estoque de um produto de forma segura (usando transação).
+     */
     override suspend fun addProductStock(productId: String, quantity: Int) {
-        val docRef = collection.document(productId)
-        firestore.runTransaction { transaction ->
-            val snapshot = transaction.get(docRef)
-            val current = snapshot.toObject(ProductDto::class.java)
-                ?: throw Exception("Produto não encontrado")
-
-            val updatedStock = current.copy(
-                currentStock = current.currentStock + quantity,
-                lastUpdateDate = System.currentTimeMillis()
-            )
-            transaction.set(docRef, updatedStock)
-        }.await()
+        updateProductStock(productId, quantity)
     }
 
-    // Remover estoque de um produto
+    /**
+     * Remove uma quantidade do estoque de um produto de forma segura (usando transação).
+     * Lança uma exceção se a quantidade for maior que o estoque atual.
+     */
     override suspend fun removeProductStock(productId: String, quantity: Int) {
-        val docRef = collection.document(productId)
+        updateProductStock(productId, -quantity)
+    }
+
+    /**
+     * Função privada para abstrair a lógica de transação de estoque,
+     * usada tanto para adição quanto para remoção.
+     */
+    private suspend fun updateProductStock(productId: String, quantityDelta: Int) {
+        val docRef = productsCollection.document(productId)
         firestore.runTransaction { transaction ->
             val snapshot = transaction.get(docRef)
-            val current = snapshot.toObject(ProductDto::class.java)
-                ?: throw Exception("Produto não encontrado")
+            val currentProduct = snapshot.toObject(ProductDto::class.java)
+                ?: throw Exception("Produto com ID $productId não encontrado.")
 
-            val newStock = current.currentStock - quantity
+            val newStock = currentProduct.currentStock + quantityDelta
             if (newStock < 0) {
-                throw Exception("Estoque insuficiente para retirada")
+                throw Exception("Estoque insuficiente. Ação cancelada.")
             }
 
-            val updatedStock = current.copy(
+            val updatedProduct = currentProduct.copy(
                 currentStock = newStock,
                 lastUpdateDate = System.currentTimeMillis()
             )
-            transaction.set(docRef, updatedStock)
+            transaction.set(docRef, updatedProduct)
         }.await()
     }
 
-    // Buscar produto por código ou nome
+
+    /**
+     * Busca um produto por código ou nome.
+     * Prioriza a busca por ID (código). Se não encontrar, busca por nome.
+     */
     override suspend fun getProductsByCodeOrName(query: String): Product? {
-        val snapshot = collection
-            .whereEqualTo("idProduct", query)
-            .get()
-            .await()
+        val byId = productsCollection.whereEqualTo("idProduct", query).get().await()
+        if (!byId.isEmpty) {
+            return byId.documents.first().toObject(ProductDto::class.java)?.toDomain()
+        }
 
-        val first = snapshot.documents.firstOrNull()
-            ?: collection.whereEqualTo("name", query).get().await().documents.firstOrNull()
-
-        return first?.toObject(ProductDto::class.java)?.toDomain()
+        val byName = productsCollection.whereEqualTo("name", query).get().await()
+        return byName.documents.firstOrNull()?.toObject(ProductDto::class.java)?.toDomain()
     }
 
-
+    /**
+     * Obtém todos os produtos da coleção.
+     */
     override suspend fun getAllProducts(): List<Product> {
         return try {
-            val snapshot = collection.get().await()
-            snapshot.documents.mapNotNull { doc ->
-                doc.toObject(ProductDto::class.java)?.toDomain()
-            }
+            val snapshot = productsCollection.get().await()
+            snapshot.documents.mapNotNull { it.toObject(ProductDto::class.java)?.toDomain() }
         } catch (e: Exception) {
-            Log.e("ProductRepository", "Erro ao buscar todos os produtos", e)
+            Log.e("ProductMovementRepo", "Erro ao buscar todos os produtos", e)
             emptyList()
         }
     }
 
+    /**
+     * Escuta mudanças em um produto específico em tempo real.
+     */
     override fun listenProductById(productId: String): Flow<Product?> = callbackFlow {
-        val listener = collection.document(productId)
+        val listener = productsCollection.document(productId)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     close(error)
+                    Log.e("ProductMovementRepo", "Erro ao escutar produto $productId", error)
                     return@addSnapshotListener
                 }
-                if (snapshot != null && snapshot.exists()) {
-                    trySend(snapshot.toObject(ProductDto::class.java)?.toDomain())
-                } else {
-                    trySend(null)
+
+                val product = snapshot?.toObject(ProductDto::class.java)?.toDomain()
+                trySend(product)
+            }
+        awaitClose { listener.remove() }
+    }
+
+    /**
+     * Obtém uma lista dos movimentos mais recentes de todos os produtos.
+     * Usa `collectionGroup` para buscar movimentos de subcoleções.
+     */
+    override suspend fun listenRecentMovements(limit: Long): Flow<List<ProductMovement>> = callbackFlow {
+        val listener = firestore.collectionGroup("movements")
+            .orderBy("date", Query.Direction.DESCENDING)
+            .limit(limit)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    close(error)
+                    Log.e("ProductMovementRepo", "Erro ao escutar movimentos recentes", error)
+                    return@addSnapshotListener
                 }
+
+                val movements = snapshot?.documents?.mapNotNull { doc ->
+                    doc.toObject(MovementDto::class.java)?.toDomain()
+                } ?: emptyList()
+
+                trySend(movements)
             }
         awaitClose { listener.remove() }
     }
 
 
+    /**
+     * Obtém os produtos mais vendidos (com base nos movimentos de "Saída").
+     */
+    override suspend fun getTopSellingProducts(limit: Int): List<Pair<Product, Int>> {
+        return try {
+            // Passo 1: Buscar todos os movimentos de "Saída"
+            val salesSnapshot = firestore.collectionGroup("movements")
+                .whereEqualTo("type", "Saída")
+                .get()
+                .await()
 
+            // Passo 2: Calcular o total de vendas por produto
+            val salesMap = salesSnapshot.documents.mapNotNull { it.toObject(MovementDto::class.java) }
+                .groupBy { it.productId }
+                .mapValues { (_, movements) -> movements.sumOf { it.quantity } }
+
+            // Passo 3: Ordenar e pegar os top N produtos
+            val topSalesIds = salesMap.entries
+                .sortedByDescending { it.value }
+                .take(limit)
+                .map { it.key to it.value }
+
+            // Passo 4: Buscar os detalhes dos produtos correspondentes
+            topSalesIds.mapNotNull { (productId, totalSales) ->
+                val productDoc = productsCollection.document(productId).get().await()
+                val product = productDoc.toObject(ProductDto::class.java)?.toDomain()
+                if (product != null) product to totalSales else null
+            }
+        } catch (e: Exception) {
+            Log.e("ProductMovementRepo", "Erro ao buscar top produtos", e)
+            emptyList()
+        }
+    }
 }

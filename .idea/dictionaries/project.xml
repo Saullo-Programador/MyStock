@@ -1,82 +1,199 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>abstrair</w>
+      <w>adiciona</w>
       <w>adicionais</w>
       <w>adicionar</w>
+      <w>adição</w>
+      <w>aguarda</w>
+      <w>alterações</w>
+      <w>aplica</w>
+      <w>aplicar</w>
+      <w>aplicação</w>
+      <w>apresentar</w>
       <w>após</w>
       <w>aqui</w>
       <w>armazém</w>
       <w>ativo</w>
       <w>atualiza</w>
+      <w>atualizado</w>
       <w>atualizar</w>
       <w>atualização</w>
+      <w>atualizações</w>
+      <w>automaticamente</w>
+      <w>ação</w>
       <w>barras</w>
+      <w>busca</w>
       <w>buscar</w>
       <w>cada</w>
       <w>cadastrar</w>
       <w>cadastro</w>
       <w>caixa</w>
+      <w>cancelada</w>
       <w>cancelar</w>
+      <w>carrega</w>
+      <w>carregar</w>
+      <w>caso</w>
       <w>chamaria</w>
+      <w>coleção</w>
+      <w>combina</w>
+      <w>conclusão</w>
+      <w>constantes</w>
       <w>convertido</w>
       <w>corredor</w>
+      <w>correspondentes</w>
       <w>custo</w>
+      <w>cálculo</w>
       <w>código</w>
       <w>dados</w>
+      <w>deleta</w>
       <w>deletar</w>
+      <w>deleção</w>
       <w>descrição</w>
       <w>detalhes</w>
       <w>digite</w>
       <w>documento</w>
+      <w>documentos</w>
+      <w>domínio</w>
+      <w>editar</w>
+      <w>edição</w>
+      <w>eficiente</w>
       <w>eletrônicos</w>
       <w>emita</w>
+      <w>emite</w>
       <w>encontrado</w>
+      <w>encontrar</w>
+      <w>então</w>
       <w>erro</w>
+      <w>escuta</w>
       <w>escutar</w>
+      <w>específico</w>
+      <w>estatísticas</w>
       <w>estão</w>
+      <w>evento</w>
+      <w>eventos</w>
+      <w>exceção</w>
       <w>excluir</w>
+      <w>exclusão</w>
+      <w>execução</w>
       <w>exemplo</w>
       <w>existe</w>
+      <w>existente</w>
+      <w>fecha</w>
+      <w>fechamento</w>
+      <w>fechar</w>
+      <w>feito</w>
+      <w>forma</w>
       <w>formulário</w>
       <w>fornecedor</w>
       <w>função</w>
       <w>funções</w>
+      <w>garantir</w>
+      <w>gerencia</w>
+      <w>gerenciar</w>
+      <w>histórico</w>
       <w>imagem</w>
+      <w>implementação</w>
       <w>inativo</w>
+      <w>incrementa</w>
       <w>informações</w>
+      <w>inicia</w>
       <w>inicial</w>
       <w>insuficiente</w>
+      <w>inválida</w>
       <w>inválidos</w>
+      <w>lança</w>
       <w>lista</w>
+      <w>listagem</w>
       <w>litro</w>
       <w>localização</w>
+      <w>lógica</w>
+      <w>maior</w>
+      <w>mantém</w>
+      <w>mapeia</w>
       <w>medida</w>
+      <w>mesmo</w>
+      <w>metodo</w>
+      <w>modelo</w>
+      <w>movimentação</w>
+      <w>movimento</w>
+      <w>movimentos</w>
+      <w>mudanças</w>
+      <w>método</w>
       <w>mínimo</w>
+      <w>múltiplos</w>
       <w>navegar</w>
       <w>nenhum</w>
+      <w>objeto</w>
+      <w>objetos</w>
       <w>obrigatórios</w>
       <w>observações</w>
       <w>obter</w>
+      <w>obtém</w>
+      <w>operação</w>
+      <w>operações</w>
+      <w>ordenar</w>
+      <w>passo</w>
+      <w>pegar</w>
+      <w>pelo</w>
+      <w>pesquisa</w>
+      <w>precisa</w>
+      <w>precisam</w>
+      <w>preencha</w>
+      <w>preenche</w>
       <w>preenchidos</w>
       <w>preço</w>
+      <w>prioriza</w>
+      <w>privada</w>
       <w>produto</w>
       <w>produtos</w>
       <w>promoção</w>
+      <w>quantidade</w>
+      <w>quanto</w>
       <w>querer</w>
       <w>quilo</w>
+      <w>realizada</w>
+      <w>reativa</w>
       <w>recebe</w>
+      <w>recebidos</w>
+      <w>recentes</w>
+      <w>recuperado</w>
       <w>recuperar</w>
       <w>redefinir</w>
+      <w>referência</w>
+      <w>registra</w>
+      <w>registro</w>
+      <w>reinicia</w>
+      <w>remoção</w>
       <w>repositório</w>
+      <w>repositórios</w>
       <w>resetar</w>
+      <w>responsável</w>
+      <w>resultado</w>
+      <w>resumo</w>
       <w>retirada</w>
+      <w>salva</w>
+      <w>salvamento</w>
       <w>salvando</w>
+      <w>saídas</w>
+      <w>seja</w>
+      <w>seleção</w>
       <w>senha</w>
+      <w>suas</w>
+      <w>subcoleções</w>
       <w>sucesso</w>
+      <w>sugestões</w>
+      <w>suspende</w>
+      <w>transação</w>
       <w>unidade</w>
+      <w>usada</w>
+      <w>usam</w>
+      <w>usando</w>
       <w>validação</w>
       <w>vazio</w>
       <w>vazios</w>
+      <w>único</w>
     </words>
   </dictionary>
 </component>

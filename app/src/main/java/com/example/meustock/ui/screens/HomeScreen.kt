@@ -2,6 +2,7 @@ package com.example.meustock.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,8 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -45,13 +49,13 @@ fun HomeScreen(
     viewModel: DashboardViewModel
 ){
     val state by viewModel.state.collectAsState()
-    HomeContent(
+    DashboardScreen(
         state = state
     )
 }
 
 @Composable
-fun HomeContent(state: DashboardUiState) {
+fun DashboardScreen(state: DashboardUiState) {
     Scaffold { innerPadding ->
         val scrollState = rememberScrollState()
         Column(
@@ -75,8 +79,7 @@ fun HomeContent(state: DashboardUiState) {
                 gifResourceId = R.drawable.checking_boxes_transparent_refined
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(36.dp))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -127,10 +130,9 @@ fun HomeContent(state: DashboardUiState) {
                         )
                     }
                 }
-                TopSellingProductsCard()
+                //TopSellingProductsCard(topProducts = state.topSellingProducts)
                 RestockProductsCard(products = state.restockProducts)
-                RecentActivityCard()
-                Text("Ações Rápidas", style = MaterialTheme.typography.titleMedium)
+                RecentActivityCard( movements = state.lastMovements)
             }
         }
     }
@@ -145,30 +147,40 @@ fun DashboardSummaryCard(
     modifier: Modifier = Modifier
 ) {
     Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         modifier = modifier
-            .height(100.dp),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.surface)
-                .padding(12.dp)
-                .fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                painter = painterResource(img),
-                tint = colorIcon,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .width(32.dp)
-                    .height(32.dp)
-            )
-            Column {
-                Text(title, style = MaterialTheme.typography.titleSmall)
-                Text(value, style = MaterialTheme.typography.headlineSmall)
+            .height(100.dp)
+            .graphicsLayer {
+                this.shadowElevation = 10.dp.toPx()
+                this.shape = RoundedCornerShape(12.dp)
+                // A cor do brilho com opacidade sutil (0.5f)
+                this.ambientShadowColor = colorIcon.copy(alpha = 0.5f)
+                this.spotShadowColor = colorIcon.copy(alpha = 0.5f)
             }
+    ) {
+        Column(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(16.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                Icon(
+                    painter = painterResource(img),
+                    tint = colorIcon,
+                    contentDescription = null,
+                    modifier = Modifier.size(35.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(title, style = MaterialTheme.typography.titleMedium)
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                value,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
         }
     }
 }

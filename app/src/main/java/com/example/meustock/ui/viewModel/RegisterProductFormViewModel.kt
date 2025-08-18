@@ -6,27 +6,34 @@ import androidx.lifecycle.viewModelScope
 import com.example.meustock.domain.model.Product
 import com.example.meustock.domain.usecase.GetNextProductCodeUseCase
 import com.example.meustock.domain.usecase.SaveProductUseCase
+import com.example.meustock.ui.states.ProductUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
-import com.example.meustock.ui.states.ProductUiState
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
+/**
+ * Eventos do formulário de registro de produto.
+ */
 sealed class ProductFormEvent {
     object Loading : ProductFormEvent()
     object Success : ProductFormEvent()
     data class Error(val message: String) : ProductFormEvent()
-    object Idle : ProductFormEvent() // Estado inicial ou reset
+    object Idle : ProductFormEvent()
 }
+
+/**
+ * ViewModel para a tela de registro de um novo produto.
+ * Gerencia o estado do formulário e a lógica de salvamento.
+ */
 @HiltViewModel
 class RegisterProductFormViewModel @Inject constructor(
     private val saveProductUseCase: SaveProductUseCase,
     private val getNextProductCodeUseCase: GetNextProductCodeUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProductUiState())
     val uiState: StateFlow<ProductUiState> = _uiState.asStateFlow()
@@ -34,7 +41,10 @@ class RegisterProductFormViewModel @Inject constructor(
     private val _productFormEvent = MutableStateFlow<ProductFormEvent>(ProductFormEvent.Idle)
     val productFormEvent: StateFlow<ProductFormEvent> = _productFormEvent.asStateFlow()
 
-    // Funções de atualização dos campos
+    /**
+     * Funções de atualização dos campos do formulário.
+     * Usam `_uiState.update` para garantir que o estado seja atualizado de forma segura.
+     */
     fun updateNameProduct(name: String) { _uiState.update { it.copy(nameProduct = name) } }
     fun updateDescription(description: String) { _uiState.update { it.copy(description = description) } }
     fun updateBarcodeSku(barcode: String) { _uiState.update { it.copy(barcodeSku = barcode) } }
@@ -50,21 +60,15 @@ class RegisterProductFormViewModel @Inject constructor(
     fun updateStatus(status: String) { _uiState.update { it.copy(status = status) } }
     fun updateNotes(notes: String) { _uiState.update { it.copy(notes = notes) } }
 
-
-    // Função para salvar o produto
+    /**
+     * Valida os campos do formulário e salva o novo produto.
+     */
     fun saveProduct() {
         viewModelScope.launch {
-            val currentProductUiState = _uiState.value
+            val state = _uiState.value
 
-            if (currentProductUiState.nameProduct.isBlank() ||
-                currentProductUiState.costPrice.isBlank() ||
-                currentProductUiState.sellingPrice.isBlank() ||
-                currentProductUiState.currentStock.isBlank() ||
-                currentProductUiState.minimumStock.isBlank() ||
-                currentProductUiState.category.isBlank() ||
-                currentProductUiState.unitOfMeasurement.isBlank()
-            ) {
-                _productFormEvent.value = ProductFormEvent.Error("Campos obrigatórios não preenchidos ou inválidos.")
+            if (!isFormValid(state)) {
+                _productFormEvent.value = ProductFormEvent.Error("Preencha todos os campos obrigatórios.")
                 return@launch
             }
 
@@ -72,30 +76,11 @@ class RegisterProductFormViewModel @Inject constructor(
 
             try {
                 val nextProductCode = getNextProductCodeUseCase()
-
-                val productToSave = Product(
-                    idProduct = nextProductCode,
-                    name = currentProductUiState.nameProduct,
-                    description = currentProductUiState.description.takeIf { it?.isNotBlank() ?: false },
-                    barcodeSku = currentProductUiState.barcodeSku.takeIf { it?.isNotBlank() ?: false },
-                    costPrice = currentProductUiState.costPrice.toDoubleOrNull() ?: 0.0,
-                    sellingPrice = currentProductUiState.sellingPrice.toDoubleOrNull() ?: 0.0,
-                    currentStock = currentProductUiState.currentStock.toIntOrNull() ?: 0,
-                    minimumStock = currentProductUiState.minimumStock.toIntOrNull() ?: 0,
-                    category = currentProductUiState.category,
-                    brand = currentProductUiState.brand.takeIf { it?.isNotBlank() ?: false },
-                    unitOfMeasurement = currentProductUiState.unitOfMeasurement,
-                    supplier = currentProductUiState.supplier.takeIf { it?.isNotBlank() ?: false },
-                    stockLocation = currentProductUiState.stockLocation.takeIf { it?.isNotBlank() ?: false },
-                    status = currentProductUiState.status,
-                    notes = currentProductUiState.notes.takeIf { it?.isNotBlank() ?: false },
-                    registrationDate = currentProductUiState.registrationDate,
-                    lastUpdateDate = System.currentTimeMillis() // atualiza o timestamp
-                )
-
+                val productToSave = createProductFromUiState(state, nextProductCode)
                 saveProductUseCase(productToSave)
+
                 _productFormEvent.value = ProductFormEvent.Success
-                _uiState.update { ProductUiState() } // Limpa formulário
+                _uiState.update { ProductUiState() } // Limpa o formulário
             } catch (e: Exception) {
                 _productFormEvent.value = ProductFormEvent.Error("Erro ao salvar o produto: ${e.message}")
                 Log.e("RegisterProductViewModel", "Erro ao salvar o produto", e)
@@ -103,6 +88,47 @@ class RegisterProductFormViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Valida os campos obrigatórios do formulário.
+     */
+    private fun isFormValid(state: ProductUiState): Boolean {
+        return state.nameProduct.isNotBlank() &&
+                state.costPrice.toDoubleOrNull() != null &&
+                state.sellingPrice.toDoubleOrNull() != null &&
+                state.currentStock.toIntOrNull() != null &&
+                state.minimumStock.toIntOrNull() != null &&
+                state.category.isNotBlank() &&
+                state.unitOfMeasurement.isNotBlank()
+    }
+
+    /**
+     * Mapeia o estado da UI para um objeto de domínio `Product`.
+     */
+    private fun createProductFromUiState(state: ProductUiState, id: String): Product {
+        return Product(
+            idProduct = id,
+            name = state.nameProduct,
+            description = state.description.takeIf { it?.isNotBlank() == true },
+            barcodeSku = state.barcodeSku.takeIf { it?.isNotBlank() == true },
+            costPrice = state.costPrice.toDoubleOrNull() ?: 0.0,
+            sellingPrice = state.sellingPrice.toDoubleOrNull() ?: 0.0,
+            currentStock = state.currentStock.toIntOrNull() ?: 0,
+            minimumStock = state.minimumStock.toIntOrNull() ?: 0,
+            category = state.category,
+            brand = state.brand.takeIf { it?.isNotBlank() == true },
+            unitOfMeasurement = state.unitOfMeasurement,
+            supplier = state.supplier.takeIf { it?.isNotBlank() == true },
+            stockLocation = state.stockLocation.takeIf { it?.isNotBlank() == true },
+            status = state.status,
+            notes = state.notes.takeIf { it?.isNotBlank() == true },
+            registrationDate = state.registrationDate,
+            lastUpdateDate = System.currentTimeMillis()
+        )
+    }
+
+    /**
+     * Reinicia o estado do evento do formulário.
+     */
     fun resetProductFormEvent() {
         _productFormEvent.value = ProductFormEvent.Idle
     }
