@@ -16,14 +16,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.meustock.domain.model.Product
 
 
 @Composable
-fun RestockProductsCard() {
+fun RestockProductsCard(products: List<Product>) {
+
+    if (products.isEmpty()) return
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(
@@ -37,9 +39,9 @@ fun RestockProductsCard() {
             )
 
             Spacer(modifier = Modifier.height(12.dp))
-
-            RestockProductItem(name = "Mouse Sem Fio", stock = 8)
-            RestockProductItem(name = "Webcam HD", stock = 5)
+            products.forEach { product ->
+                RestockProductItem(name = product.name, stock = product.currentStock)
+            }
         }
     }
 }

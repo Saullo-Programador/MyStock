@@ -20,8 +20,7 @@ import androidx.compose.ui.unit.dp
 fun TopSellingProductsCard() {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(

@@ -18,6 +18,10 @@ class ProductMovementViewModel @Inject constructor(
     private val _movements = MutableStateFlow<List<ProductMovement>>(emptyList())
     val movements: StateFlow<List<ProductMovement>> = _movements
 
+    
+
+
+
     fun loadMovements(productId: String) {
         viewModelScope.launch {
             repository.getProductMovements(productId)

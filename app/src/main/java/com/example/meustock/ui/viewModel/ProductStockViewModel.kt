@@ -97,6 +97,10 @@ class ProductStockViewModel @Inject constructor(
             try {
                 if (isEntrada) {
                     repository.addProductStock(product.idProduct, quantity)
+                    repository.registerProductMovement(
+                        product.idProduct,
+                        quantity, "entrada",
+                    )
                 } else {
                     repository.removeProductStock(product.idProduct, quantity)
                 }

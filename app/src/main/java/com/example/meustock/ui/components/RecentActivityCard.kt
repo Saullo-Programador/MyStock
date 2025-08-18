@@ -20,8 +20,7 @@ import androidx.compose.ui.unit.dp
 fun RecentActivityCard() {
     Card (
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(
@@ -31,7 +30,7 @@ fun RecentActivityCard() {
         ) {
             Text(
                 text = "Atividade Recente",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleLarge
             )
 
             Spacer(modifier = Modifier.height(12.dp))

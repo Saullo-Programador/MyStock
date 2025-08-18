@@ -20,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,16 +38,15 @@ import com.example.meustock.ui.components.RecentActivityCard
 import com.example.meustock.ui.components.RestockProductsCard
 import com.example.meustock.ui.components.TopSellingProductsCard
 import com.example.meustock.ui.states.DashboardUiState
+import com.example.meustock.ui.viewModel.DashboardViewModel
 
 @Composable
 fun HomeScreen(
+    viewModel: DashboardViewModel
 ){
+    val state by viewModel.state.collectAsState()
     HomeContent(
-        state = DashboardUiState(
-            totalProducts = 10,
-            totalItemsInStock = 5,
-            totalStockValue = 1000.0
-        )
+        state = state
     )
 }
 
@@ -75,51 +76,62 @@ fun HomeContent(state: DashboardUiState) {
             )
 
             Spacer(modifier = Modifier.height(24.dp))
-
             Spacer(modifier = Modifier.height(12.dp))
 
-            Row(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(17.dp)
             ) {
-                DashboardSummaryCard(
-                    title = "Produtos",
-                    value = "${state.totalProducts}",
-                    img = R.drawable.icon_product,
-                    colorIcon = Color.White,
-                    modifier = Modifier.weight(1f)
-                )
-                DashboardSummaryCard(
-                    title = "Valor Estoque",
-                    value = "R$ ${String.format("%.2f", state.totalStockValue)}",
-                    img = R.drawable.icon_money,
-                    colorIcon = Color.White,
-                    modifier = Modifier.weight(1f)
-                )
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        DashboardSummaryCard(
+                            title = "Total Produtos",
+                            value = "${state.totalProducts} Produtos",
+                            img = R.drawable.icon_product,
+                            modifier = Modifier.weight(1f)
+                        )
+                        DashboardSummaryCard(
+                            title = "Estoque Total",
+                            value = "${state.totalItemsInStock} Itens",
+                            img = R.drawable.icon_stock,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        DashboardSummaryCard(
+                            title = "Estoque Baixo",
+                            value = "${state.lowStockItems} Produtos",
+                            img = R.drawable.icon_alert,
+                            colorIcon = Color.Red,
+                            modifier = Modifier.weight(1f)
+                        )
+                        DashboardSummaryCard(
+                            title = "Valor Estoque",
+                            value = "R$ ${String.format("%.2f", state.totalStockValue)}",
+                            img = R.drawable.icon_money,
+                            colorIcon = Color(0xFFBEA205),
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+                TopSellingProductsCard()
+                RestockProductsCard(products = state.restockProducts)
+                RecentActivityCard()
+                Text("Ações Rápidas", style = MaterialTheme.typography.titleMedium)
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            DashboardSummaryCard(
-                title = "Estoque Baixo",
-                value = "${state.totalItemsInStock}",
-                img = R.drawable.icon_alert,
-                colorIcon = Color.White,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            TopSellingProductsCard()
-            Spacer(modifier = Modifier.height(16.dp))
-            RestockProductsCard()
-
-            Spacer(modifier = Modifier.height(16.dp))
-            RecentActivityCard()
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text("Ações Rápidas", style = MaterialTheme.typography.titleMedium)
         }
     }
 }
@@ -139,7 +151,7 @@ fun DashboardSummaryCard(
     ) {
         Row(
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.primary)
+                .background(color = MaterialTheme.colorScheme.surface)
                 .padding(12.dp)
                 .fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
@@ -177,14 +189,4 @@ fun GifComposable(gifResourceId: Int, modifier: Modifier = Modifier) {
         modifier = modifier,
         contentScale = ContentScale.FillBounds
     )
-}
-
-
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen()
 }

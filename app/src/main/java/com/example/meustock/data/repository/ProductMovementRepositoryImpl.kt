@@ -23,7 +23,7 @@ class ProductMovementRepositoryImpl @Inject constructor(
     private val collection = firestore.collection("products")
 
     override suspend fun getProductMovements(productId: String): Flow<List<ProductMovement>> = callbackFlow {
-        val listener = collection.document(productId)
+    val listener = collection.document(productId)
             .collection("movements")
             .orderBy("date", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
@@ -36,6 +36,7 @@ class ProductMovementRepositoryImpl @Inject constructor(
                     val movements = snapshot.documents.mapNotNull { doc ->
                         doc.toObject(MovementDto::class.java)?.toDomain()
                     }
+                    Log.d("Firestore", "Movements recebidos: ${movements.size}")
                     trySend(movements)
                 }
             }
@@ -60,6 +61,8 @@ class ProductMovementRepositoryImpl @Inject constructor(
             responsible = responsible,
             notes = notes
         )
+
+        Log.d("Firestore", "Salvando movimento: $movement")
 
         collection.document(productId)
             .collection("movements")

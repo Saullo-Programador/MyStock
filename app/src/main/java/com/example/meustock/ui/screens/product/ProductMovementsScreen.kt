@@ -51,9 +51,22 @@ fun ProductMovementsScreen(
             )
         }
     ) { padding ->
-        LazyColumn(contentPadding = padding) {
-            items(movements) { movement ->
-                MovementItem(movement)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+
+            if ( movements.isEmpty()) {
+                Text("Produto não encontrado")
+            }else {
+                LazyColumn() {
+                    items(movements) { movement ->
+                        MovementItem(movement)
+                    }
+                }
             }
         }
     }

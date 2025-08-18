@@ -3,6 +3,7 @@ package com.example.meustock.ui.screens
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,17 +35,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.meustock.R
 import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.SearchComponents
-import com.example.meustock.ui.navigation.Screen
 import com.example.meustock.ui.states.ProductStockUiState
-import com.example.meustock.ui.theme.MeuStockTheme
 import com.example.meustock.ui.viewModel.ProductStockViewModel
 
 @Composable
@@ -82,25 +78,41 @@ fun ProductWithdrawalScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding( top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            uiState.selectedProduct?.let { product ->
-                ProductStockContent(
-                    name = product.name,
-                    brand = product.brand ?: "",
-                    price = product.sellingPrice,
-                    stock = product.currentStock,
-                    onEntradaClick = {
-                        isEntrada = true
-                        showDialog = true
-                    },
-                    onSaidaClick = {
-                        isEntrada = false
-                        showDialog = true
-                    },
-                    uiState = uiState
-                )
+            if (uiState.selectedProduct == null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        "Pesquise o Produto para continuar",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }else {
+                uiState.selectedProduct.let { product ->
+                    ProductStockContent(
+                        name = product.name,
+                        brand = product.brand ?: "",
+                        price = product.sellingPrice,
+                        stock = product.currentStock,
+                        onEntradaClick = {
+                            isEntrada = true
+                            showDialog = true
+                        },
+                        onSaidaClick = {
+                            isEntrada = false
+                            showDialog = true
+                        },
+                        uiState = uiState,
+                        onNavMovements = {
+                            onNavMovements( product.idProduct)
+                        }
+                    )
+                }
             }
 
             if (showDialog) {
@@ -129,7 +141,8 @@ fun ProductStockContent(
     price: Double,
     stock: Int,
     onEntradaClick: () -> Unit,
-    onSaidaClick: () -> Unit
+    onSaidaClick: () -> Unit,
+    onNavMovements: () -> Unit
 ) {
     when{
         uiState.errorMessage != null -> {
@@ -176,6 +189,13 @@ fun ProductStockContent(
                     .weight(1f)
             )
         }
+        ButtonComponent(
+            text = "Ver Movimentações",
+            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surface),
+            fontColor = Color.White,
+            cornerRadius = 14,
+            onClick = { onNavMovements() }
+        )
     }
 }
 
