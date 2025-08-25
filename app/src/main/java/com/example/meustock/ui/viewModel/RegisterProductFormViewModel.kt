@@ -1,12 +1,19 @@
 package com.example.meustock.ui.viewModel
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.meustock.domain.model.Product
 import com.example.meustock.domain.usecase.GetNextProductCodeUseCase
 import com.example.meustock.domain.usecase.SaveProductUseCase
 import com.example.meustock.ui.states.ProductUiState
+import com.example.meustock.ui.utils.ImageUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -60,10 +67,13 @@ class RegisterProductFormViewModel @Inject constructor(
     fun updateStatus(status: String) { _uiState.update { it.copy(status = status) } }
     fun updateNotes(notes: String) { _uiState.update { it.copy(notes = notes) } }
 
+
+
+
     /**
      * Valida os campos do formulário e salva o novo produto.
      */
-    fun saveProduct() {
+    fun saveProduct(imageUri: String?, context: Context) {
         viewModelScope.launch {
             val state = _uiState.value
 
@@ -76,7 +86,14 @@ class RegisterProductFormViewModel @Inject constructor(
 
             try {
                 val nextProductCode = getNextProductCodeUseCase()
-                val productToSave = createProductFromUiState(state, nextProductCode)
+
+                val imageBase64 = imageUri?.let{ uri ->
+                    ImageUtils.uriToBase64(context, Uri.parse(uri))
+                }
+
+                val productToSave = createProductFromUiState(state, nextProductCode).copy(
+                    imageUrl = imageBase64
+                )
                 saveProductUseCase(productToSave)
 
                 _productFormEvent.value = ProductFormEvent.Success

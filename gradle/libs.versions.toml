@@ -28,8 +28,10 @@ okhttp = "5.1.0"
 retrofit = "3.0.0"
 textRecognition = "16.0.1"
 firebaseFirestoreKtx = "25.1.4"
+accompanistPermissions = "0.37.3"
 
 [libraries]
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref= "accompanistPermissions" }
 androidx-camera-extensions = { module = "androidx.camera:camera-extensions" }
 androidx-camera-core = { module = "androidx.camera:camera-core" }
 androidx-camera-view = { module = "androidx.camera:camera-view", version.ref = "cameraView" }

@@ -49,6 +49,9 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
 
+    //Accompanist
+    implementation (libs.accompanist.permissions)
+
 
     //CameraX
     implementation(libs.androidx.camera.core)

@@ -15,18 +15,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.meustock.R
+import com.example.meustock.ui.utils.ImageUtils
 
 
 @Composable
 fun ItemProduct(
-    image: Painter = painterResource(id = R.drawable._4),
+    imageUri: String? = null,
     nameProduct: String,
     quantity: Int,
     price: Double,
@@ -46,14 +50,27 @@ fun ItemProduct(
     ) {
         Column {
             Box {
-                Image(
-                    painter = image,
-                    contentDescription = "Imagem do produto $nameProduct",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(130.dp)
-                )
+                if (imageUri != null){
+                    val bitmap = ImageUtils.base64ToBitmap(imageUri)
+                    Image(
+                        bitmap = bitmap?.asImageBitmap() ?: ImageBitmap(1, 1),
+                        contentDescription = "Imagem do produto $nameProduct",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(130.dp)
+                    )
+
+                }else{
+                    Image(
+                        painter = painterResource(id = R.drawable._4),
+                        contentDescription = "Imagem do produto $nameProduct",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(130.dp)
+                    )
+                }
 
                 Box(
                     modifier = Modifier

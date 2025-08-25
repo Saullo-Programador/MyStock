@@ -27,7 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.meustock.ui.components.ButtonComponent
-import com.example.meustock.ui.components.LoadingDialog
+import com.example.meustock.ui.components.LoadingScreen
 import com.example.meustock.ui.components.TextFeldComponent
 import com.example.meustock.ui.components.TopBar
 import com.example.meustock.ui.states.ProductEditUiState
@@ -108,7 +108,7 @@ fun ProductEditContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (uiState.isLoading) {
-            LoadingDialog(mensagem = "Carregando produto...")
+            LoadingScreen(mensagem = "Carregando produto...")
         } else {
             ProductEditFrom(
                 viewModel = viewModel,

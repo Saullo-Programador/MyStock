@@ -24,13 +24,28 @@ import androidx.compose.ui.unit.dp
 import com.example.meustock.R
 import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.ItemProduct
+import com.example.meustock.ui.components.SearchComponents
 import com.example.meustock.ui.viewModel.ProductListViewModel
+
 
 @Composable
 fun ProductListScreen(
     viewModel: ProductListViewModel,
     onDetailProduct: (String) -> Unit = {},
-    onNavigatorEdit: (String) -> Unit = {}
+    onNavigatorEdit: (String) -> Unit = {},
+){
+    ProductListContent(
+        viewModel = viewModel,
+        onDetailProduct = onDetailProduct,
+        onNavigatorEdit = onNavigatorEdit
+    )
+
+}
+@Composable
+fun ProductListContent(
+    viewModel: ProductListViewModel,
+    onDetailProduct: (String) -> Unit = {},
+    onNavigatorEdit: (String) -> Unit = {},
 ) {
     val openAlertDialog = remember { mutableStateOf(false) }
     val productId = remember { mutableStateOf<String?>(null) }
@@ -38,6 +53,23 @@ fun ProductListScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
+        topBar = {
+            SearchComponents(
+                query = "",
+                onQueryChange = {},
+                onSearch = {},
+                searchResults = listOf(),
+                onResultClick = {},
+                placeholder = "ID ou Nome do Produto",
+                leadingIcon = painterResource(id = R.drawable.icon_search),
+                expanded = false,
+                onExpandedChange = {},
+                cornerRadius = 15,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            )
+        }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -48,7 +80,7 @@ fun ProductListScreen(
             Column (
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding( top = 5.dp, start = 16.dp, end = 16.dp, bottom = 80.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ){
                 if (openAlertDialog.value && productId.value != null) {
@@ -99,18 +131,18 @@ fun ListProduct(
     onDeleteProduct: (String) -> Unit = {},
     onEditProduct: (String) -> Unit = {}
 ){
-    val products by viewModel.product.collectAsState()
+    val products by viewModel.products.collectAsState()
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 128.dp),
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ){
         items(products.size){ index ->
             val product = products[index]
             ItemProduct(
+                imageUri = product.imageUrl,
                 nameProduct = product.name,
                 quantity = product.currentStock,
                 price = product.sellingPrice,
