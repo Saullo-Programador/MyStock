@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 /**
  * ViewModel responsável pela lógica da tela de Dashboard.
  * Coleta e combina dados de múltiplos repositórios para apresentar um resumo do estoque.
@@ -33,47 +34,42 @@ class DashboardViewModel @Inject constructor(
         loadDashboardData()
     }
 
-    /**
-     * Carrega todos os dados do dashboard de forma reativa.
-     * Combina os flows de produtos, movimentos recentes e top de vendas
-     * para atualizar a UI de forma eficiente.
-     */
     private fun loadDashboardData() {
         viewModelScope.launch {
-            // Flow de produtos para calcular estatísticas
-            val productsFlow = productRepository.getProducts()
+            _state.update { it.copy(isLoading = true, errorMessage = null) }
 
-            // Flow para os movimentos recentes
-            val recentMovementsFlow = productMovementRepository.listenRecentMovements(limit = 5)
+            try {
+                val productsFlow = productRepository.getProducts()
+                val recentMovementsFlow = productMovementRepository.listenRecentMovements(limit = 5)
 
-            // Flow para os produtos mais vendidos (usa `first()` para buscar apenas uma vez)
-            val topSellingProductsFlow = productMovementRepository.getTopSellingProducts(limit = 5)
+                combine(
+                    productsFlow,
+                    recentMovementsFlow,
+                ) { products, movements ->
 
-            // Combina os flows para garantir que o estado da UI seja atualizado com todos os dados
-            combine(
-                productsFlow,
-                recentMovementsFlow
-            ) { products, movements ->
-                // O cálculo do top de vendas é feito apenas uma vez, então o valor é recuperado
-                val topProducts = topSellingProductsFlow
 
-                val totalProducts = products.size
-                val totalItemsInStock = products.sumOf { it.currentStock }
-                val totalStockValue = products.sumOf { it.costPrice * it.currentStock }
-                val lowStockItems = products.count { it.currentStock < it.minimumStock }
-                val restockProducts = products.filter { it.currentStock <= it.minimumStock }
 
-                _state.value = _state.value.copy(
-                    totalProducts = totalProducts,
-                    totalItemsInStock = totalItemsInStock,
-                    totalStockValue = totalStockValue,
-                    lowStockItems = lowStockItems,
-                    restockProducts = restockProducts,
-                    lastMovements = movements,
-                    topSellingProducts = topProducts
-                )
-            }.collect {
-                // `collect` mantém o flow ativo e atualiza o estado
+                    val totalProducts = products.size
+                    val totalItemsInStock = products.sumOf { it.currentStock }
+                    val totalStockValue = products.sumOf { it.costPrice * it.currentStock }
+                    val lowStockItems = products.count { it.currentStock < it.minimumStock }
+                    val restockProducts = products.filter { it.currentStock <= it.minimumStock }
+
+                    DashboardUiState(
+                        isLoading = false,
+                        errorMessage = null,
+                        totalProducts = totalProducts,
+                        totalItemsInStock = totalItemsInStock,
+                        totalStockValue = totalStockValue,
+                        lowStockItems = lowStockItems,
+                        restockProducts = restockProducts,
+                        lastMovements = movements,
+                    )
+                }.collect { uiState ->
+                    _state.value = uiState
+                }
+            } catch (e: Exception) {
+                _state.update { it.copy(isLoading = false, errorMessage = e.message) }
             }
         }
     }

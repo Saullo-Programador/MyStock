@@ -24,7 +24,7 @@ class GetNextProductCodeUseCase @Inject constructor(
 class DetailProductUseCase @Inject constructor(
     private val productRepository: ProductRepository
 ){
-    suspend operator fun invoke(productId: String): Flow<Product>{
+    suspend operator fun invoke(productId: String): Flow<Product?>{
         return productRepository.detailProduct(productId)
     }
 }

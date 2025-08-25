@@ -192,39 +192,4 @@ class ProductMovementRepositoryImpl @Inject constructor(
             }
         awaitClose { listener.remove() }
     }
-
-
-    /**
-     * Obtém os produtos mais vendidos (com base nos movimentos de "Saída").
-     */
-    override suspend fun getTopSellingProducts(limit: Int): List<Pair<Product, Int>> {
-        return try {
-            // Passo 1: Buscar todos os movimentos de "Saída"
-            val salesSnapshot = firestore.collectionGroup("movements")
-                .whereEqualTo("type", "Saída")
-                .get()
-                .await()
-
-            // Passo 2: Calcular o total de vendas por produto
-            val salesMap = salesSnapshot.documents.mapNotNull { it.toObject(MovementDto::class.java) }
-                .groupBy { it.productId }
-                .mapValues { (_, movements) -> movements.sumOf { it.quantity } }
-
-            // Passo 3: Ordenar e pegar os top N produtos
-            val topSalesIds = salesMap.entries
-                .sortedByDescending { it.value }
-                .take(limit)
-                .map { it.key to it.value }
-
-            // Passo 4: Buscar os detalhes dos produtos correspondentes
-            topSalesIds.mapNotNull { (productId, totalSales) ->
-                val productDoc = productsCollection.document(productId).get().await()
-                val product = productDoc.toObject(ProductDto::class.java)?.toDomain()
-                if (product != null) product to totalSales else null
-            }
-        } catch (e: Exception) {
-            Log.e("ProductMovementRepo", "Erro ao buscar top produtos", e)
-            emptyList()
-        }
-    }
 }

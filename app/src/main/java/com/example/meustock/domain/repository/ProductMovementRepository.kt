@@ -20,6 +20,5 @@ interface ProductMovementRepository{
     )
     suspend fun getAllProducts(): List<Product>
     fun listenProductById(productId: String): Flow<Product?>
-    suspend fun getTopSellingProducts(limit: Int = 5): List<Pair<Product, Int>>
 
 }

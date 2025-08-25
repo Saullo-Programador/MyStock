@@ -1,5 +1,6 @@
 package com.example.meustock.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,9 +40,9 @@ import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.request.ImageRequest
 import com.example.meustock.R
+import com.example.meustock.ui.components.LoadingScreen
 import com.example.meustock.ui.components.RecentActivityCard
 import com.example.meustock.ui.components.RestockProductsCard
-import com.example.meustock.ui.components.TopSellingProductsCard
 import com.example.meustock.ui.states.DashboardUiState
 import com.example.meustock.ui.viewModel.DashboardViewModel
 
@@ -49,15 +51,29 @@ fun HomeScreen(
     viewModel: DashboardViewModel
 ){
     val state by viewModel.state.collectAsState()
-    DashboardScreen(
-        state = state
-    )
+
+    when{
+        state.isLoading -> LoadingScreen()
+        state.errorMessage != null -> {
+            // Pode exibir uma tela de erro dedicada
+            Text(
+                text = state.errorMessage ?: "Erro desconhecido",
+                color = Color.Red,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        else -> DashboardScreen(state)
+    }
+
 }
 
 @Composable
 fun DashboardScreen(state: DashboardUiState) {
     Scaffold { innerPadding ->
         val scrollState = rememberScrollState()
+
+
+
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -130,7 +146,6 @@ fun DashboardScreen(state: DashboardUiState) {
                         )
                     }
                 }
-                //TopSellingProductsCard(topProducts = state.topSellingProducts)
                 RestockProductsCard(products = state.restockProducts)
                 RecentActivityCard( movements = state.lastMovements)
             }
@@ -147,16 +162,14 @@ fun DashboardSummaryCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 11.dp),
         modifier = modifier
             .height(100.dp)
-            .graphicsLayer {
-                this.shadowElevation = 10.dp.toPx()
-                this.shape = RoundedCornerShape(12.dp)
-                // A cor do brilho com opacidade sutil (0.5f)
-                this.ambientShadowColor = colorIcon.copy(alpha = 0.5f)
-                this.spotShadowColor = colorIcon.copy(alpha = 0.5f)
-            }
+            .border(
+                width = 1.dp,
+                color = colorIcon,
+                shape = RoundedCornerShape(12.dp)
+            )
     ) {
         Column(
             modifier = Modifier

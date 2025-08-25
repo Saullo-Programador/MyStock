@@ -10,5 +10,7 @@ data class DashboardUiState(
     val lowStockItems: Int = 0,
     val restockProducts: List<Product> = emptyList(),
     val lastMovements: List<ProductMovement> = emptyList(),
-    val topSellingProducts: List<Pair<Product, Int>> = emptyList()
+
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
 )

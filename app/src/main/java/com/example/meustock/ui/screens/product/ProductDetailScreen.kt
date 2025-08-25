@@ -1,6 +1,7 @@
 package com.example.meustock.ui.screens.product
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -46,6 +49,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.example.meustock.R
+import com.example.meustock.ui.utils.ImageUtils
 
 @Composable
 fun ProductDetailScreen(
@@ -106,46 +110,29 @@ fun ProductDetailContent(
 
         product.imageUrl?.let { imageUrl ->
             if (imageUrl.isNotBlank()) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(imageUrl)
-                        .crossfade(true)
-                        .build(),
+                val bitmap = ImageUtils.base64ToBitmap(imageUrl)
+                Image(
+                    bitmap = bitmap?.asImageBitmap() ?: ImageBitmap(1, 1),
                     contentDescription = "Imagem do produto ${product.name}",
-                    modifier = Modifier
-                        .fillMaxWidth() // Ocupa 70% da largura da tela
-                        .height(200.dp) // Altura fixa, ajuste conforme necessário
-                        .clip(RoundedCornerShape(8.dp)) // Borda arredondada
-                        .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)) // Borda sutil
-                        .padding(bottom = 24.dp), // Mais espaçamento abaixo da imagem
                     contentScale = ContentScale.Crop,
-                    error = @Composable {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.surfaceVariant),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text("Erro ao carregar imagem", style = MaterialTheme.typography.bodySmall)
-                        }
-                    } as Painter?
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(shape = RoundedCornerShape(15.dp))
+                        .height(250.dp)
                 )
+
             }
         } ?: run {
-            // Placeholder se não houver URL de imagem
-            Box(
+            // Se a URL da imagem estiver vazia ou nula, mostre uma imagem padrão
+            Image(
+                painter = painterResource(id = R.drawable._4),
+                contentDescription = "Imagem do produto ${product.name}",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .padding(bottom = 24.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Sem Imagem Disponível", style = MaterialTheme.typography.bodySmall)
-            }
+                    .clip(shape = RoundedCornerShape(15.dp))
+                    .height(250.dp)
+            )
         }
 
         // Nome do Produto em destaque

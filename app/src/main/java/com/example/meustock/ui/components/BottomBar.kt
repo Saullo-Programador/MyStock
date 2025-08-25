@@ -118,10 +118,12 @@ fun NavigationItem(
             contentDescription = item.title,
             tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
         )
-        Text(
-            text = item.title,
-            fontSize = 12.sp,
-            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
-        )
+        if (selected){
+            Text(
+                text = item.title,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }

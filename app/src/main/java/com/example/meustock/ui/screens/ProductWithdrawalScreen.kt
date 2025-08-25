@@ -67,6 +67,7 @@ fun ProductWithdrawalScreen(
                 leadingIcon = painterResource(id = R.drawable.icon_search),
                 expanded = viewModel.expanded,
                 onExpandedChange = viewModel::onExpandedChange,
+                cornerRadius = 15,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
