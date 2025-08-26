@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,11 +25,13 @@ import java.util.Locale
 fun RecentActivityCard(movements: List<ProductMovement>) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(2.dp)
+        elevation = CardDefaults.cardElevation(2.dp),
+        shape = RoundedCornerShape(15.dp),
     ) {
         Column(
             modifier = Modifier
                 .background(color = MaterialTheme.colorScheme.surface)
+                .fillMaxWidth()
                 .padding(16.dp),
         ) {
             Text(

@@ -64,7 +64,6 @@ fun ProductListContent(
                 leadingIcon = painterResource(id = R.drawable.icon_search),
                 expanded = false,
                 onExpandedChange = {},
-                cornerRadius = 15,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)

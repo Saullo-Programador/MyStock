@@ -37,7 +37,7 @@ fun SearchComponents(
     modifier: Modifier = Modifier,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
-    cornerRadius: Int = 8
+    cornerRadius: Int = 15
 ){
     SearchBar(
         inputField = { 

@@ -67,7 +67,6 @@ fun ProductWithdrawalScreen(
                 leadingIcon = painterResource(id = R.drawable.icon_search),
                 expanded = viewModel.expanded,
                 onExpandedChange = viewModel::onExpandedChange,
-                cornerRadius = 15,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
@@ -212,7 +211,7 @@ fun ProductCard(
         modifier = Modifier
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(15.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)

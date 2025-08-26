@@ -1,5 +1,10 @@
 package com.example.meustock.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,7 +42,13 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        enterTransition = { fadeIn(animationSpec = tween(durationMillis = 500)) +
+                scaleIn(animationSpec = tween(durationMillis = 500))
+        },
+        exitTransition = { fadeOut(animationSpec = tween(durationMillis = 500)) +
+                scaleOut(animationSpec = tween(durationMillis = 500))
+        }
     ){
 
         composable(Screen.Home.route){

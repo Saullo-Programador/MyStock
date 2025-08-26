@@ -40,7 +40,7 @@ fun ButtonComponent(
     iconPosition: ButtonIconPosition = ButtonIconPosition.START,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
     fontColor: Color = Color.White,
-    cornerRadius: Int = 12
+    cornerRadius: Int = 15
 ) {
 
     Button(
