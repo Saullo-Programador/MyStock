@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.meustock.ui.screens.HomeScreen
+import com.example.meustock.ui.screens.NotificationSettingsScreen
 import com.example.meustock.ui.screens.product.ProductListScreen
 import com.example.meustock.ui.screens.product.RegisterProductFormScreen
 import com.example.meustock.ui.screens.product.RegisterProductScreen
@@ -32,6 +33,7 @@ import com.example.meustock.ui.viewModel.ProductEditViewModel
 import com.example.meustock.ui.viewModel.ProductMovementViewModel
 import com.example.meustock.ui.viewModel.ProductStockViewModel
 import com.example.meustock.ui.viewModel.RegisterProductFormViewModel
+import com.example.mytest.ui.notification.StockNotificationViewModel
 
 @Composable
 fun AppNavigation(
@@ -97,7 +99,11 @@ fun AppNavigation(
         }
 
         composable(Screen.Setting.route) {
-            SettingsScreen()
+            SettingsScreen(
+                onScreenNotification = {
+                    navController.navigate(Screen.NotificationSettings.route)
+                }
+            )
         }
 
         composable(Screen.ProductList.route) {
@@ -110,6 +116,13 @@ fun AppNavigation(
                 onNavigatorEdit = { productId ->
                     navController.navigate(Screen.ProductEdit.createRoute(productId))
                 }
+            )
+        }
+
+        composable(Screen.NotificationSettings.route){
+            val viewModel: StockNotificationViewModel = hiltViewModel()
+            NotificationSettingsScreen(
+                viewModel = viewModel
             )
         }
 

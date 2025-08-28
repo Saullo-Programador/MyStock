@@ -54,8 +54,8 @@ class RemoveProductStockUseCase @Inject constructor(
 
 class GetProductsByCodeOrNameUseCase @Inject constructor(
     private val productRepository: ProductMovementRepository
-){
-    suspend operator fun invoke(query: String) = productRepository.getProductsByCodeOrName(query)
+) {
+    suspend operator fun invoke(query: String) = productRepository.searchProducts(query)
 }
 
 
@@ -69,4 +69,20 @@ class ListenProductByIdUseCase @Inject constructor(
     private val productRepository: ProductMovementRepository
 ) {
     operator fun invoke(productId: String) = productRepository.listenProductById(productId)
+}
+
+class RegisterProductMovement @Inject constructor(
+    private val productRepository: ProductMovementRepository
+){
+    suspend operator fun invoke(
+        productId: String,
+        quantity: Int,
+        type: String,
+        responsible:
+        String? = null,
+        notes: String? = null
+    ) {
+        productRepository.registerProductMovement(productId, quantity, type, responsible, notes)
+
+    }
 }

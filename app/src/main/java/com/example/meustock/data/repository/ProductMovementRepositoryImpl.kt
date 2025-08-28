@@ -29,7 +29,8 @@ class ProductMovementRepositoryImpl @Inject constructor(
     /**
      * Obtém uma lista de movimentos de um produto específico em tempo real.
      * Usa `callbackFlow` para escutar mudanças no Firestore.
-     */
+     **/
+
     override suspend fun getProductMovements(productId: String): Flow<List<ProductMovement>> = callbackFlow {
         val movementsCollection = productsCollection.document(productId).collection("movements")
         val listener = movementsCollection
@@ -54,6 +55,39 @@ class ProductMovementRepositoryImpl @Inject constructor(
         awaitClose { listener.remove() }
     }
 
+    override suspend fun searchProducts(query: String): List<Product> {
+        if (query.isBlank()) return emptyList()
+
+        return try {
+            val byId = productsCollection
+                .orderBy("idProduct")
+                .startAt(query.uppercase()) 
+                .endAt(query.uppercase() + "\uf8ff")
+                .limit(10)
+                .get()
+                .await()
+
+
+            if (!byId.isEmpty) {
+                return byId.documents.mapNotNull { it.toObject(ProductDto::class.java)?.toDomain() }
+            }
+
+            // Busca por nome (prefix search)
+            val byName = productsCollection
+                .orderBy("name")
+                .startAt(query)
+                .endAt(query + "\uf8ff")
+                .limit(10)
+                .get()
+                .await()
+
+            byName.documents.mapNotNull { it.toObject(ProductDto::class.java)?.toDomain() }
+        } catch (e: Exception) {
+            Log.e("ProductRepo", "Erro na busca: $query", e)
+            emptyList()
+        }
+    }
+
     /**
      * Registra um novo movimento de estoque para um produto.
      */
@@ -64,24 +98,35 @@ class ProductMovementRepositoryImpl @Inject constructor(
         responsible: String?,
         notes: String?
     ) {
+        val productRef = productsCollection.document(productId)
         val movementId = UUID.randomUUID().toString()
-        val movement = MovementDto(
-            id = movementId,
-            productId = productId,
-            quantity = quantity,
-            type = type,
-            date = System.currentTimeMillis(),
-            responsible = responsible,
-            notes = notes
-        )
+        val movementRef = productRef.collection("movements").document(movementId)
 
-        Log.d("ProductMovementRepo", "Salvando movimento: $movement")
+        firestore.runTransaction { transaction ->
+            val snapshot = transaction.get(productRef)
+            val currentProduct = snapshot.toObject(ProductDto::class.java)
+                ?: throw Exception("Produto não encontrado")
 
-        productsCollection.document(productId)
-            .collection("movements")
-            .document(movementId)
-            .set(movement)
-            .await() // Suspende a execução até a conclusão da operação
+            val newStock = currentProduct.currentStock + if (type == "Entrada") quantity else -quantity
+            if (newStock < 0) throw Exception("Estoque insuficiente")
+
+            val updatedProduct = currentProduct.copy(
+                currentStock = newStock,
+                lastUpdateDate = System.currentTimeMillis()
+            )
+            transaction.set(productRef, updatedProduct)
+
+            val movement = MovementDto(
+                id = movementId,
+                productId = productId,
+                quantity = quantity,
+                type = type,
+                date = System.currentTimeMillis(),
+                responsible = responsible,
+                notes = notes
+            )
+            transaction.set(movementRef, movement)
+        }.await()
     }
 
     /**
@@ -123,20 +168,6 @@ class ProductMovementRepositoryImpl @Inject constructor(
         }.await()
     }
 
-
-    /**
-     * Busca um produto por código ou nome.
-     * Prioriza a busca por ID (código). Se não encontrar, busca por nome.
-     */
-    override suspend fun getProductsByCodeOrName(query: String): Product? {
-        val byId = productsCollection.whereEqualTo("idProduct", query).get().await()
-        if (!byId.isEmpty) {
-            return byId.documents.first().toObject(ProductDto::class.java)?.toDomain()
-        }
-
-        val byName = productsCollection.whereEqualTo("name", query).get().await()
-        return byName.documents.firstOrNull()?.toObject(ProductDto::class.java)?.toDomain()
-    }
 
     /**
      * Obtém todos os produtos da coleção.

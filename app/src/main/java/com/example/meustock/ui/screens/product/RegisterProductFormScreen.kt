@@ -3,10 +3,8 @@ package com.example.meustock.ui.screens.product
 import android.Manifest
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -39,8 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -51,15 +46,17 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.meustock.R
 import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.CameraScreen
+import com.example.meustock.ui.components.LoadingScreen
 import com.example.meustock.ui.components.TextFeldComponent
 import com.example.meustock.ui.components.TopBar
+import com.example.meustock.ui.components.ViewReact
 import com.example.meustock.ui.states.ProductUiState
-import com.example.meustock.ui.utils.ImageUtils
 import com.example.meustock.ui.viewModel.ProductFormEvent
 import com.example.meustock.ui.viewModel.RegisterProductFormViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -72,79 +69,72 @@ fun RegisterProductFormScreen(
     val productFormEvent by viewModel.productFormEvent.collectAsState()
     val context = LocalContext.current
     val cameraPermissionState = rememberPermissionState( Manifest.permission.CAMERA )
-    var click by remember { mutableStateOf(false) }
+    var clickCamera by remember { mutableStateOf(false) }
     var capturedImageUri by remember { mutableStateOf<String?>(null) }
 
 
-    LaunchedEffect(productFormEvent){
-        when(productFormEvent){
-            is ProductFormEvent.Loading -> {
-                Toast.makeText(context, "Salvando Produto...", Toast.LENGTH_SHORT).show()
-            }
+    LaunchedEffect(productFormEvent) {
+        when (productFormEvent) {
+            is ProductFormEvent.Loading -> Unit
             is ProductFormEvent.Success -> {
-                Toast.makeText(context, "Produto Salvo com Sucesso!", Toast.LENGTH_SHORT).show()
-                viewModel.resetProductFormEvent()
-                onSuccessSave()
+                onSuccessSave() // navegação
+                delay(1000)
+                viewModel.resetProductFormEvent() // reset do evento
             }
             is ProductFormEvent.Error -> {
                 val errorMessage = (productFormEvent as ProductFormEvent.Error).message
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 viewModel.resetProductFormEvent()
             }
-            ProductFormEvent.Idle -> {}
+            ProductFormEvent.Idle -> Unit
         }
     }
 
-    if (cameraPermissionState.status.isGranted && click) {
-        CameraScreen(
-            onBackClick = { click = false },
-            onPhotoTaken = { uri -> capturedImageUri = uri }
-        )
-    } else {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize(),
-            topBar = {
-                TopBar(
-                    title = "Cadastrar Produto",
-                    onNavigationIconClick = { onBackClick() },
+    // ---- UI controlada pelo estado ----
+    when (productFormEvent) {
+        is ProductFormEvent.Loading -> ViewReact(type = "Loading")
+        is ProductFormEvent.Success -> ViewReact(type = "Success")
+        is ProductFormEvent.Error,
+        ProductFormEvent.Idle ->{
+            if (cameraPermissionState.status.isGranted && clickCamera) {
+                CameraScreen(
+                    onBackClick = { clickCamera = false },
+                    onPhotoTaken = { uri -> capturedImageUri = uri }
                 )
-            }
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            } else {
+                Scaffold(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    topBar = {
+                        TopBar(
+                            title = "Cadastrar Produto",
+                            onNavigationIconClick = { onBackClick() },
+                            colorBackground = Color.Transparent
+                        )
+                    }
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
 
-                RegisterProductFrom(
-                    uiState = uiState,
-                    imageUri = capturedImageUri,
-                    onCameraClick = {
-                        cameraPermissionState.launchPermissionRequest()
-                        click = true
-                    },
-                    onNameProductChange = viewModel::updateNameProduct,
-                    onDescriptionChange = viewModel::updateDescription,
-                    onBarcodeSkuChange = viewModel::updateBarcodeSku,
-                    onCostPriceChange = viewModel::updateCostPrice,
-                    onSellingPriceChange = viewModel::updateSellingPrice,
-                    onCurrentStockChange = viewModel::updateCurrentStock,
-                    onMinimumStockChange = viewModel::updateMinimumStock,
-                    onCategoryChange = viewModel::updateCategory,
-                    onBrandChange = viewModel::updateBrand,
-                    onUnitOfMeasurementChange = viewModel::updateUnitOfMeasurement,
-                    onSupplierChange = viewModel::updateSupplier,
-                    onStockLocationChange = viewModel::updateStockLocation,
-                    onStatusChange = viewModel::updateStatus,
-                    onNotesChange = viewModel::updateNotes,
-                    onSaveClick = { viewModel.saveProduct(capturedImageUri, context) },
-                    isSaving = productFormEvent is ProductFormEvent.Loading
-                )
+                        RegisterProductFrom(
+                            uiState = uiState,
+                            imageUri = capturedImageUri,
+                            onCameraClick = {
+                                cameraPermissionState.launchPermissionRequest()
+                                clickCamera = true
+                            },
+                            onSaveClick = { viewModel.saveProduct(capturedImageUri, context) },
+                        )
+                    }
+                }
             }
         }
     }
+
 
 }
 
@@ -153,22 +143,7 @@ fun RegisterProductFrom(
     uiState: ProductUiState,
     onCameraClick: () -> Unit = {},
     imageUri: String? = null,
-    onNameProductChange: (String) -> Unit,
-    onDescriptionChange: (String) -> Unit,
-    onBarcodeSkuChange: (String) -> Unit,
-    onCostPriceChange: (String) -> Unit,
-    onSellingPriceChange: (String) -> Unit,
-    onCurrentStockChange: (String) -> Unit,
-    onMinimumStockChange: (String) -> Unit,
-    onCategoryChange: (String) -> Unit,
-    onBrandChange: (String) -> Unit,
-    onUnitOfMeasurementChange: (String) -> Unit,
-    onSupplierChange: (String) -> Unit,
-    onStockLocationChange: (String) -> Unit,
-    onStatusChange: (String) -> Unit,
-    onNotesChange: (String) -> Unit,
     onSaveClick: () -> Unit,
-    isSaving: Boolean
 
 ){
     val scrollState = rememberScrollState()
@@ -178,7 +153,6 @@ fun RegisterProductFrom(
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ){
-        Spacer(modifier = Modifier.height(4.dp))
         CardImgCamera(
             imageUri = imageUri,
             onClick = {onCameraClick()}
@@ -187,33 +161,33 @@ fun RegisterProductFrom(
         // Nome do Produto
         TextFeldComponent(
             value = uiState.nameProduct, // Lê do uiState
-            onValueChange = onNameProductChange, // Chama a função do ViewModel
+            onValueChange = uiState.onNameProductChange, // Chama a função do ViewModel
             label = "Nome do Produto*",
             placeholder = "Digite o nome do produto",
             trailingIcon = Icons.Default.Clear,
-            onTrailingIconClick = { onNameProductChange("") },
+            onTrailingIconClick = { uiState.onNameProductChange("") },
             shape = RoundedCornerShape(20.dp)
         )
 
         // Descrição do Produto
         TextFeldComponent(
             value = uiState.description,
-            onValueChange = onDescriptionChange,
+            onValueChange = uiState.onDescriptionChange,
             label = "Descrição do Produto",
             placeholder = "Detalhes do produto",
             trailingIcon = Icons.Default.Clear,
-            onTrailingIconClick = { onDescriptionChange("") },
+            onTrailingIconClick = { uiState.onDescriptionChange("") },
             shape = RoundedCornerShape(20.dp)
         )
 
         // Código de Barras
         TextFeldComponent(
             value = uiState.barcodeSku,
-            onValueChange = onBarcodeSkuChange,
+            onValueChange = uiState.onBarcodeSkuChange,
             label = "Código de Barras / SKU",
             placeholder = "Ex: 7891234567890",
             trailingIcon = Icons.Default.Clear,
-            onTrailingIconClick = { onBarcodeSkuChange("") },
+            onTrailingIconClick = { uiState.onBarcodeSkuChange("") },
             shape = RoundedCornerShape(20.dp)
         )
 
@@ -221,7 +195,7 @@ fun RegisterProductFrom(
         Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TextFeldComponent(
                 value = uiState.costPrice,
-                onValueChange = onCostPriceChange,
+                onValueChange = uiState.onCostPriceChange,
                 label = "Preço de Custo*",
                 placeholder = "0.00",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -230,7 +204,7 @@ fun RegisterProductFrom(
             )
             TextFeldComponent(
                 value = uiState.sellingPrice,
-                onValueChange = onSellingPriceChange,
+                onValueChange = uiState.onSellingPriceChange,
                 label = "Preço de Venda*",
                 placeholder = "0.00",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -243,7 +217,7 @@ fun RegisterProductFrom(
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TextFeldComponent(
                 value = uiState.currentStock,
-                onValueChange = onCurrentStockChange,
+                onValueChange = uiState.onCurrentStockChange,
                 label = "Estoque Atual*",
                 placeholder = "0",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -252,7 +226,7 @@ fun RegisterProductFrom(
             )
             TextFeldComponent(
                 value = uiState.minimumStock,
-                onValueChange = onMinimumStockChange,
+                onValueChange = uiState.onMinimumStockChange,
                 label = "Estoque Mínimo*",
                 placeholder = "0",
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -264,66 +238,66 @@ fun RegisterProductFrom(
         // Categoria
         TextFeldComponent(
             value = uiState.category,
-            onValueChange = onCategoryChange,
+            onValueChange = uiState.onCategoryChange,
             label = "Categoria*",
             placeholder = "Ex: Eletrônicos",
             trailingIcon = Icons.Default.Clear,
-            onTrailingIconClick = { onCategoryChange("") },
+            onTrailingIconClick = { uiState.onCategoryChange("") },
             shape = RoundedCornerShape(20.dp)
         )
 
         // Marca
         TextFeldComponent(
             value = uiState.brand,
-            onValueChange = onBrandChange,
+            onValueChange = uiState.onBrandChange,
             label = "Marca",
             placeholder = "Ex: Samsung",
             trailingIcon = Icons.Default.Clear,
-            onTrailingIconClick = { onBrandChange("") },
+            onTrailingIconClick = { uiState.onBrandChange("") },
             shape = RoundedCornerShape(20.dp)
         )
 
         // Unidade de Medida
         TextFeldComponent(
             value = uiState.unitOfMeasurement,
-            onValueChange = onUnitOfMeasurementChange,
+            onValueChange = uiState.onUnitOfMeasurementChange,
             label = "Unidade de Medida*",
             placeholder = "Ex: unidade, kg, litro",
             trailingIcon = Icons.Default.Clear,
-            onTrailingIconClick = { onUnitOfMeasurementChange("") },
+            onTrailingIconClick = { uiState.onUnitOfMeasurementChange("") },
             shape = RoundedCornerShape(20.dp)
         )
 
         // Fornecedor
         TextFeldComponent(
             value = uiState.supplier,
-            onValueChange = onSupplierChange,
+            onValueChange = uiState.onSupplierChange,
             label = "Fornecedor",
             placeholder = "Nome do fornecedor",
             trailingIcon = Icons.Default.Clear,
-            onTrailingIconClick = { onSupplierChange("") },
+            onTrailingIconClick = { uiState.onSupplierChange("") },
             shape = RoundedCornerShape(20.dp)
         )
 
         // Localização no Estoque
         TextFeldComponent(
             value = uiState.stockLocation,
-            onValueChange = onStockLocationChange,
+            onValueChange = uiState.onStockLocationChange,
             label = "Localização no Estoque",
             placeholder = "Ex: Armazém A, Corredor 3",
             trailingIcon = Icons.Default.Clear,
-            onTrailingIconClick = { onStockLocationChange("") },
+            onTrailingIconClick = { uiState.onStockLocationChange("") },
             shape = RoundedCornerShape(20.dp)
         )
 
         // Observações
         TextFeldComponent(
             value = uiState.notes,
-            onValueChange = onNotesChange,
+            onValueChange = uiState.onNotesChange,
             label = "Observações",
             placeholder = "Informações adicionais",
             trailingIcon = Icons.Default.Clear,
-            onTrailingIconClick = { onNotesChange("") },
+            onTrailingIconClick = { uiState.onNotesChange("") },
             shape = RoundedCornerShape(20.dp),
         )
 
@@ -331,7 +305,7 @@ fun RegisterProductFrom(
 
         ButtonComponent(
             onClick = onSaveClick,
-            text = if (isSaving) "Salvando..." else "Salvar",
+            text = "Salvar",
             cornerRadius = 12,
         )
 
@@ -341,7 +315,7 @@ fun RegisterProductFrom(
 }
 
 @Composable
-fun CardImgCamera(
+private fun CardImgCamera(
     imageUri: String? = null,
     onClick: () -> Unit = {}
 ){
@@ -387,40 +361,3 @@ fun CardImgCamera(
     }
 }
 
-
-@Composable
-fun CheckScreen(){
-    Column (
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ){
-        Box(
-            modifier = Modifier
-                .clip(shape = CircleShape)
-                .background(Color.Green)
-                .size(150.dp),
-            contentAlignment = Alignment.Center,
-
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.icon_check),
-                contentDescription = "Check Icon",
-                modifier = Modifier.size(100.dp),
-                tint = Color.White
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Produto Cadastrado!",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CheckScreenPreview(){
-    CheckScreen()
-}

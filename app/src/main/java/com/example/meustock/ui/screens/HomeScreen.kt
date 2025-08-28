@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -35,6 +37,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.request.ImageRequest
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.meustock.R
 import com.example.meustock.ui.components.LoadingScreen
 import com.example.meustock.ui.components.RecentActivityCard
@@ -84,11 +91,11 @@ fun DashboardScreen(state: DashboardUiState) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            GifComposable(
+            ImgComposable(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp),
-                gifResourceId = R.drawable.checking_boxes_transparent_refined
+                img = R.raw.codingslide
             )
 
             Spacer(modifier = Modifier.height(36.dp))
@@ -195,19 +202,16 @@ fun DashboardSummaryCard(
 }
 
 @Composable
-fun GifComposable(gifResourceId: Int, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val imgRequest = ImageRequest.Builder(context)
-        .data(gifResourceId)
-        .decoderFactory(GifDecoder.Factory())
-        .build()
-
-    val painter = rememberAsyncImagePainter(model = imgRequest)
-
-    Image(
-        painter = painter,
-        contentDescription = null,
+fun ImgComposable(img: Int, modifier: Modifier = Modifier) {
+    Box(
         modifier = modifier,
-        contentScale = ContentScale.FillBounds
-    )
+        contentAlignment = Alignment.Center
+    ){
+        val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(img) )
+        LottieAnimation(
+            composition = composition,
+            iterations = LottieConstants.IterateForever,
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
 }

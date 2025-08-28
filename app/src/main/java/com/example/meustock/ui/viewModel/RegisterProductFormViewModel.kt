@@ -52,22 +52,55 @@ class RegisterProductFormViewModel @Inject constructor(
      * Funções de atualização dos campos do formulário.
      * Usam `_uiState.update` para garantir que o estado seja atualizado de forma segura.
      */
-    fun updateNameProduct(name: String) { _uiState.update { it.copy(nameProduct = name) } }
-    fun updateDescription(description: String) { _uiState.update { it.copy(description = description) } }
-    fun updateBarcodeSku(barcode: String) { _uiState.update { it.copy(barcodeSku = barcode) } }
-    fun updateCostPrice(price: String) { _uiState.update { it.copy(costPrice = price) } }
-    fun updateSellingPrice(price: String) { _uiState.update { it.copy(sellingPrice = price) } }
-    fun updateCurrentStock(stock: String) { _uiState.update { it.copy(currentStock = stock) } }
-    fun updateMinimumStock(stock: String) { _uiState.update { it.copy(minimumStock = stock) } }
-    fun updateCategory(category: String) { _uiState.update { it.copy(category = category) } }
-    fun updateBrand(brand: String) { _uiState.update { it.copy(brand = brand) } }
-    fun updateUnitOfMeasurement(unit: String) { _uiState.update { it.copy(unitOfMeasurement = unit) } }
-    fun updateSupplier(supplier: String) { _uiState.update { it.copy(supplier = supplier) } }
-    fun updateStockLocation(location: String) { _uiState.update { it.copy(stockLocation = location) } }
-    fun updateStatus(status: String) { _uiState.update { it.copy(status = status) } }
-    fun updateNotes(notes: String) { _uiState.update { it.copy(notes = notes) } }
 
-
+    init {
+        _uiState.update { state ->
+            state.copy(
+                onNameProductChange = { newName ->
+                    _uiState.value = _uiState.value.copy(nameProduct = newName)
+                },
+                onDescriptionChange = { newDescription ->
+                    _uiState.value = _uiState.value.copy(description = newDescription)
+                },
+                onBarcodeSkuChange = { newBarcodeSku ->
+                    _uiState.value = _uiState.value.copy(barcodeSku = newBarcodeSku)
+                },
+                onCostPriceChange = { newCostPrice ->
+                    _uiState.value = _uiState.value.copy(costPrice = newCostPrice)
+                },
+                onSellingPriceChange = { newSellingPrice ->
+                    _uiState.value = _uiState.value.copy(sellingPrice = newSellingPrice)
+                },
+                onCurrentStockChange = { newCurrentStock ->
+                    _uiState.value = _uiState.value.copy(currentStock = newCurrentStock)
+                },
+                onMinimumStockChange = { newMinimumStock ->
+                    _uiState.value = _uiState.value.copy(minimumStock = newMinimumStock)
+                },
+                onCategoryChange = { newCategory ->
+                    _uiState.value = _uiState.value.copy(category = newCategory)
+                },
+                onBrandChange = { newBrand ->
+                    _uiState.value = _uiState.value.copy(brand = newBrand)
+                },
+                onUnitOfMeasurementChange = { newUnitOfMeasurement ->
+                    _uiState.value = _uiState.value.copy(unitOfMeasurement = newUnitOfMeasurement)
+                },
+                onSupplierChange = { newSupplier ->
+                    _uiState.value = _uiState.value.copy(supplier = newSupplier)
+                },
+                onStockLocationChange = { newStockLocation ->
+                    _uiState.value = _uiState.value.copy(stockLocation = newStockLocation)
+                },
+                onStatusChange = { newStatus ->
+                    _uiState.value = _uiState.value.copy(status = newStatus)
+                },
+                onNotesChange = { newNotes ->
+                    _uiState.value = _uiState.value.copy(notes = newNotes)
+                }
+            )
+        }
+    }
 
 
     /**

@@ -41,6 +41,57 @@ class ProductEditViewModel @Inject constructor(
     private val _productFormEvent = MutableStateFlow<ProductEditFormEvent>(ProductEditFormEvent.Idle)
     val productFormEvent: StateFlow<ProductEditFormEvent> = _productFormEvent.asStateFlow()
 
+
+    init {
+        _uiState.update { state ->
+            state.copy(
+                onNameProductChange = { newName ->
+                    _uiState.value = _uiState.value.copy(nameProduct = newName)
+                },
+                onDescriptionChange = { newDescription ->
+                    _uiState.value = _uiState.value.copy(description = newDescription)
+                },
+                onBarcodeSkuChange = { newBarcodeSku ->
+                    _uiState.value = _uiState.value.copy(barcodeSku = newBarcodeSku)
+                },
+                onCostPriceChange = { newCostPrice ->
+                    _uiState.value = _uiState.value.copy(costPrice = newCostPrice)
+                },
+                onSellingPriceChange = { newSellingPrice ->
+                    _uiState.value = _uiState.value.copy(sellingPrice = newSellingPrice)
+                },
+                onCurrentStockChange = { newCurrentStock ->
+                    _uiState.value = _uiState.value.copy(currentStock = newCurrentStock)
+                },
+                onMinimumStockChange = { newMinimumStock ->
+                    _uiState.value = _uiState.value.copy(minimumStock = newMinimumStock)
+                },
+                onCategoryChange = { newCategory ->
+                    _uiState.value = _uiState.value.copy(category = newCategory)
+                },
+                onBrandChange = { newBrand ->
+                    _uiState.value = _uiState.value.copy(brand = newBrand)
+                },
+                onUnitOfMeasurementChange = { newUnitOfMeasurement ->
+                    _uiState.value = _uiState.value.copy(unitOfMeasurement = newUnitOfMeasurement)
+                },
+                onSupplierChange = { newSupplier ->
+                    _uiState.value = _uiState.value.copy(supplier = newSupplier)
+                },
+                onStockLocationChange = { newStockLocation ->
+                    _uiState.value = _uiState.value.copy(stockLocation = newStockLocation)
+                },
+                onStatusChange = { newStatus ->
+                    _uiState.value = _uiState.value.copy(status = newStatus)
+                },
+                onNotesChange = { newNotes ->
+                    _uiState.value = _uiState.value.copy(notes = newNotes)
+                }
+
+            )
+        }
+    }
+
     /**
      * Inicia a edição de um produto com base no seu ID.
      * Carrega os dados do produto e preenche o estado da UI.

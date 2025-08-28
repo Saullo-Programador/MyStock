@@ -26,7 +26,7 @@ fun MainScreenWithBottomBar(navController: NavHostController, startDestination: 
                 BottomBar(
                     navController = navController,
                     onFabClick = {
-                        navController.navigate(Screen.RegisterProduct.route)
+                        navController.navigate(Screen.RegisterProductForm.route)
                     },
                 )
             }

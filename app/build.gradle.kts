@@ -46,6 +46,16 @@ android {
 
 dependencies {
 
+    //Worker
+    implementation(libs.androidx.hilt.work)
+    implementation(libs.work.runtime.ktx)
+
+
+
+    // lottie
+    implementation(libs.lottie.compose)
+
+    // Coil
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
 
@@ -78,8 +88,8 @@ dependencies {
 
     // Retrofit
     implementation(libs.retrofit)
-    implementation(libs.converter.gson) // Para converter JSON com Gson
-    implementation(libs.okhttp) // Para logging das requisições (opcional)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
 
     //ViewModel

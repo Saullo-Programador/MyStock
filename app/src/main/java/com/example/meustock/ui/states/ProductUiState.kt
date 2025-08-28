@@ -26,11 +26,22 @@ data class ProductUiState(
     val status: String = "Ativo", // Status do Produto (ex: ativo, inativo, promoção, etc)
     val notes: String? = "", // Observações
 
-)
+    val onRegistrationDateChange: (Long) -> Unit = {},
+    val onLastUpdateDateChange: (Long) -> Unit = {},
+    val onNameProductChange: (String) -> Unit = {},
+    val onDescriptionChange: (String?) -> Unit = {},
+    val onBarcodeSkuChange: (String?) -> Unit = {},
+    val onCostPriceChange: (String) -> Unit = {},
+    val onSellingPriceChange: (String) -> Unit = {},
+    val onCurrentStockChange: (String) -> Unit = {},
+    val onMinimumStockChange: (String) -> Unit = {},
+    val onCategoryChange: (String) -> Unit = {},
+    val onBrandChange: (String?) -> Unit = {},
+    val onUnitOfMeasurementChange: (String) -> Unit = {},
+    val onSupplierChange: (String?) -> Unit = {},
+    val onStockLocationChange: (String?) -> Unit = {},
+    val onStatusChange: (String) -> Unit = {},
+    val onNotesChange: (String?) -> Unit = {},
+    val isLoading: Boolean = false
 
-sealed class ProductFormEvent {
-    object Loading : ProductFormEvent()
-    object Success : ProductFormEvent()
-    data class Error(val message: String) : ProductFormEvent()
-    object Idle : ProductFormEvent() // Estado inicial ou reset
-}
+)

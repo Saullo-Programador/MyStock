@@ -10,7 +10,6 @@ interface ProductMovementRepository{
     suspend fun addProductStock(productId: String, quantity: Int)
     suspend fun removeProductStock(productId: String, quantity: Int)
     suspend fun getProductMovements(productId: String): Flow<List<ProductMovement>>
-    suspend fun getProductsByCodeOrName(query: String): Product?
     suspend fun registerProductMovement(
         productId: String,
         quantity: Int,
@@ -20,5 +19,7 @@ interface ProductMovementRepository{
     )
     suspend fun getAllProducts(): List<Product>
     fun listenProductById(productId: String): Flow<Product?>
+
+    suspend fun searchProducts(query: String): List<Product>
 
 }

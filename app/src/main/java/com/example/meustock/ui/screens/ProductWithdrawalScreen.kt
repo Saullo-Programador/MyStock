@@ -41,6 +41,7 @@ import com.example.meustock.R
 import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.SearchComponents
+import com.example.meustock.ui.components.ViewReact
 import com.example.meustock.ui.states.ProductStockUiState
 import com.example.meustock.ui.viewModel.ProductStockViewModel
 
@@ -81,51 +82,56 @@ fun ProductWithdrawalScreen(
                 .padding( top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            if (uiState.selectedProduct == null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        "Pesquise o Produto para continuar",
-                        style = MaterialTheme.typography.titleMedium
-                    )
+            if(uiState.isLoading) {
+                ViewReact("Loading")
+            }else{
+                if (uiState.selectedProduct == null) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            "Pesquise o Produto para continuar",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                } else {
+                    uiState.selectedProduct.let { product ->
+                        ProductStockContent(
+                            name = product.name,
+                            brand = product.brand ?: "",
+                            price = product.sellingPrice,
+                            stock = product.currentStock,
+                            onEntradaClick = {
+                                isEntrada = true
+                                showDialog = true
+                            },
+                            onSaidaClick = {
+                                isEntrada = false
+                                showDialog = true
+                            },
+                            uiState = uiState,
+                            onNavMovements = {
+                                onNavMovements(product.idProduct)
+                            }
+                        )
+                    }
                 }
-            }else {
-                uiState.selectedProduct.let { product ->
-                    ProductStockContent(
-                        name = product.name,
-                        brand = product.brand ?: "",
-                        price = product.sellingPrice,
-                        stock = product.currentStock,
-                        onEntradaClick = {
-                            isEntrada = true
-                            showDialog = true
-                        },
-                        onSaidaClick = {
-                            isEntrada = false
-                            showDialog = true
-                        },
-                        uiState = uiState,
-                        onNavMovements = {
-                            onNavMovements( product.idProduct)
-                        }
-                    )
-                }
-            }
 
-            if (showDialog) {
-                QuantityDialog(
-                    isEntrada = isEntrada,
-                    quantity = uiState.quantity,
-                    onQuantityChange = viewModel::onQuantityChange,
-                    onConfirm = {
-                        viewModel.applyStockMovement(isEntrada)
-                        showDialog = false
-                    },
-                    onDismiss = { showDialog = false }
-                )
+
+                if (showDialog) {
+                    QuantityDialog(
+                        isEntrada = isEntrada,
+                        quantity = uiState.quantity,
+                        onQuantityChange = viewModel::onQuantityChange,
+                        onConfirm = {
+                            viewModel.applyStockMovement(isEntrada)
+                            showDialog = false
+                        },
+                        onDismiss = { showDialog = false }
+                    )
+                }
             }
         }
     }
@@ -150,6 +156,9 @@ fun ProductStockContent(
         }
         uiState.successMessage != null -> {
             Toast.makeText(LocalContext.current, uiState.successMessage, Toast.LENGTH_SHORT).show()
+        }
+        uiState.isLoading -> {
+            ViewReact("Loading")
         }
     }
     Column(

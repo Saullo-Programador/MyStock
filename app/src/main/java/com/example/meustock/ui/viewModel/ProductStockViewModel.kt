@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.meustock.domain.repository.ProductMovementRepository
 import com.example.meustock.domain.usecase.GetProductsByCodeOrNameUseCase
 import com.example.meustock.domain.usecase.ListenProductByIdUseCase
+import com.example.meustock.domain.usecase.RegisterProductMovement
 import com.example.meustock.ui.states.ProductStockUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -21,11 +22,11 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductStockViewModel @Inject constructor(
     private val repository: ProductMovementRepository,
-    private val getProductsByCodeOrName: GetProductsByCodeOrNameUseCase,
-    private val listenProductById: ListenProductByIdUseCase
+    private val listenProductById: ListenProductByIdUseCase,
+    private val registerProductMovement : RegisterProductMovement,
+    private val searchProducts: GetProductsByCodeOrNameUseCase
 ) : ViewModel() {
 
-    // Usa `mutableStateOf` para estados que não precisam de `StateFlow` e são mais simples
     var uiState by mutableStateOf(ProductStockUiState())
         private set
     var expanded by mutableStateOf(false)
@@ -35,51 +36,50 @@ class ProductStockViewModel @Inject constructor(
 
     fun onExpandedChange(exp: Boolean) { expanded = exp }
     fun onQuantityChange(quantity: String) { uiState = uiState.copy(quantity = quantity) }
+
     fun onQueryChange(query: String) {
         uiState = uiState.copy(query = query)
         fetchSearchSuggestions(query)
     }
 
     /**
-     * Busca sugestões de produtos em segundo plano com base na consulta.
+     * Busca sugestões no Firestore direto, sem trazer toda a coleção.
      */
     private fun fetchSearchSuggestions(query: String) {
         viewModelScope.launch {
-            val allProducts = repository.getAllProducts()
-            searchResults = allProducts
-                .filter { it.idProduct.contains(query, true) || it.name.contains(query, true) }
-                .map { "${it.idProduct} - ${it.name}" }
+            val products = repository.searchProducts(query)
+            searchResults = products.map { "${it.idProduct} - ${it.name}" }
         }
     }
 
-    /**
-     * Lida com a seleção de um resultado de pesquisa.
-     */
     fun onSearchResultClick(resultText: String) {
         val idProduct = resultText.substringBefore(" - ").trim()
         uiState = uiState.copy(query = idProduct)
         expanded = false
-        searchProduct(query = idProduct)
+        searchProduct(idProduct)
     }
 
     /**
-     * Busca um produto por código ou nome e escuta suas atualizações em tempo real.
+     * Busca produto e já mostra na UI (não espera listener).
      */
     fun searchProduct(query: String) {
         uiState = uiState.copy(isLoading = true, errorMessage = null)
+
         viewModelScope.launch {
-            val product = getProductsByCodeOrName(query)
+            val products = searchProducts(query)
+            val product = products.firstOrNull()
             if (product != null) {
-                // Escuta as mudanças no produto para atualizar o estado da UI automaticamente
+                // Mostra o produto imediatamente
+                uiState = uiState.copy(
+                    selectedProduct = product,
+                    query = product.idProduct,
+                    isLoading = false
+                )
+
+                // Depois escuta em tempo real
                 listenProductById(product.idProduct).collect { updatedProduct ->
-                    if (updatedProduct != null) {
-                        uiState = uiState.copy(
-                            selectedProduct = updatedProduct,
-                            query = updatedProduct.idProduct,
-                            isLoading = false
-                        )
-                    } else {
-                        uiState = uiState.copy(errorMessage = "Produto não encontrado.", isLoading = false)
+                    updatedProduct?.let {
+                        uiState = uiState.copy(selectedProduct = it)
                     }
                 }
             } else {
@@ -89,7 +89,7 @@ class ProductStockViewModel @Inject constructor(
     }
 
     /**
-     * Aplica uma movimentação de estoque (entrada ou saída).
+     * Aplica entrada ou saída em uma única transação.
      */
     fun applyStockMovement(isEntrada: Boolean) {
         val product = uiState.selectedProduct ?: run {
@@ -104,13 +104,12 @@ class ProductStockViewModel @Inject constructor(
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true, errorMessage = null, successMessage = null)
             try {
-                if (isEntrada) {
-                    repository.addProductStock(product.idProduct, quantity)
-                    repository.registerProductMovement(product.idProduct, quantity, "Entrada")
-                } else {
-                    repository.removeProductStock(product.idProduct, quantity)
-                    repository.registerProductMovement(product.idProduct, quantity, "Saída")
-                }
+                registerProductMovement(
+                    product.idProduct,
+                    quantity,
+                    if (isEntrada) "Entrada" else "Saída"
+                )
+
                 uiState = uiState.copy(
                     successMessage = "Movimentação realizada com sucesso!",
                     isLoading = false,
@@ -118,7 +117,7 @@ class ProductStockViewModel @Inject constructor(
                 )
             } catch (e: Exception) {
                 uiState = uiState.copy(errorMessage = e.message, isLoading = false)
-                Log.e("ProductStockViewModel", "Erro ao aplicar movimento de estoque", e)
+                Log.e("ProductStockVM", "Erro ao aplicar movimento", e)
             }
         }
     }
