@@ -34,6 +34,7 @@
       <w>cancelada</w>
       <w>cancelar</w>
       <w>carrega</w>
+      <w>carregando</w>
       <w>carregar</w>
       <w>caso</w>
       <w>chamaria</w>
@@ -59,6 +60,7 @@
       <w>documento</w>
       <w>documentos</w>
       <w>domínio</w>
+      <w>editado</w>
       <w>editar</w>
       <w>edição</w>
       <w>eficiente</w>
@@ -121,6 +123,7 @@
       <w>mesmo</w>
       <w>metodo</w>
       <w>modelo</w>
+      <w>mostre</w>
       <w>movimentação</w>
       <w>movimento</w>
       <w>movimentos</w>
@@ -130,6 +133,7 @@
       <w>múltiplos</w>
       <w>navegar</w>
       <w>nenhum</w>
+      <w>nula</w>
       <w>objeto</w>
       <w>objetos</w>
       <w>obrigatórios</w>
@@ -196,6 +200,7 @@
       <w>usam</w>
       <w>usando</w>
       <w>validação</w>
+      <w>vazia</w>
       <w>vazio</w>
       <w>vazios</w>
       <w>único</w>

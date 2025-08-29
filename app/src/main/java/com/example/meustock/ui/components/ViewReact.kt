@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.meustock.R
 import kotlinx.coroutines.selects.select
@@ -25,13 +28,14 @@ import kotlinx.coroutines.selects.select
 @Composable
 fun ViewReact(
     type: String,
+    onFinished: (() -> Unit)? = null,
 ) {
     when(type){
         "Delete" -> {
-            ImgLottie(img = R.raw.lottie_delete)
+            ImgLottie(img = R.raw.lottie_delete, onFinished = onFinished)
         }
         "Success" -> {
-            ImgLottie(img = R.raw.lottie_success_check)
+            ImgLottie(img = R.raw.success_check, onFinished = onFinished)
         }
         "Error" -> {
             Box(
@@ -53,11 +57,6 @@ fun ViewReact(
                 CircularProgressIndicator()
             }
         }
-        else -> {
-            ImgLottie(
-                img = R.raw.codingslide
-            )
-        }
 
     }
 
@@ -67,6 +66,7 @@ fun ViewReact(
 @Composable
 fun ImgLottie(
     img: Int,
+    onFinished: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ){
     Box(
@@ -76,10 +76,22 @@ fun ImgLottie(
         contentAlignment = Alignment.Center
     ){
         val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(img) )
+        val progress by animateLottieCompositionAsState(
+            composition = composition,
+            iterations = 1,
+        )
+
         LottieAnimation(
             composition = composition,
-            iterations = LottieConstants.IterateForever,
-            modifier = modifier.fillMaxWidth()
+            progress = { progress },
+            modifier = modifier
+                .height(150.dp)
+                .width(150.dp),
         )
+
+        if(progress == 1f){
+            onFinished?.invoke()
+        }
+
     }
 }

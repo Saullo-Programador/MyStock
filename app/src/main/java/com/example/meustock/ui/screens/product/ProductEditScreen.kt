@@ -33,8 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -47,6 +45,7 @@ import com.example.meustock.ui.components.CameraScreen
 import com.example.meustock.ui.components.LoadingScreen
 import com.example.meustock.ui.components.TextFeldComponent
 import com.example.meustock.ui.components.TopBar
+import com.example.meustock.ui.components.ViewReact
 import com.example.meustock.ui.states.ProductEditUiState
 import com.example.meustock.ui.utils.ImageUtils
 import com.example.meustock.ui.viewModel.ProductEditFormEvent
@@ -66,49 +65,70 @@ fun ProductEditScreen (
 ){
     val cameraPermissionState = rememberPermissionState( Manifest.permission.CAMERA )
     var clickCamera by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     var capturedImageUri by remember { mutableStateOf<String?>(null) }
+    val productEditFormEvent by viewModel.productFormEvent.collectAsState()
+
 
     LaunchedEffect(productId) {
         viewModel.loadProduct(productId)
     }
 
-    if (cameraPermissionState.status.isGranted && clickCamera) {
-        CameraScreen(
-            onBackClick = { clickCamera = false },
-            onPhotoTaken = { uri -> capturedImageUri = uri }
-        )
-    } else {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize(),
-            topBar = {
-                TopBar(
-                    onNavigationIconClick = onBackClick,
-                    title = "Editar Produto",
-                    colorBackground = Color.Transparent
+
+
+    when (productEditFormEvent) {
+        is ProductEditFormEvent.Loading -> ViewReact(type = "Loading")
+        is ProductEditFormEvent.Success -> {
+            ViewReact(
+                type = "Success",
+                onFinished = {
+                    Toast.makeText(context, "Produto Editado com Sucesso!", Toast.LENGTH_SHORT).show()
+                    onSuccessEdit()
+                    viewModel.resetProductFormEvent()
+                }
+            )
+        }
+        is ProductEditFormEvent.Error -> ViewReact(type = "Error")
+        ProductEditFormEvent.Idle -> {
+
+            if (cameraPermissionState.status.isGranted && clickCamera) {
+                CameraScreen(
+                    onBackClick = { clickCamera = false },
+                    onPhotoTaken = { uri -> capturedImageUri = uri }
                 )
-            }
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                ProductEditContent(
-                    viewModel = viewModel,
-                    uiState = uiState,
-                    onSuccessEdit = onSuccessEdit,
-                    onCameraClick = {
-                        cameraPermissionState.launchPermissionRequest()
-                        clickCamera = true
-                    },
-                    imgUrl = if (capturedImageUri != null){
-                        capturedImageUri
-                    }else{
-                        uiState.imageUrl
+            }else {
+                Scaffold(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    topBar = {
+                        TopBar(
+                            onNavigationIconClick = onBackClick,
+                            title = "Editar Produto",
+                            colorBackground = Color.Transparent
+                        )
                     }
-                )
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        ProductEditContent(
+                            viewModel = viewModel,
+                            uiState = uiState,
+                            onCameraClick = {
+                                cameraPermissionState.launchPermissionRequest()
+                                clickCamera = true
+                            },
+                            imgUrl = if (capturedImageUri != null) {
+                                capturedImageUri
+                            } else {
+                                uiState.imageUrl
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -120,31 +140,10 @@ fun ProductEditScreen (
 fun ProductEditContent(
     viewModel: ProductEditViewModel,
     uiState: ProductEditUiState,
-    onSuccessEdit: () -> Unit = {},
     onCameraClick: () -> Unit = {},
     imgUrl: String?
 ){
-    val context = LocalContext.current
-    val productEditFormEvent by viewModel.productFormEvent.collectAsState()
 
-
-    LaunchedEffect(productEditFormEvent) {
-        when (productEditFormEvent) {
-            is ProductEditFormEvent.Loading ->{
-                Toast.makeText(context, "Salvando Produto...", Toast.LENGTH_SHORT).show()
-            }
-            is ProductEditFormEvent.Success -> {
-                Toast.makeText(context, "Produto Salvo com Sucesso!", Toast.LENGTH_SHORT).show()
-                viewModel.resetProductFormEvent()
-                onSuccessEdit()
-            }
-            is ProductEditFormEvent.Error -> {
-                val errorMessage = (productEditFormEvent as ProductEditFormEvent.Error).message
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            }
-            ProductEditFormEvent.Idle -> {}
-        }
-    }
 
     Column(
         modifier = Modifier
