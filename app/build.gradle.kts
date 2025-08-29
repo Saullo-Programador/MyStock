@@ -50,8 +50,6 @@ dependencies {
     implementation(libs.androidx.hilt.work)
     implementation(libs.work.runtime.ktx)
 
-
-
     // lottie
     implementation(libs.lottie.compose)
 

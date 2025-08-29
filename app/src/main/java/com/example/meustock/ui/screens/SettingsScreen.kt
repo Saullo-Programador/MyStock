@@ -15,54 +15,64 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.meustock.ui.components.TopBar
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun SettingsScreen(
+    onScreenNotification: () -> Unit = {}
 ) {
-    SettingsContent()
-
+    SettingsContent(
+        onScreenNotification = onScreenNotification
+    )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsContent() {
+fun SettingsContent(
+    logout: () -> Unit = {},
+    deleteConta: () -> Unit = {},
+    onScreenNotification: () -> Unit = {},
+) {
     var darkMode by remember { mutableStateOf(false) }
     var notificationsEnabled by remember { mutableStateOf(true) }
-    var vibrationEnabled by remember { mutableStateOf(true) }
     var biometricEnabled by remember { mutableStateOf(false) }
-    var syncOverWifiOnly by remember { mutableStateOf(true) }
 
     Scaffold(
         topBar = {
-            TopBar(
-                title = "Configurações",
-                colorTitle = MaterialTheme.colorScheme.onBackground,
-                colorBackground = MaterialTheme.colorScheme.background
+            TopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground,
+                ),
+                title = {
+                    Text(
+                        text = "Configurações",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = TextStyle(
+                            fontSize = 22.sp,
+                        )
+                    )
+                },
             )
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(bottom = 40.dp  )
+                .padding(bottom = 40.dp)
                 .verticalScroll(rememberScrollState())
                 .fillMaxSize()
         ) {
@@ -79,8 +89,8 @@ fun SettingsContent() {
                     contentDescription = "Foto de perfil",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                            .size(56.dp)
-                            .clip(CircleShape)
+                        .size(56.dp)
+                        .clip(CircleShape)
                 )
                 Spacer(Modifier.width(16.dp))
                 Column {
@@ -90,41 +100,36 @@ fun SettingsContent() {
             }
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
             SettingsItem(
-                icon = Icons.Default.Lock,
+                icon = painterResource(R.drawable.round_lock_24),
                 title = "Alterar senha",
                 onClick = { /* Implementar */ }
             )
             SettingsItem(
-                icon = Icons.AutoMirrored.Filled.ExitToApp,
+                icon = painterResource(R.drawable.icon_logout),
                 title = "Sair",
-                onClick = { /* Logout */ }
+                onClick = { logout() }
             )
 
             // ===== Preferências =====
             SettingSection(title = "Preferências") {
                 SettingsSwitch(
-                    icon = Icons.Default.Star,
+                    icon = if(darkMode == true){
+                        painterResource(R.drawable.icon_dark_mode)
+                    }else{
+                        painterResource(R.drawable.icon_light_mode)
+                    },
                     title = "Tema escuro",
                     checked = darkMode,
                     onCheckedChange = { darkMode = it }
                 )
                 SettingsItem(
-                    icon = Icons.Default.AccountBox,
-                    title = "Idioma",
-                    subtitle = "Português (Brasil)",
-                    onClick = { /* Seleção de idioma */ }
-                )
-                SettingsSwitch(
-                    icon = Icons.Default.Notifications,
+                    icon = if (notificationsEnabled == true){
+                        painterResource(R.drawable.icon_notifications_active)
+                    }else{
+                        painterResource(R.drawable.icon_notifications_off)
+                    },
                     title = "Notificações",
-                    checked = notificationsEnabled,
-                    onCheckedChange = { notificationsEnabled = it }
-                )
-                SettingsSwitch(
-                    icon = Icons.Default.Info,
-                    title = "Vibração",
-                    checked = vibrationEnabled,
-                    onCheckedChange = { vibrationEnabled = it }
+                    onClick = { onScreenNotification() }
                 )
 
             }
@@ -133,33 +138,21 @@ fun SettingsContent() {
             // ===== Segurança =====
             SettingSection(title = "Segurança") {
                 SettingsSwitch(
-                    icon = Icons.AutoMirrored.Filled.List,
+                    icon = if(biometricEnabled == true){
+                        painterResource(R.drawable.icon_biometria)
+                    }else{
+                        painterResource(R.drawable.icon_biometria_off)
+                    },
                     title = "Desbloqueio por biometria",
                     checked = biometricEnabled,
                     onCheckedChange = { biometricEnabled = it }
                 )
                 SettingsItem(
-                    icon = Icons.Default.Delete,
+                    icon = painterResource(R.drawable.icon_delete),
                     title = "Apagar conta",
-                    onClick = { /* Confirmar e apagar conta */ }
+                    onClick = { deleteConta() }
                 )
 
-            }
-            HorizontalDivider(thickness = DividerDefaults.Thickness, color = MaterialTheme.colorScheme.surfaceVariant)
-
-            // ===== Conectividade =====
-            SettingSection(title = "Conectividade") {
-                SettingsSwitch(
-                    icon = Icons.Default.Email,
-                    title = "Sincronizar apenas via Wi-Fi",
-                    checked = syncOverWifiOnly,
-                    onCheckedChange = { syncOverWifiOnly = it }
-                )
-                SettingsItem(
-                    icon = Icons.Default.Star,
-                    title = "Sincronizar agora",
-                    onClick = { /* Sync manual */ }
-                )
             }
             HorizontalDivider(thickness = DividerDefaults.Thickness, color = MaterialTheme.colorScheme.surfaceVariant)
 
@@ -168,20 +161,10 @@ fun SettingsContent() {
             // ===== Sobre =====
             SettingSection(title = "Sobre") {
                 SettingsItem(
-                    icon = Icons.Default.Info,
+                    icon = painterResource(R.drawable.icon_info),
                     title = "Versão",
                     subtitle = "1.0.0",
                     onClick = {}
-                )
-                SettingsItem(
-                    icon = Icons.Default.Info,
-                    title = "Termos de uso",
-                    onClick = { /* Abrir termos */ }
-                )
-                SettingsItem(
-                    icon = Icons.Default.Star,
-                    title = "Política de privacidade",
-                    onClick = { /* Abrir política */ }
                 )
             }
             Spacer(modifier = Modifier.height(35.dp))
@@ -207,8 +190,10 @@ fun SettingSection(title: String?, content: @Composable ColumnScope.() -> Unit) 
 
 @Composable
 fun SettingsItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: Painter,
+    colorIcon: Color = MaterialTheme.colorScheme.onBackground,
     title: String,
+    colorText: Color = MaterialTheme.colorScheme.onBackground,
     subtitle: String? = null,
     onClick: () -> Unit
 ) {
@@ -219,10 +204,10 @@ fun SettingsItem(
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Icon(icon, contentDescription = null, modifier = Modifier.size(24.dp))
+        Icon(icon, contentDescription = null, modifier = Modifier.size(24.dp), tint = colorIcon)
         Spacer(Modifier.width(16.dp))
         Column {
-            Text(title, fontWeight = FontWeight.Medium)
+            Text(title,  fontWeight = FontWeight.Medium)
             if (subtitle != null) {
                 Text(subtitle, style = MaterialTheme.typography.bodySmall)
             }
@@ -232,7 +217,7 @@ fun SettingsItem(
 
 @Composable
 fun SettingsSwitch(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: Painter,
     title: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit

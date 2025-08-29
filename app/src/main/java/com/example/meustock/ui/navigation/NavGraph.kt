@@ -22,7 +22,6 @@ sealed class Screen(val route: String) {
 
     //Configurações
     object Setting : Screen("Setting")
-    object NotificationSettings : Screen("NotificationSettings")
 
 
     //Lista de Produtos
