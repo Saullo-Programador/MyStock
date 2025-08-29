@@ -1,10 +1,7 @@
 package com.example.meustock.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -19,11 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.meustock.R
-import kotlinx.coroutines.selects.select
 
 @Composable
 fun ViewReact(
@@ -35,19 +30,10 @@ fun ViewReact(
             ImgLottie(img = R.raw.lottie_delete, onFinished = onFinished)
         }
         "Success" -> {
-            ImgLottie(img = R.raw.success_check, onFinished = onFinished)
+            ImgLottie(img = R.raw.lottie_success_check, onFinished = onFinished)
         }
         "Error" -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                Text(
-                    text = "Erro ao carregar dados" ,
-                    color = Color.Red,
-                    fontSize = 30.sp
-                )
-            }
+            ImgLottie(img = R.raw.lottie_error, onFinished = onFinished)
         }
         "Loading" -> {
             Box(

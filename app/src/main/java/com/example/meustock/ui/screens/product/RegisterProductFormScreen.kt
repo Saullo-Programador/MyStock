@@ -26,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,13 +39,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.meustock.R
 import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.CameraScreen
-import com.example.meustock.ui.components.LoadingScreen
 import com.example.meustock.ui.components.TextFeldComponent
 import com.example.meustock.ui.components.TopBar
 import com.example.meustock.ui.components.ViewReact
@@ -56,7 +53,6 @@ import com.example.meustock.ui.viewModel.RegisterProductFormViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -73,28 +69,29 @@ fun RegisterProductFormScreen(
     var capturedImageUri by remember { mutableStateOf<String?>(null) }
 
 
-    LaunchedEffect(productFormEvent) {
-        when (productFormEvent) {
-            is ProductFormEvent.Loading -> Unit
-            is ProductFormEvent.Success -> {
-                onSuccessSave() // navegação
-                delay(1000)
-                viewModel.resetProductFormEvent() // reset do evento
-            }
-            is ProductFormEvent.Error -> {
-                val errorMessage = (productFormEvent as ProductFormEvent.Error).message
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                viewModel.resetProductFormEvent()
-            }
-            ProductFormEvent.Idle -> Unit
-        }
-    }
-
     // ---- UI controlada pelo estado ----
     when (productFormEvent) {
         is ProductFormEvent.Loading -> ViewReact(type = "Loading")
-        is ProductFormEvent.Success -> ViewReact(type = "Success")
-        is ProductFormEvent.Error,
+        is ProductFormEvent.Success -> {
+            ViewReact(
+                type = "Success",
+                onFinished = {
+                    Toast.makeText(context, "Produto Cadastrado com Sucesso!", Toast.LENGTH_SHORT).show()
+                    onSuccessSave() // navegação
+                    viewModel.resetProductFormEvent() // reset do evento
+                }
+            )
+        }
+        is ProductFormEvent.Error -> {
+            val errorMessage = (productFormEvent as ProductFormEvent.Error).message
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            ViewReact(
+                type = "Error",
+                onFinished = {
+                    viewModel.resetProductFormEvent()
+                }
+            )
+        }
         ProductFormEvent.Idle ->{
             if (cameraPermissionState.status.isGranted && clickCamera) {
                 CameraScreen(
@@ -322,7 +319,7 @@ private fun CardImgCamera(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick ),
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(15.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
