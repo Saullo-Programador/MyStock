@@ -21,6 +21,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,66 +44,90 @@ import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.SearchComponents
 import com.example.meustock.ui.components.ViewReact
 import com.example.meustock.ui.states.ProductStockUiState
+import com.example.meustock.ui.viewModel.ProductFormEvent
 import com.example.meustock.ui.viewModel.ProductStockViewModel
+import com.example.meustock.ui.viewModel.WithdrawalScreenEvent
 
 @Composable
 fun ProductWithdrawalScreen(
     viewModel: ProductStockViewModel,
     onNavMovements: (String) -> Unit = {}
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
+    val searchResults by viewModel.searchResults.collectAsState()
+    val expanded by viewModel.expanded.collectAsState()
+    val event by viewModel.event.collectAsState()
+
     var showDialog by remember { mutableStateOf(false) }
     var isEntrada by remember { mutableStateOf(true) }
+    val context = LocalContext.current
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
-        topBar = {
-            SearchComponents(
-                query = uiState.query,
-                onQueryChange = viewModel::onQueryChange,
-                onSearch = viewModel::searchProduct,
-                searchResults = viewModel.searchResults,
-                onResultClick = viewModel::onSearchResultClick,
-                placeholder = "ID ou Nome do Produto",
-                leadingIcon = painterResource(id = R.drawable.icon_search),
-                expanded = viewModel.expanded,
-                onExpandedChange = viewModel::onExpandedChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            )
-
+    when(event) {
+        is WithdrawalScreenEvent.Loading -> {
+            ViewReact("Loading")
         }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding( top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            if(uiState.isLoading) {
-                ViewReact("Loading")
-            }else{
-                if (uiState.selectedProduct == null) {
-                    Box(
+        is WithdrawalScreenEvent.Success -> {
+            ViewReact(
+                type = "Success",
+                onFinished = {
+                    Toast.makeText(context, "Movimentação realizada com sucesso!", Toast.LENGTH_SHORT).show()
+                    viewModel.resetEvent() // 🔥 reset aqui
+                }
+            )
+        }
+        is WithdrawalScreenEvent.Error -> {
+            val message = (event as WithdrawalScreenEvent.Error).message
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            ViewReact(
+                type = "Error",
+                onFinished = {
+                    viewModel.resetEvent()
+                }
+            )
+        }
+        WithdrawalScreenEvent.Idle -> {
+            // Layout normal da tela
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = {
+                    SearchComponents(
+                        query = uiState.query,
+                        onQueryChange = viewModel::onQueryChange,
+                        onSearch = viewModel::searchProduct,
+                        searchResults = searchResults,
+                        onResultClick = viewModel::onSearchResultClick,
+                        placeholder = "ID ou Nome do Produto",
+                        leadingIcon = painterResource(id = R.drawable.icon_search),
+                        expanded = expanded,
+                        onExpandedChange = viewModel::onExpandedChange,
                         modifier = Modifier
-                            .fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            "Pesquise o Produto para continuar",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
-                } else {
-                    uiState.selectedProduct.let { product ->
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
+                }
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    if (uiState.selectedProduct == null) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text("Pesquise o Produto para continuar",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                        }
+                    } else {
                         ProductStockContent(
-                            name = product.name,
-                            brand = product.brand ?: "",
-                            price = product.sellingPrice,
-                            stock = product.currentStock,
+                            name = uiState.selectedProduct!!.name,
+                            brand = uiState.selectedProduct!!.brand ?: "",
+                            price = uiState.selectedProduct!!.sellingPrice,
+                            stock = uiState.selectedProduct!!.currentStock,
                             onEntradaClick = {
                                 isEntrada = true
                                 showDialog = true
@@ -111,26 +136,22 @@ fun ProductWithdrawalScreen(
                                 isEntrada = false
                                 showDialog = true
                             },
-                            uiState = uiState,
-                            onNavMovements = {
-                                onNavMovements(product.idProduct)
-                            }
+                            onNavMovements = { onNavMovements(uiState.selectedProduct!!.idProduct) }
                         )
                     }
-                }
 
-
-                if (showDialog) {
-                    QuantityDialog(
-                        isEntrada = isEntrada,
-                        quantity = uiState.quantity,
-                        onQuantityChange = viewModel::onQuantityChange,
-                        onConfirm = {
-                            viewModel.applyStockMovement(isEntrada)
-                            showDialog = false
-                        },
-                        onDismiss = { showDialog = false }
-                    )
+                    if (showDialog) {
+                        QuantityDialog(
+                            isEntrada = isEntrada,
+                            quantity = uiState.quantity,
+                            onQuantityChange = viewModel::onQuantityChange,
+                            onConfirm = {
+                                viewModel.applyStockMovement(isEntrada)
+                                showDialog = false
+                            },
+                            onDismiss = { showDialog = false }
+                        )
+                    }
                 }
             }
         }
@@ -141,7 +162,6 @@ fun ProductWithdrawalScreen(
 
 @Composable
 fun ProductStockContent(
-    uiState: ProductStockUiState,
     name: String,
     brand: String,
     price: Double,
@@ -150,17 +170,6 @@ fun ProductStockContent(
     onSaidaClick: () -> Unit,
     onNavMovements: () -> Unit
 ) {
-    when{
-        uiState.errorMessage != null -> {
-            Toast.makeText(LocalContext.current, uiState.errorMessage, Toast.LENGTH_SHORT).show()
-        }
-        uiState.successMessage != null -> {
-            Toast.makeText(LocalContext.current, uiState.successMessage, Toast.LENGTH_SHORT).show()
-        }
-        uiState.isLoading -> {
-            ViewReact("Loading")
-        }
-    }
     Column(
         modifier = Modifier
             .fillMaxSize(),

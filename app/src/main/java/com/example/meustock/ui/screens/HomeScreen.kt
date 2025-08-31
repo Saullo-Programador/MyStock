@@ -1,6 +1,5 @@
 package com.example.meustock.ui.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -14,9 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import java.text.NumberFormat
+import java.util.Locale
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,15 +31,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
-import coil.decode.GifDecoder
-import coil.request.ImageRequest
-import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -47,36 +42,39 @@ import com.example.meustock.ui.components.LoadingScreen
 import com.example.meustock.ui.components.RecentActivityCard
 import com.example.meustock.ui.components.RestockProductsCard
 import com.example.meustock.ui.states.DashboardUiState
+import com.example.meustock.ui.viewModel.DashboardEvent
 import com.example.meustock.ui.viewModel.DashboardViewModel
 
 @Composable
 fun HomeScreen(
     viewModel: DashboardViewModel
 ){
-    val state by viewModel.state.collectAsState()
+    val dashboardEvent by viewModel.dashboardEvent.collectAsState()
 
-    when{
-        state.isLoading -> LoadingScreen()
-        state.errorMessage != null -> {
-            // Pode exibir uma tela de erro dedicada
-            Text(
-                text = state.errorMessage ?: "Erro desconhecido",
-                color = Color.Red,
-                modifier = Modifier.fillMaxSize()
-            )
+    when(dashboardEvent){
+        DashboardEvent.Loading -> LoadingScreen()
+        is DashboardEvent.Success -> {
+            val state = (dashboardEvent as DashboardEvent.Success).uiState
+            DashboardScreen(state)
         }
-        else -> DashboardScreen(state)
+        is DashboardEvent.Error -> {
+            val message = (dashboardEvent as DashboardEvent.Error).message
+            ErrorScreen(message = message) { viewModel.retry() }
+        }
+        DashboardEvent.Idle -> {}
     }
 
 }
 
 @Composable
 fun DashboardScreen(state: DashboardUiState) {
+
+    val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
+    val formattedValue = currencyFormatter.format(state.totalStockValue)
+    val scrollState = rememberScrollState()
+
+
     Scaffold { innerPadding ->
-        val scrollState = rememberScrollState()
-
-
-
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -142,7 +140,7 @@ fun DashboardScreen(state: DashboardUiState) {
                         )
                         DashboardSummaryCard(
                             title = "Valor Estoque",
-                            value = "R$ ${String.format("%.2f", state.totalStockValue)}",
+                            value = "$formattedValue",
                             img = R.drawable.icon_money,
                             colorIcon = Color(0xFFBEA205),
                             modifier = Modifier.weight(1f)
@@ -213,5 +211,20 @@ fun ImgComposable(img: Int, modifier: Modifier = Modifier) {
             iterations = LottieConstants.IterateForever,
             modifier = Modifier.fillMaxWidth()
         )
+    }
+}
+
+@Composable
+fun ErrorScreen(message: String, onRetry: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = message, color = Color.Red)
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(onClick = onRetry) {
+            Text("Tentar novamente")
+        }
     }
 }

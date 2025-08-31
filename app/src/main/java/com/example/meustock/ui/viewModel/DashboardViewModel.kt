@@ -16,6 +16,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// Estados e eventos da tela de Dashboard
+sealed class DashboardEvent {
+    object Loading : DashboardEvent()
+    data class Success(val uiState: DashboardUiState) : DashboardEvent()
+    data class Error(val message: String) : DashboardEvent()
+    object Idle : DashboardEvent()
+}
 
 /**
  * ViewModel responsável pela lógica da tela de Dashboard.
@@ -27,27 +34,22 @@ class DashboardViewModel @Inject constructor(
     private val productMovementRepository: ProductMovementRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(DashboardUiState())
-    val state: StateFlow<DashboardUiState> = _state.asStateFlow()
+    private val _dashboardEvent = MutableStateFlow<DashboardEvent>(DashboardEvent.Idle)
+    val dashboardEvent: StateFlow<DashboardEvent> = _dashboardEvent.asStateFlow()
 
     init {
         loadDashboardData()
     }
 
-    private fun loadDashboardData() {
+    fun loadDashboardData() {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true, errorMessage = null) }
+            _dashboardEvent.value = DashboardEvent.Loading
 
             try {
                 val productsFlow = productRepository.getProducts()
                 val recentMovementsFlow = productMovementRepository.listenRecentMovements(limit = 5)
 
-                combine(
-                    productsFlow,
-                    recentMovementsFlow,
-                ) { products, movements ->
-
-
+                combine(productsFlow, recentMovementsFlow) { products, movements ->
 
                     val totalProducts = products.size
                     val totalItemsInStock = products.sumOf { it.currentStock }
@@ -56,21 +58,25 @@ class DashboardViewModel @Inject constructor(
                     val restockProducts = products.filter { it.currentStock <= it.minimumStock }
 
                     DashboardUiState(
-                        isLoading = false,
-                        errorMessage = null,
                         totalProducts = totalProducts,
                         totalItemsInStock = totalItemsInStock,
                         totalStockValue = totalStockValue,
                         lowStockItems = lowStockItems,
                         restockProducts = restockProducts,
-                        lastMovements = movements,
+                        lastMovements = movements
                     )
+
                 }.collect { uiState ->
-                    _state.value = uiState
+                    _dashboardEvent.value = DashboardEvent.Success(uiState)
                 }
+
             } catch (e: Exception) {
-                _state.update { it.copy(isLoading = false, errorMessage = e.message) }
+                _dashboardEvent.value = DashboardEvent.Error(e.message ?: "Erro desconhecido")
             }
         }
+    }
+
+    fun retry() {
+        loadDashboardData()
     }
 }

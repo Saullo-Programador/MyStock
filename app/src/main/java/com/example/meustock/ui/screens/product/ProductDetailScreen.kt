@@ -2,8 +2,6 @@ package com.example.meustock.ui.screens.product
 
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,13 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -33,14 +29,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.meustock.domain.model.Product
 import com.example.meustock.ui.components.DetailItem
 import com.example.meustock.ui.components.TopBar
@@ -49,6 +41,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.example.meustock.R
+import com.example.meustock.ui.components.ViewReact
 import com.example.meustock.ui.utils.ImageUtils
 
 @Composable
@@ -64,32 +57,34 @@ fun ProductDetailScreen(
         viewModel.loadProduct(productId)
     }
 
-    Scaffold(
-        topBar = {
-            TopBar(
-                colorBackground = Color.Transparent,
-                title = "Detalhes do Produto", // Título genérico para a TopBar
-                onNavigationIconClick = onBackClick,
-                onTrailingIconClick = {
-                    productState?.idProduct?.let { id ->
-                        onEditProduct(id)
-                    }
+    when (val product = productState) {
+        null -> ViewReact(type = "Loading")
+        else -> {
+            Scaffold(
+                topBar = {
+                    TopBar(
+                        colorBackground = Color.Transparent,
+                        title = "Detalhes do Produto", // Título genérico para a TopBar
+                        onNavigationIconClick = onBackClick,
+                        onTrailingIconClick = {
+                            productState?.idProduct?.let { id ->
+                                onEditProduct(id)
+                            }
+                        },
+                        trailingIconPainter = painterResource(R.drawable.icon_edit)
+                    )
                 },
-                trailingIconPainter = painterResource(R.drawable.icon_edit)
-            )
-        },
-        modifier = Modifier.fillMaxSize(),
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            when (val product = productState) {
-                null -> CircularProgressIndicator()
-                else -> ProductDetailContent(product = product)
+                modifier = Modifier.fillMaxSize(),
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    ProductDetailContent(product = product)
+                }
             }
         }
     }
@@ -99,7 +94,6 @@ fun ProductDetailScreen(
 fun ProductDetailContent(
     product: Product,
 ){
-    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()

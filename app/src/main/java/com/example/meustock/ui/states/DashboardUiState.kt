@@ -11,6 +11,4 @@ data class DashboardUiState(
     val restockProducts: List<Product> = emptyList(),
     val lastMovements: List<ProductMovement> = emptyList(),
 
-    val isLoading: Boolean = false,
-    val errorMessage: String? = null,
 )

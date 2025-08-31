@@ -22,6 +22,7 @@
       <w>atualização</w>
       <w>atualizações</w>
       <w>automaticamente</w>
+      <w>auxiliar</w>
       <w>ação</w>
       <w>barras</w>
       <w>busca</w>
@@ -38,6 +39,7 @@
       <w>carregar</w>
       <w>caso</w>
       <w>chamaria</w>
+      <w>classificação</w>
       <w>coleção</w>
       <w>combina</w>
       <w>conclusão</w>
@@ -50,12 +52,14 @@
       <w>cálculo</w>
       <w>código</w>
       <w>dados</w>
+      <w>datas</w>
       <w>dedicada</w>
       <w>deleta</w>
       <w>deletar</w>
       <w>deleção</w>
       <w>desconhecido</w>
       <w>descrição</w>
+      <w>destaque</w>
       <w>detalhes</w>
       <w>digite</w>
       <w>documento</w>
@@ -92,12 +96,15 @@
       <w>fechar</w>
       <w>feito</w>
       <w>forma</w>
+      <w>formatar</w>
       <w>formulário</w>
       <w>fornecedor</w>
       <w>foto</w>
       <w>função</w>
       <w>funções</w>
       <w>garantir</w>
+      <w>genérico</w>
+      <w>gerais</w>
       <w>gerencia</w>
       <w>gerenciar</w>
       <w>histórico</w>
@@ -127,6 +134,7 @@
       <w>modelo</w>
       <w>mostre</w>
       <w>movimentação</w>
+      <w>movimentações</w>
       <w>movimento</w>
       <w>movimentos</w>
       <w>mudanças</w>
@@ -136,6 +144,8 @@
       <w>navegar</w>
       <w>navegação</w>
       <w>nenhum</w>
+      <w>notas</w>
+      <w>novamente</w>
       <w>nula</w>
       <w>objeto</w>
       <w>objetos</w>
@@ -168,6 +178,7 @@
       <w>realizada</w>
       <w>reativa</w>
       <w>recebe</w>
+      <w>recebido</w>
       <w>recebidos</w>
       <w>recentes</w>
       <w>recuperado</w>
@@ -197,7 +208,9 @@
       <w>sucesso</w>
       <w>sugestões</w>
       <w>suspende</w>
+      <w>tentar</w>
       <w>transação</w>
+      <w>título</w>
       <w>unidade</w>
       <w>usada</w>
       <w>usam</w>
@@ -206,6 +219,7 @@
       <w>vazia</w>
       <w>vazio</w>
       <w>vazios</w>
+      <w>vibrantes</w>
       <w>único</w>
     </words>
   </dictionary>

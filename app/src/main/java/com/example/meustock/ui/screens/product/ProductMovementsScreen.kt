@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.meustock.domain.model.ProductMovement
 import com.example.meustock.ui.components.TopBar
 import com.example.meustock.ui.viewModel.ProductMovementViewModel
@@ -63,7 +62,7 @@ fun ProductMovementsScreen(
             if ( movements.isEmpty()) {
                 Text("Produto não encontrado")
             }else {
-                LazyColumn() {
+                LazyColumn {
                     items(movements) { movement ->
                         MovementItem(movement)
                     }
