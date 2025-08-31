@@ -2,7 +2,6 @@ package com.example.meustock.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.meustock.domain.model.Product
 import com.example.meustock.domain.repository.ProductMovementRepository
 import com.example.meustock.domain.repository.ProductRepository
 import com.example.meustock.ui.states.DashboardUiState
@@ -11,8 +10,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

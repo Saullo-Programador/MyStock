@@ -16,6 +16,7 @@
       <w>aqui</w>
       <w>armazém</w>
       <w>ativo</w>
+      <w>atuais</w>
       <w>atualiza</w>
       <w>atualizado</w>
       <w>atualizar</w>
@@ -35,6 +36,7 @@
       <w>caixa</w>
       <w>cancelada</w>
       <w>cancelar</w>
+      <w>capturada</w>
       <w>carrega</w>
       <w>carregando</w>
       <w>carregar</w>
@@ -43,11 +45,13 @@
       <w>classificação</w>
       <w>coleção</w>
       <w>combina</w>
+      <w>compressão</w>
       <w>conclusão</w>
       <w>confirmar</w>
       <w>constantes</w>
       <w>continuar</w>
       <w>controlada</w>
+      <w>converte</w>
       <w>convertido</w>
       <w>corredor</w>
       <w>correspondentes</w>
@@ -108,10 +112,13 @@
       <w>funções</w>
       <w>garantir</w>
       <w>genérico</w>
+      <w>gerados</w>
       <w>gerais</w>
+      <w>geralmente</w>
       <w>gerencia</w>
       <w>gerenciar</w>
       <w>histórico</w>
+      <w>identificação</w>
       <w>imagem</w>
       <w>implementação</w>
       <w>inativo</w>
@@ -120,6 +127,7 @@
       <w>inicia</w>
       <w>inicial</w>
       <w>insuficiente</w>
+      <w>internamente</w>
       <w>inválida</w>
       <w>inválidos</w>
       <w>itens</w>
@@ -135,6 +143,7 @@
       <w>medida</w>
       <w>meio</w>
       <w>mesmo</w>
+      <w>metadados</w>
       <w>metodo</w>
       <w>modelo</w>
       <w>mostre</w>
@@ -190,6 +199,7 @@
       <w>recuperado</w>
       <w>recuperar</w>
       <w>redefinir</w>
+      <w>reduzir</w>
       <w>referência</w>
       <w>registra</w>
       <w>registro</w>
@@ -224,6 +234,7 @@
       <w>usam</w>
       <w>usando</w>
       <w>validação</w>
+      <w>valores</w>
       <w>vazia</w>
       <w>vazio</w>
       <w>vazios</w>

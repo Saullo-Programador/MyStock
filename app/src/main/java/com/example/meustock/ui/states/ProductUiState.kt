@@ -1,6 +1,5 @@
 package com.example.meustock.ui.states
 
-import java.util.UUID
 
 data class ProductUiState(
     // Campos de identificação e metadados, geralmente gerados internamente

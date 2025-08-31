@@ -1,7 +1,5 @@
 package com.example.meustock.ui.states
 
-import com.example.meustock.domain.model.Product
-import java.util.UUID
 
 data class ProductEditUiState(
     val idProduct: String = "", // Código do Produto
@@ -44,26 +42,4 @@ data class ProductEditUiState(
     val isLoading: Boolean = false
 )
 
-fun Product.toEditUiState(onUpdate: (ProductEditUiState) -> Unit): ProductEditUiState {
-    return ProductEditUiState(
-        idProduct = idProduct,
-        registrationDate = registrationDate,
-        lastUpdateDate = lastUpdateDate,
-        imageUrl = imageUrl,
-        nameProduct = name,
-        description = description,
-        barcodeSku = barcodeSku,
-        costPrice = costPrice.toString(),
-        sellingPrice = sellingPrice.toString(),
-        currentStock = currentStock.toString(),
-        minimumStock = minimumStock.toString(),
-        category = category,
-        brand = brand,
-        unitOfMeasurement = unitOfMeasurement,
-        supplier = supplier,
-        stockLocation = stockLocation,
-        status = status,
-        notes = notes,
-        // Os lambdas você pode injetar fora ou dentro da função
-    )
-}
+
