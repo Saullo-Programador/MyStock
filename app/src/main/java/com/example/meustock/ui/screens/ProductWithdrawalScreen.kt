@@ -43,8 +43,6 @@ import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.SearchComponents
 import com.example.meustock.ui.components.ViewReact
-import com.example.meustock.ui.states.ProductStockUiState
-import com.example.meustock.ui.viewModel.ProductFormEvent
 import com.example.meustock.ui.viewModel.ProductStockViewModel
 import com.example.meustock.ui.viewModel.WithdrawalScreenEvent
 

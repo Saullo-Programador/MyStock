@@ -18,7 +18,6 @@ import java.util.Locale
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -38,6 +37,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.meustock.R
+import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.LoadingScreen
 import com.example.meustock.ui.components.RecentActivityCard
 import com.example.meustock.ui.components.RestockProductsCard
@@ -223,8 +223,10 @@ fun ErrorScreen(message: String, onRetry: () -> Unit) {
     ) {
         Text(text = message, color = Color.Red)
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = onRetry) {
-            Text("Tentar novamente")
-        }
+        ButtonComponent(
+            text = "Tentar Novamente",
+            onClick = onRetry,
+            cornerRadius = 10
+        )
     }
 }
