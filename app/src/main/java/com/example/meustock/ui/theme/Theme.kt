@@ -13,15 +13,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple,
-    onBackground = Color.White,
-    surface = surfaceDark,
+    primary = BluePrimary,
+    onPrimary = Color.White,
+    secondary = BlueSecondary,
+    onSecondary = Color.White,
+    background = BackgroundDark,
+    onBackground = TextPrimaryDark,
+    surface = SurfaceDark,
+    onSurface = TextPrimaryDark,
+    surfaceVariant = InputBackgroundDark, // inputs
+    onSurfaceVariant = TextSecondaryDark,
+    error = DangerRed,
+    onError = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple,
-    onBackground = Color.Black,
-    surface = surfaceLight,
+    primary = BluePrimary,
+    onPrimary = Color.White,
+    secondary = BlueSecondary,
+    onSecondary = Color.Black,
+    background = BackgroundLight,
+    onBackground = TextPrimaryLight,
+    surface = SurfaceLight,
+    onSurface = TextPrimaryLight,
+    surfaceVariant = InputBackgroundLight, // inputs
+    onSurfaceVariant = TextSecondaryLight,
+    error = DangerRed,
+    onError = Color.Black,
 )
 
 @Composable
