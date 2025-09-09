@@ -84,11 +84,15 @@
       <w>encontrado</w>
       <w>encontrar</w>
       <w>então</w>
+      <w>enviado</w>
+      <w>enviamos</w>
+      <w>enviar</w>
       <w>erro</w>
       <w>escuta</w>
       <w>escutar</w>
       <w>espaço</w>
       <w>específico</w>
+      <w>esqueceu</w>
       <w>estatísticas</w>
       <w>estão</w>
       <w>evento</w>
@@ -106,6 +110,7 @@
       <w>fechamento</w>
       <w>fechar</w>
       <w>feito</w>
+      <w>filtro</w>
       <w>forma</w>
       <w>formatar</w>
       <w>formulário</w>
@@ -129,6 +134,8 @@
       <w>informações</w>
       <w>inicia</w>
       <w>inicial</w>
+      <w>insira</w>
+      <w>instruções</w>
       <w>insuficiente</w>
       <w>internamente</w>
       <w>inválida</w>
@@ -196,13 +203,18 @@
       <w>realizada</w>
       <w>reativa</w>
       <w>recebe</w>
+      <w>receber</w>
+      <w>recebeu</w>
       <w>recebido</w>
       <w>recebidos</w>
       <w>recentes</w>
       <w>recuperado</w>
       <w>recuperar</w>
+      <w>recuperação</w>
       <w>redefinir</w>
       <w>reduzir</w>
+      <w>reenviar</w>
+      <w>reenvie</w>
       <w>referência</w>
       <w>registra</w>
       <w>registro</w>
@@ -243,6 +255,7 @@
       <w>vazia</w>
       <w>vazio</w>
       <w>vazios</w>
+      <w>verifique</w>
       <w>vibrantes</w>
       <w>único</w>
     </words>

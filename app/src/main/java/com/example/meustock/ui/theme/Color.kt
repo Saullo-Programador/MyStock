@@ -6,8 +6,8 @@ import androidx.compose.ui.graphics.Color
 // =====================
 // PALETA PRINCIPAL
 // =====================
-val BluePrimary = Color(0xFF082A5C) // principal (forte, para app bar, botões)
-val BlueSecondary = Color(0xFF3B98F4) // destaque (links, ícones, botões secundários)
+val BluePrimary = Color(0xFF3B98F4) // principal (forte, para app bar, botões)
+val BlueSecondary = Color(0xFF082A5C)// destaque (links, ícones, botões secundários)
 
 // =====================
 // LIGHT MODE

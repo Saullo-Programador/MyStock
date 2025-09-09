@@ -1,7 +1,10 @@
 package com.example.meustock.ui.components
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
+import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -10,18 +13,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     title: String,
-    colorTitle: Color = Color.White,
+    colorTitle: Color = MaterialTheme.colorScheme.onBackground,
     onNavigationIconClick: () -> Unit= {},
     trailingIconVector: ImageVector? = null,
     trailingIconPainter: Painter? = null,
@@ -47,8 +52,9 @@ fun TopBar(
         navigationIcon = {
             IconButton(onClick = { onNavigationIconClick() }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
                     tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(35.dp),
                     contentDescription = "onNavigationIconClick TopBar"
                 )
             }
