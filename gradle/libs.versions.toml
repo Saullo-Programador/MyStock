@@ -9,6 +9,7 @@ coilGif = "2.7.0"
 coilCompose = "2.7.0"
 converterGson = "3.0.0"
 firebaseBom = "34.1.0"
+firebaseUiAuth = "9.0.0"
 hiltWork = "1.2.0"
 kotlin = "2.2.0"
 coreKtx = "1.17.0"
@@ -48,6 +49,7 @@ coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilGif" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-ui-auth = { module = "com.firebaseui:firebase-ui-auth", version.ref = "firebaseUiAuth" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

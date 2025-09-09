@@ -100,7 +100,7 @@ fun SettingsContent(
             }
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
             SettingsItem(
-                icon = painterResource(R.drawable.round_lock_24),
+                icon = painterResource(R.drawable.icon_lock),
                 title = "Alterar senha",
                 onClick = { /* Implementar */ }
             )

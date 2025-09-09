@@ -15,6 +15,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.meustock.ui.screens.ForgotPasswordScreen
 import com.example.meustock.ui.screens.HomeScreen
  import com.example.meustock.ui.screens.product.ProductListScreen
 import com.example.meustock.ui.screens.product.RegisterProductFormScreen
@@ -25,6 +26,11 @@ import com.example.meustock.ui.screens.product.ProductDetailScreen
 import com.example.meustock.ui.screens.product.ProductEditScreen
 import com.example.meustock.ui.screens.product.ProductMovementsScreen
 import com.example.meustock.ui.screens.ProductWithdrawalScreen
+import com.example.meustock.ui.screens.SignInScreen
+import com.example.meustock.ui.screens.SignUpScreen
+import com.example.meustock.ui.states.ForgotPasswordUiState
+import com.example.meustock.ui.states.SignInUiState
+import com.example.meustock.ui.viewModel.AuthViewModel
 import com.example.meustock.ui.viewModel.DashboardViewModel
 import com.example.meustock.ui.viewModel.ProductListViewModel
 import com.example.meustock.ui.viewModel.ProductDetailViewModel
@@ -50,6 +56,52 @@ fun AppNavigation(
                 scaleOut(animationSpec = tween(durationMillis = 500))
         }
     ){
+
+        composable(Screen.SignIn.route){
+            val viewMode: AuthViewModel = hiltViewModel()
+            SignInScreen(
+                onSignUpClick = {
+                    navController.navigate(Screen.SignUp.route)
+                },
+                onSignInClick = {
+                    navController.navigate(Screen.Home.route){
+                        popUpTo(Screen.SignIn.route){
+                            inclusive = true
+                        }
+                    }
+                },
+                onForgotPasswordClick = {
+                    navController.navigate(Screen.ForgotPassword.route)
+                },
+                viewModel = viewMode,
+            )
+        }
+        composable(Screen.SignUp.route){
+            val viewModel: AuthViewModel = hiltViewModel()
+            SignUpScreen(
+                onSignUpClick = {
+                    navController.navigate(Screen.SignIn.route){
+                        popUpTo(Screen.SignUp.route){
+                            inclusive = true
+                        }
+                    }
+                },
+                onSignInClick = {
+                    navController.popBackStack()
+                },
+                viewModel = viewModel,
+            )
+        }
+
+        composable(Screen.ForgotPassword.route){
+            val viewModel: AuthViewModel = hiltViewModel()
+            ForgotPasswordScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                viewModel = viewModel,
+            )
+        }
 
         composable(Screen.Home.route){
             val viewModel: DashboardViewModel = hiltViewModel()

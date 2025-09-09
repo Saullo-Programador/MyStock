@@ -59,7 +59,7 @@ class MainActivity : ComponentActivity() {
                 ){
                     MainScreenWithBottomBar(
                         navController = navController,
-                        startDestination = Screen.Home.route
+                        startDestination = Screen.SignIn.route
                     )
                 }
             }
