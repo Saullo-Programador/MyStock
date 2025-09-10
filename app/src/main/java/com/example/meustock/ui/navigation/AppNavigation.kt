@@ -30,7 +30,6 @@ import com.example.meustock.ui.screens.SignInScreen
 import com.example.meustock.ui.screens.SignUpScreen
 import com.example.meustock.ui.states.ForgotPasswordUiState
 import com.example.meustock.ui.states.SignInUiState
-import com.example.meustock.ui.viewModel.AuthViewModel
 import com.example.meustock.ui.viewModel.DashboardViewModel
 import com.example.meustock.ui.viewModel.ProductListViewModel
 import com.example.meustock.ui.viewModel.ProductDetailViewModel
@@ -58,48 +57,44 @@ fun AppNavigation(
     ){
 
         composable(Screen.SignIn.route){
-            val viewMode: AuthViewModel = hiltViewModel()
             SignInScreen(
                 onSignUpClick = {
                     navController.navigate(Screen.SignUp.route)
                 },
                 onSignInClick = {
                     navController.navigate(Screen.Home.route){
-                        popUpTo(Screen.SignIn.route){
-                            inclusive = true
-                        }
                     }
                 },
                 onForgotPasswordClick = {
-                    navController.navigate(Screen.ForgotPassword.route)
+                    navController.navigate(Screen.ForgotPassword.route){
+
+                    }
                 },
-                viewModel = viewMode,
+                uiState = SignInUiState()
             )
         }
         composable(Screen.SignUp.route){
-            val viewModel: AuthViewModel = hiltViewModel()
             SignUpScreen(
                 onSignUpClick = {
-                    navController.navigate(Screen.SignIn.route){
+                    navController.navigate(Screen.Home.route){
                         popUpTo(Screen.SignUp.route){
                             inclusive = true
                         }
                     }
                 },
-                onSignInClick = {
+                onLoginClick = {
                     navController.popBackStack()
                 },
-                viewModel = viewModel,
+                uiState = SignInUiState()
             )
         }
 
         composable(Screen.ForgotPassword.route){
-            val viewModel: AuthViewModel = hiltViewModel()
             ForgotPasswordScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                viewModel = viewModel,
+                uiState = ForgotPasswordUiState()
             )
         }
 

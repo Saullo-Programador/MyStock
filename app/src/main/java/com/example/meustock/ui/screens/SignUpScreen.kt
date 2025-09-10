@@ -1,6 +1,5 @@
 package com.example.meustock.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,21 +18,16 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -41,58 +35,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.meustock.R
 import com.example.meustock.ui.components.ButtonGradient
 import com.example.meustock.ui.components.TextFeldComponent
-import com.example.meustock.ui.states.AuthUiState
 import com.example.meustock.ui.theme.MeuStockTheme
 import com.example.meustock.ui.states.SignInUiState
-import com.example.meustock.ui.states.SignUpUiState
-import com.example.meustock.ui.viewModel.AuthViewModel
 
 @Composable
 fun SignUpScreen(
     onSignUpClick: () -> Unit = {},
-    onSignInClick: () -> Unit = {},
-    viewModel: AuthViewModel,
+    onLoginClick: () -> Unit = {},
+    onForgotPasswordClick: () -> Unit = {},
+    uiState: SignInUiState,
 ) {
     SignUpContent(
         onSignUpClick = onSignUpClick,
-        onSignInClick = onSignInClick,
-        viewModel = viewModel,
+        onLoginClick = onLoginClick,
+        uiState = uiState
     )
 }
 
 @Composable
 fun SignUpContent(
     onSignUpClick: () -> Unit = {},
-    onSignInClick: () -> Unit = {},
-    viewModel: AuthViewModel,
+    onLoginClick: () -> Unit = {},
+    uiState: SignInUiState,
 ) {
-    val authUiState by viewModel.uiState.collectAsState()
-    val uiState by viewModel.signUp.collectAsState()
-    val context = LocalContext.current
-
-    LaunchedEffect(authUiState.error) {
-        authUiState.error?.let {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            viewModel.clearError() // cria essa função no ViewModel
-        }
-    }
-
-
-    when{
-        authUiState.isLoading -> {
-            CircularProgressIndicator()
-        }
-        authUiState.user != null -> {
-            Toast.makeText(LocalContext.current, "Cadastro com sucesso", Toast.LENGTH_SHORT).show()
-        }
-    }
-    if(authUiState.user != null){
-        onSignUpClick()
-    }
 
     Box(
         modifier = Modifier
@@ -116,19 +84,18 @@ fun SignUpContent(
             )
         }
         SignUpForm(
-            onSignUpClick = {
-                viewModel.signUp()
-            },
-            onSignInClick = onSignInClick,
-            uiState = uiState,
+            onSignUpClick = onSignUpClick,
+            onLoginClick = onLoginClick,
+            uiState = uiState
+
         )
     }
 }
 @Composable
 fun SignUpForm(
     onSignUpClick: () -> Unit = {},
-    onSignInClick: () -> Unit = {},
-    uiState: SignUpUiState,
+    onLoginClick: () -> Unit = {},
+    uiState: SignInUiState,
 ) {
 
     Column(
@@ -155,28 +122,28 @@ fun SignUpForm(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             TextFeldComponent(
-                value = uiState.empresaName,
-                onValueChange = { uiState.onEmpresaNameChange(it) },
+                value = uiState.email,
+                onValueChange = { uiState.onEmailChange },
                 label = "Nome da Empresa",
                 placeholder = "Digite o nome da empresa!",
                 leadingIcon = Icons.Default.Email,
                 trailingIcon = Icons.Default.Clear,
-                onTrailingIconClick = { uiState.onEmpresaNameChange("") },
-                shape = RoundedCornerShape(12.dp)
-            )
-            TextFeldComponent(
-                value = uiState.username,
-                onValueChange = { uiState.onUsernameChange(it) },
-                label = "Nome do Usuário",
-                placeholder = "Digite seu nome de usuário",
-                leadingIcon = Icons.Default.Email,
-                trailingIcon = Icons.Default.Clear,
-                onTrailingIconClick = { uiState.onUsernameChange("") },
+                onTrailingIconClick = { uiState.onEmailChange("") },
                 shape = RoundedCornerShape(12.dp)
             )
             TextFeldComponent(
                 value = uiState.email,
-                onValueChange = { uiState.onEmailChange(it) },
+                onValueChange = { uiState.onEmailChange },
+                label = "Nome do Usuário",
+                placeholder = "Digite seu nome de usuário",
+                leadingIcon = Icons.Default.Email,
+                trailingIcon = Icons.Default.Clear,
+                onTrailingIconClick = { uiState.onEmailChange("") },
+                shape = RoundedCornerShape(12.dp)
+            )
+            TextFeldComponent(
+                value = uiState.email,
+                onValueChange = { uiState.onEmailChange },
                 label = "E-mail",
                 placeholder = "Digite seu e-mail",
                 leadingIcon = Icons.Default.Email,
@@ -186,7 +153,7 @@ fun SignUpForm(
             )
             TextFeldComponent(
                 value = uiState.password,
-                onValueChange = { uiState.onPasswordChange(it) },
+                onValueChange = { uiState.onPasswordChange },
                 label = "Senha",
                 placeholder = "Digite sua Senha!",
                 isPasswordField = true,
@@ -194,8 +161,8 @@ fun SignUpForm(
                 shape = RoundedCornerShape(12.dp)
             )
             TextFeldComponent(
-                value = uiState.passwordConfirmation,
-                onValueChange = { uiState.onPasswordConfirmationChange(it) },
+                value = uiState.password,
+                onValueChange = { uiState.onPasswordChange },
                 label = "Confirmar Senha",
                 placeholder = "Digite sua Senha Novamente!",
                 isPasswordField = true,
@@ -213,8 +180,8 @@ fun SignUpForm(
                 .padding(vertical = 10.dp, horizontal = 10.dp),
         ){
             Checkbox(
-                checked = uiState.check,
-                onCheckedChange = { uiState.onCheckChange(it) },
+                checked = false,
+                onCheckedChange = {},
                 modifier = Modifier.size(10.dp)
             )
             Text(
@@ -227,7 +194,7 @@ fun SignUpForm(
 
 
         ButtonGradient(
-            onClick = onSignUpClick,
+            onClick = onLoginClick,
             text = "Cadastrar",
             fontSize = 18,
             fontColor = Color.White
@@ -241,7 +208,7 @@ fun SignUpForm(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Você já tem uma conta?", color = MaterialTheme.colorScheme.onSurfaceVariant)
-            TextButton(onClick = onSignInClick) {
+            TextButton(onClick = onSignUpClick) {
                 Text("Faça Login", color = Color(0xFF1976D2))
             }
         }
@@ -261,8 +228,9 @@ fun SignUpPreviewDarkMode(){
     ) {
         SignUpScreen(
             onSignUpClick = {},
-            onSignInClick = {},
-            viewModel = hiltViewModel()
+            onLoginClick = {},
+            onForgotPasswordClick = {},
+            uiState = SignInUiState()
         )
     }
 }
@@ -280,8 +248,9 @@ fun SignUpPreviewLightMode(){
     ) {
         SignUpScreen(
             onSignUpClick = {},
-            onSignInClick = {},
-            viewModel = hiltViewModel()
+            onLoginClick = {},
+            onForgotPasswordClick = {},
+            uiState = SignInUiState()
         )
     }
 }
