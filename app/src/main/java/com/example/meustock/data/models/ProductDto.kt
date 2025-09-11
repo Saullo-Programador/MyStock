@@ -1,6 +1,7 @@
 package com.example.meustock.data.models
 
 data class ProductDto(
+    val createdBy: String = "",
     val idProduct: String = "",
     val imageUrl: String? = null,
     val imagePublicId: String? = null,

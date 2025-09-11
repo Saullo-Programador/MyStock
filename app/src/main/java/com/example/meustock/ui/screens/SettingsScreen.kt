@@ -28,26 +28,34 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.meustock.ui.viewModel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
-    onScreenNotification: () -> Unit = {}
+    onScreenNotification: () -> Unit = {},
+    viewModel: SettingsViewModel,
+    onSignOutClick: () -> Unit = {}
 ) {
     SettingsContent(
-        onScreenNotification = onScreenNotification
+        onScreenNotification = onScreenNotification,
+        viewModel = viewModel,
+        onSignOutClick = onSignOutClick,
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsContent(
-    logout: () -> Unit = {},
+    onSignOutClick: () -> Unit = {},
     deleteConta: () -> Unit = {},
     onScreenNotification: () -> Unit = {},
+    viewModel: SettingsViewModel
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     var darkMode by remember { mutableStateOf(false) }
     var notificationsEnabled by remember { mutableStateOf(true) }
     var biometricEnabled by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
@@ -94,8 +102,14 @@ fun SettingsContent(
                 )
                 Spacer(Modifier.width(16.dp))
                 Column {
-                    Text("Saullo Dantas", fontWeight = FontWeight.Bold)
-                    Text("saullo@email.com", style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = uiState.user?.displayName ?: "Usuário",
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = uiState.user?.email ?: "email não disponível",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
             }
             HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
@@ -107,7 +121,10 @@ fun SettingsContent(
             SettingsItem(
                 icon = painterResource(R.drawable.icon_logout),
                 title = "Sair",
-                onClick = { logout() }
+                onClick = {
+                    viewModel.signOut()
+                    onSignOutClick()
+                }
             )
 
             // ===== Preferências =====

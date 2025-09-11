@@ -2,6 +2,7 @@
   <dictionary name="project">
     <words>
       <w>abstrair</w>
+      <w>aceite</w>
       <w>adiciona</w>
       <w>adicionais</w>
       <w>adicionar</w>
@@ -37,12 +38,14 @@
       <w>cancelada</w>
       <w>cancelar</w>
       <w>capturada</w>
+      <w>caracteres</w>
       <w>carrega</w>
       <w>carregando</w>
       <w>carregar</w>
       <w>caso</w>
       <w>chamaria</w>
       <w>classificação</w>
+      <w>coincidem</w>
       <w>coleção</w>
       <w>combina</w>
       <w>compressão</w>
@@ -50,6 +53,8 @@
       <w>concordo</w>
       <w>confirmar</w>
       <w>constantes</w>
+      <w>conta</w>
+      <w>conter</w>
       <w>continuar</w>
       <w>controlada</w>
       <w>converte</w>
@@ -69,6 +74,7 @@
       <w>descrição</w>
       <w>destaque</w>
       <w>detalhes</w>
+      <w>deve</w>
       <w>digite</w>
       <w>documento</w>
       <w>documentos</w>
@@ -83,6 +89,7 @@
       <w>empresa</w>
       <w>encontrado</w>
       <w>encontrar</w>
+      <w>entrar</w>
       <w>então</w>
       <w>enviado</w>
       <w>enviamos</w>
@@ -134,6 +141,7 @@
       <w>informações</w>
       <w>inicia</w>
       <w>inicial</w>
+      <w>inicialização</w>
       <w>insira</w>
       <w>instruções</w>
       <w>insuficiente</w>
@@ -201,6 +209,7 @@
       <w>querer</w>
       <w>quilo</w>
       <w>realizada</w>
+      <w>realizado</w>
       <w>reativa</w>
       <w>recebe</w>
       <w>receber</w>
@@ -235,6 +244,7 @@
       <w>seja</w>
       <w>seleção</w>
       <w>senha</w>
+      <w>senhas</w>
       <w>suas</w>
       <w>subcoleções</w>
       <w>substitua</w>

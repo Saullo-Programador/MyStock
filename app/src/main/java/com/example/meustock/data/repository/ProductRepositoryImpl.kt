@@ -6,6 +6,7 @@ import com.example.meustock.data.mappers.toDto
 import com.example.meustock.data.models.ProductDto
 import com.example.meustock.domain.model.Product
 import com.example.meustock.domain.repository.ProductRepository
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
@@ -29,20 +30,30 @@ class ProductRepositoryImpl @Inject constructor(
      * Ideal para UI que precisa de atualizações constantes.
      */
     override suspend fun getProducts(): Flow<List<Product>> = callbackFlow {
-        val registration = collection.addSnapshotListener { snapshot, e ->
-            if (e != null) {
-                close(e) // Emite o erro e fecha o flow
-                Log.e("ProductRepo", "Erro ao buscar produtos", e)
-                return@addSnapshotListener
+
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+            ?: run {
+                trySend(emptyList())
+                close()
+                return@callbackFlow
             }
 
-            // Mapeia os documentos para objetos de domínio
-            val products = snapshot?.documents?.mapNotNull {
-                it.toObject(ProductDto::class.java)?.toDomain()
-            } ?: emptyList()
+        val registration = collection
+            .whereEqualTo("createdBy", uid)
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    close(e) // Emite o erro e fecha o flow
+                    Log.e("ProductRepo", "Erro ao buscar produtos", e)
+                    return@addSnapshotListener
+                }
 
-            trySend(products) // Emite a nova lista de produtos
-        }
+                // Mapeia os documentos para objetos de domínio
+                val products = snapshot?.documents?.mapNotNull {
+                    it.toObject(ProductDto::class.java)?.toDomain()
+                } ?: emptyList()
+
+                trySend(products) // Emite a nova lista de produtos
+            }
         awaitClose { registration.remove() } // Remove o listener ao fechar o flow
     }
 
@@ -70,9 +81,16 @@ class ProductRepositoryImpl @Inject constructor(
      * Adiciona um novo produto ao Firestore.
      */
     override suspend fun addProduct(product: Product) {
+
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+            ?: throw Exception("Usuário não autenticado")
+
+        val productWithUser = product.copy(createdBy = uid)
+
         collection.document(product.idProduct)
-            .set(product.toDto())
+            .set(productWithUser.toDto())
             .await()
+
     }
 
     /**

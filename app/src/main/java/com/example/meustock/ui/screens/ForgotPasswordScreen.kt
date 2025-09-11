@@ -1,6 +1,7 @@
 package com.example.meustock.ui.screens
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,40 +19,66 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.meustock.R
 import com.example.meustock.ui.components.ButtonGradient
 import com.example.meustock.ui.components.TextFeldComponent
 import com.example.meustock.ui.components.TopBar
+import com.example.meustock.ui.components.ViewReact
 import com.example.meustock.ui.states.ForgotPasswordUiState
 import com.example.meustock.ui.theme.MeuStockTheme
+import com.example.meustock.ui.viewModel.AuthViewModel
 
 @Composable
 fun ForgotPasswordScreen(
     onBackClick: () -> Unit = {},
-    uiState: ForgotPasswordUiState,
-    onForgotPasswordClick: () -> Unit = {},
+    viewModel: AuthViewModel,
 ){
     ForgotPasswordContent(
         onBackClick = onBackClick,
-        uiState = uiState,
-        onForgotPasswordClick = onForgotPasswordClick
+        viewModel = viewModel,
     )
 }
 
 @Composable
 fun ForgotPasswordContent(
     onBackClick: () -> Unit = {},
-    uiState: ForgotPasswordUiState,
-    onForgotPasswordClick: () -> Unit = {},
+    viewModel: AuthViewModel,
 ){
+
+    val uiState by viewModel.forgotPassword.collectAsState()
+    val authUiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(authUiState.error) {
+        authUiState.error?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.clearError() // cria essa função no ViewModel
+        }
+    }
+
+    LaunchedEffect(uiState.success) {
+        if (uiState.success) {
+            Toast.makeText(context, "Email de recuperação enviado", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    when{
+        authUiState.isLoading -> {
+            ViewReact(type = "Loading")
+        }
+    }
     Scaffold(
         topBar = {
             TopBar(
@@ -68,8 +95,20 @@ fun ForgotPasswordContent(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ){
-            //ForgotPasswordFormScreen( uiState = uiState, onForgotPasswordClick = onForgotPasswordClick)
-            ForgotPasswordSuccessScreen(onResendClick = onForgotPasswordClick)
+            if (uiState.success){
+                ForgotPasswordSuccessScreen(
+                    onResendClick = {
+                        viewModel.forgotPassword()
+                    },
+                )
+            }else {
+                ForgotPasswordFormScreen(
+                    uiState = uiState,
+                    onForgotPasswordClick = {
+                        viewModel.forgotPassword()
+                    },
+                )
+            }
         }
     }
 }
@@ -108,7 +147,7 @@ fun ForgotPasswordFormScreen(
         )
         TextFeldComponent(
             value = uiState.email ,
-            onValueChange = { uiState.onEmailChange },
+            onValueChange = { uiState.onEmailChange(it) },
             label = "E-mail",
             placeholder = "Digite seu e-mail",
             leadingIcon = Icons.Default.Email,
@@ -184,7 +223,7 @@ fun ForgotPasswordPreviewLightMode(){
     ) {
         ForgotPasswordScreen(
             onBackClick = {},
-            uiState = ForgotPasswordUiState(),
+            viewModel = hiltViewModel(),
         )
     }
 }
@@ -201,7 +240,7 @@ fun ForgotPasswordPreviewDarkMode(){
     ) {
         ForgotPasswordScreen(
             onBackClick = {},
-            uiState = ForgotPasswordUiState(),
+            viewModel = hiltViewModel(),
         )
     }
 }

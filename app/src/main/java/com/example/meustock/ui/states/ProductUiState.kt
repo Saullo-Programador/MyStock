@@ -4,6 +4,7 @@ package com.example.meustock.ui.states
 data class ProductUiState(
     // Campos de identificação e metadados, geralmente gerados internamente
     val idProduct: String = "", // Código do Produto
+    val createdBy: String = "", // Usuário que criou o Produto
 
     val registrationDate: Long = System.currentTimeMillis(),
     val lastUpdateDate: Long = System.currentTimeMillis(),

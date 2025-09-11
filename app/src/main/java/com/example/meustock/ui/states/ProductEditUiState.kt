@@ -3,6 +3,7 @@ package com.example.meustock.ui.states
 
 data class ProductEditUiState(
     val idProduct: String = "", // Código do Produto
+    val createdBy: String = "", // Usuário que criou o produto
     val registrationDate: Long = System.currentTimeMillis(),
     val lastUpdateDate: Long = System.currentTimeMillis(),
     // Campos do formulário (valores atuais)

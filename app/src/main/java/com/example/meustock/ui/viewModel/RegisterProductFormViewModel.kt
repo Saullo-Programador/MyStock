@@ -168,7 +168,8 @@ class RegisterProductFormViewModel @Inject constructor(
             status = state.status,
             notes = state.notes.takeIf { it?.isNotBlank() == true },
             registrationDate = state.registrationDate,
-            lastUpdateDate = System.currentTimeMillis()
+            lastUpdateDate = System.currentTimeMillis(),
+            createdBy = state.createdBy
         )
     }
 

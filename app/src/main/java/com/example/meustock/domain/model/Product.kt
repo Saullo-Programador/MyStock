@@ -1,8 +1,8 @@
 package com.example.meustock.domain.model
 
-import java.util.UUID
 
 data class Product(
+    val createdBy: String, // <--- UID do usuário
     val idProduct: String,
     val imageUrl: String? = null,
     val imagePublicId: String? = null,

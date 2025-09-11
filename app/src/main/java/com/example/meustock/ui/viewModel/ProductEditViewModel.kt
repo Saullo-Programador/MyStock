@@ -163,6 +163,7 @@ class ProductEditViewModel @Inject constructor(
                     registrationDate = state.registrationDate,
                     lastUpdateDate = System.currentTimeMillis(),
                     imageUrl = state.imageUrl,
+                    createdBy = state.createdBy
                 )
                 updateProductUseCase(productToUpdate)
                 _productFormEvent.value = ProductEditFormEvent.Success

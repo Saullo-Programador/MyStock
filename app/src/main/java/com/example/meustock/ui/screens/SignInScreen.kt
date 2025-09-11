@@ -1,5 +1,6 @@
 package com.example.meustock.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,21 +15,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -36,23 +37,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.meustock.R
 import com.example.meustock.ui.components.ButtonGradient
 import com.example.meustock.ui.components.TextFeldComponent
+import com.example.meustock.ui.components.ViewReact
 import com.example.meustock.ui.states.SignInUiState
+import com.example.meustock.ui.viewModel.AuthViewModel
 
 @Composable
 fun SignInScreen(
     onSignUpClick: () -> Unit = {},
     onSignInClick: () -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
-    uiState: SignInUiState,
+    viewModel: AuthViewModel,
 ) {
     SignInContent(
         onSignUpClick = onSignUpClick,
         onSignInClick = onSignInClick,
         onForgotPasswordClick = onForgotPasswordClick,
-        uiState = uiState
+        viewModel = viewModel,
     )
 }
 
@@ -61,8 +65,34 @@ fun SignInContent(
     onSignUpClick: () -> Unit = {},
     onSignInClick: () -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
-    uiState: SignInUiState,
+    viewModel: AuthViewModel,
 ) {
+
+    val uiState by viewModel.signIn.collectAsState()
+    val authUiState by viewModel.uiState.collectAsState()
+
+    val context = LocalContext.current
+
+    LaunchedEffect(authUiState.error) {
+        authUiState.error?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.clearError() // cria essa função no ViewModel
+        }
+    }
+
+    when {
+        authUiState.isLoading -> {
+            ViewReact(type = "Loading")
+        }
+        authUiState.user != null -> {
+            Toast.makeText(LocalContext.current, "Login realizado com sucesso", Toast.LENGTH_SHORT)
+                .show()
+        }
+
+    }
+    if (authUiState.user != null) {
+        onSignInClick()
+    }
 
     Box(
         modifier = Modifier
@@ -70,7 +100,6 @@ fun SignInContent(
             .background(Color.Black),
         contentAlignment = Alignment.TopCenter
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,7 +116,7 @@ fun SignInContent(
         }
         SignInForm(
             onSignUpClick = onSignUpClick,
-            onSignInClick = onSignInClick,
+            onSignInClick = {viewModel.signIn()},
             onForgotPasswordClick = onForgotPasswordClick,
             uiState = uiState
 
@@ -100,8 +129,7 @@ fun SignInForm(
     onSignInClick: () -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
     uiState: SignInUiState,
-
-    ) {
+) {
 
     Column(
         modifier = Modifier
@@ -128,7 +156,7 @@ fun SignInForm(
         ) {
             TextFeldComponent(
                 value = uiState.email,
-                onValueChange = { uiState.onEmailChange },
+                onValueChange = { uiState.onEmailChange(it) },
                 label = "E-mail",
                 placeholder = "Digite seu e-mail",
                 leadingIcon = Icons.Default.Email,
@@ -138,7 +166,7 @@ fun SignInForm(
             )
             TextFeldComponent(
                 value = uiState.password,
-                onValueChange = { uiState.onPasswordChange },
+                onValueChange = { uiState.onPasswordChange(it) },
                 label = "Senha",
                 placeholder = "Digite sua Senha!",
                 isPasswordField = true,
@@ -192,6 +220,6 @@ fun SignInPreview(){
         onSignUpClick = {},
         onSignInClick = {},
         onForgotPasswordClick = {},
-        uiState = SignInUiState()
+        viewModel = hiltViewModel()
     )
 }

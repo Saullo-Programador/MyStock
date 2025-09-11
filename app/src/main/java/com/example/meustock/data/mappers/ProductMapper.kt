@@ -4,6 +4,7 @@ import com.example.meustock.data.models.ProductDto
 import com.example.meustock.domain.model.Product
 
 fun ProductDto.toDomain(): Product = Product(
+    createdBy = createdBy,
     idProduct = idProduct,
     imageUrl = imageUrl,
     name = name,
@@ -25,6 +26,7 @@ fun ProductDto.toDomain(): Product = Product(
 )
 
 fun Product.toDto(): ProductDto = ProductDto(
+    createdBy = createdBy,
     idProduct = idProduct,
     imageUrl = imageUrl,
     name = name,

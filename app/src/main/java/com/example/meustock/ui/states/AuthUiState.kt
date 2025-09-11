@@ -7,3 +7,4 @@ data class AuthUiState(
     val user: FirebaseUser? = null,
     val error: String? = null
 )
+

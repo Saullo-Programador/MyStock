@@ -142,12 +142,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun signOut() {
-        viewModelScope.launch {
-            authManager.logout()
-            _uiState.value = AuthUiState()
-        }
-    }
 
 
     // Forgot Password
