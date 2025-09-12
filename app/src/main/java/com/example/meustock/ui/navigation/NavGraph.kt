@@ -1,6 +1,9 @@
 package com.example.meustock.ui.navigation
 
 sealed class Screen(val route: String) {
+
+    // Page Splash
+    object Splash : Screen("splash")
     //Page Login
     object SignIn : Screen("sign_in")
     //Page Register

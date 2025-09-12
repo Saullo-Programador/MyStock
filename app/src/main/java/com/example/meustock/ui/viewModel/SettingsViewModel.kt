@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +22,21 @@ class SettingsViewModel @Inject constructor(
 
 
     fun signOut() {
-        authManager.logout()
-        _uiState.value = AuthUiState()
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            try {
+                authManager.logout()
+                _uiState.value = AuthUiState(user = null)
+                _uiState.update { it.copy(isLoading = false) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+                _uiState.update { it.copy(isLoading = false) }
+            }
+        }
     }
+
+    fun clearError() {
+        _uiState.update { it.copy(error = null) }
+    }
+
 }

@@ -28,8 +28,9 @@ import com.example.meustock.ui.screens.product.ProductMovementsScreen
 import com.example.meustock.ui.screens.ProductWithdrawalScreen
 import com.example.meustock.ui.screens.SignInScreen
 import com.example.meustock.ui.screens.SignUpScreen
-import com.example.meustock.ui.states.ForgotPasswordUiState
-import com.example.meustock.ui.states.SignInUiState
+import com.example.meustock.ui.screens.SplashScreen
+import com.example.meustock.ui.viewModel.AppViewModel
+
 import com.example.meustock.ui.viewModel.AuthViewModel
 import com.example.meustock.ui.viewModel.DashboardViewModel
 import com.example.meustock.ui.viewModel.ProductListViewModel
@@ -57,6 +58,24 @@ fun AppNavigation(
                 scaleOut(animationSpec = tween(durationMillis = 500))
         }
     ){
+
+        composable ( Screen.Splash.route){
+            val appViewModel: AppViewModel = hiltViewModel()
+            val state by appViewModel.uiState.collectAsState()
+            SplashScreen (
+                onTimeout = {
+                    if (state.user != null) {
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo(Screen.Splash.route) { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate(Screen.SignIn.route) {
+                            popUpTo(Screen.Splash.route) { inclusive = true }
+                        }
+                    }
+                }
+            )
+        }
 
         composable(Screen.SignIn.route){
             val viewMode: AuthViewModel = hiltViewModel()

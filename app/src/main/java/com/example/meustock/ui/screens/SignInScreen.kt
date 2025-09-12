@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -82,7 +83,7 @@ fun SignInContent(
 
     when {
         authUiState.isLoading -> {
-            ViewReact(type = "Loading")
+            CircularProgressIndicator()
         }
         authUiState.user != null -> {
             Toast.makeText(LocalContext.current, "Login realizado com sucesso", Toast.LENGTH_SHORT)

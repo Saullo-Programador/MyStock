@@ -1,6 +1,7 @@
 package com.example.meustock.authentication
 
 import android.util.Log
+import com.example.meustock.ui.states.AuthUiState
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -14,7 +15,6 @@ class FirebaseAuthManager @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore
 ) {
-
     // Login com email e senha
     suspend fun signIn(email: String, password: String): Result<FirebaseUser> {
         return try {
@@ -51,10 +51,22 @@ class FirebaseAuthManager @Inject constructor(
 
     }
 
+    // Verifica se o usuário está logado
+    fun isUserLoggedIn(): Boolean {
+        return auth.currentUser != null
+    }
+
+    // Obtém o usuário atual
+    fun getCurrentUser(): FirebaseUser? {
+        return auth.currentUser
+    }
+
+    // Faz logout do usuário
     fun logout() {
         auth.signOut()
     }
 
+    // Envia um email de redefinição de senha
     suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
         return try {
             Firebase.auth.sendPasswordResetEmail(email).await()
