@@ -1,4 +1,4 @@
-package com.example.meustock.ui.screens
+package com.example.meustock.ui.screens.product
 
 import android.widget.Toast
 import androidx.compose.foundation.Image

@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.meustock.R
+import com.example.meustock.domain.model.Product
 import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.ItemProduct
 import com.example.meustock.ui.components.SearchComponents
@@ -48,15 +49,17 @@ fun ProductListContent(
     val openAlertDialog = remember { mutableStateOf(false) }
     val productId = remember { mutableStateOf<String?>(null) }
 
+    val query by viewModel.query.collectAsState()
+    val products by viewModel.filteredProducts.collectAsState()
+
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             SearchComponents(
-                query = "",
-                onQueryChange = {},
-                onSearch = {},
-                searchResults = listOf(),
+                query = query,
+                onQueryChange = { viewModel.updateQuery(it) },
+                onSearch = {}, // já filtra em tempo real
+                searchResults = emptyList(), // não precisa pois usamos filteredProducts
                 onResultClick = {},
                 placeholder = "ID ou Nome do Produto",
                 leadingIcon = painterResource(id = R.drawable.icon_search),
@@ -74,12 +77,12 @@ fun ProductListContent(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column (
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding( top = 5.dp, start = 16.dp, end = 16.dp, bottom = 80.dp),
+                    .padding(top = 5.dp, start = 16.dp, end = 16.dp, bottom = 80.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-            ){
+            ) {
                 if (openAlertDialog.value && productId.value != null) {
                     AlertDialogComponent(
                         onDismissRequest = {
@@ -96,23 +99,22 @@ fun ProductListContent(
                         },
                         textConfirmation = "Excluir",
                         dialogTitle = "Excluir Produto",
-                        dialogText = {
-                            Text("Tem certeza que deseja excluir este produto?")
-                        },
+                        dialogText = { Text("Tem certeza que deseja excluir este produto?") },
                         icon = painterResource(R.drawable.icon_delete),
                         colorButtonConfirmation = Color.Red,
                         tint = Color.Red
                     )
                 }
 
+                // Lista já filtrada
                 ListProduct(
-                    viewModel = viewModel,
+                    products = products,
                     onDetailProduct = onDetailProduct,
                     onDeleteProduct = { id ->
                         productId.value = id
                         openAlertDialog.value = true
                     },
-                    onEditProduct = {id ->
+                    onEditProduct = { id ->
                         onNavigatorEdit(id)
                     }
                 )
@@ -123,35 +125,27 @@ fun ProductListContent(
 
 @Composable
 fun ListProduct(
-    viewModel: ProductListViewModel,
+    products: List<Product>,
     onDetailProduct: (String) -> Unit = {},
     onDeleteProduct: (String) -> Unit = {},
     onEditProduct: (String) -> Unit = {}
-){
-    val products by viewModel.products.collectAsState()
+) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 128.dp),
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
-    ){
-        items(products.size){ index ->
+    ) {
+        items(products.size) { index ->
             val product = products[index]
             ItemProduct(
                 imageUri = product.imageUrl,
                 nameProduct = product.name,
                 quantity = product.currentStock,
                 price = product.sellingPrice,
-                detailItemProduct = {
-                    onDetailProduct(product.idProduct)
-                },
-                onEdit = {
-                    onEditProduct(product.idProduct)
-                },
-                onDelete = {
-                    onDeleteProduct(product.idProduct)
-                }
+                detailItemProduct = { onDetailProduct(product.idProduct) },
+                onEdit = { onEditProduct(product.idProduct) },
+                onDelete = { onDeleteProduct(product.idProduct) }
             )
         }
     }
