@@ -11,6 +11,7 @@ fun MovementDto.toDomain(): ProductMovement {
         type = type,
         date = date,
         responsible = responsible,
-        notes = notes
+        notes = notes,
+        createdBy = createdBy
     )
 }

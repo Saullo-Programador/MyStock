@@ -7,6 +7,7 @@ import com.example.meustock.data.models.MovementDto
 import com.example.meustock.domain.model.Product
 import com.example.meustock.domain.model.ProductMovement
 import com.example.meustock.domain.repository.ProductMovementRepository
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
@@ -20,7 +21,8 @@ import javax.inject.Inject
  * Implementação do repositório para gerenciar movimentos de produtos no Firestore.
  */
 class ProductMovementRepositoryImpl @Inject constructor(
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val firebaseAuth: FirebaseAuth
 ) : ProductMovementRepository {
 
     // Referência à coleção de produtos no Firestore
@@ -32,8 +34,16 @@ class ProductMovementRepositoryImpl @Inject constructor(
      **/
 
     override suspend fun getProductMovements(productId: String): Flow<List<ProductMovement>> = callbackFlow {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+            ?: run {
+                trySend(emptyList())
+                close()
+                return@callbackFlow
+            }
+
         val movementsCollection = productsCollection.document(productId).collection("movements")
         val listener = movementsCollection
+            .whereEqualTo("createdBy", uid)
             .orderBy("date", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
@@ -47,6 +57,7 @@ class ProductMovementRepositoryImpl @Inject constructor(
                     doc.toObject(MovementDto::class.java)?.toDomain()
                 } ?: emptyList()
 
+
                 trySend(movements) // Emite a lista de movimentos
                 Log.d("ProductMovementRepo", "Movimentos recebidos: ${movements.size}")
             }
@@ -58,8 +69,11 @@ class ProductMovementRepositoryImpl @Inject constructor(
     override suspend fun searchProducts(query: String): List<Product> {
         if (query.isBlank()) return emptyList()
 
+        val uid = firebaseAuth.currentUser?.uid ?: return emptyList()
+
         return try {
             val byId = productsCollection
+                .whereEqualTo("createdBy", uid)
                 .orderBy("idProduct")
                 .startAt(query.uppercase()) 
                 .endAt(query.uppercase() + "\uf8ff")
@@ -74,6 +88,7 @@ class ProductMovementRepositoryImpl @Inject constructor(
 
             // Busca por nome (prefix search)
             val byName = productsCollection
+                .whereEqualTo("createdBy", uid)
                 .orderBy("name")
                 .startAt(query)
                 .endAt(query + "\uf8ff")
@@ -98,6 +113,9 @@ class ProductMovementRepositoryImpl @Inject constructor(
         responsible: String?,
         notes: String?
     ) {
+        val uid = firebaseAuth.currentUser?.uid
+            ?: throw Exception("Usuário não autenticado")
+
         val productRef = productsCollection.document(productId)
         val movementId = UUID.randomUUID().toString()
         val movementRef = productRef.collection("movements").document(movementId)
@@ -123,7 +141,8 @@ class ProductMovementRepositoryImpl @Inject constructor(
                 type = type,
                 date = System.currentTimeMillis(),
                 responsible = responsible,
-                notes = notes
+                notes = notes,
+                createdBy = uid
             )
             transaction.set(movementRef, movement)
         }.await()
@@ -205,7 +224,14 @@ class ProductMovementRepositoryImpl @Inject constructor(
      * Usa `collectionGroup` para buscar movimentos de subcoleções.
      */
     override suspend fun listenRecentMovements(limit: Long): Flow<List<ProductMovement>> = callbackFlow {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+            ?: run {
+                trySend(emptyList())
+                close()
+                return@callbackFlow
+            }
         val listener = firestore.collectionGroup("movements")
+            .whereEqualTo("createdBy", uid)
             .orderBy("date", Query.Direction.DESCENDING)
             .limit(limit)
             .addSnapshotListener { snapshot, error ->

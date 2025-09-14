@@ -7,5 +7,6 @@ data class ProductMovement(
     val type: String, // "entrada" ou "saida"
     val date: Long,
     val responsible: String?,
-    val notes: String?
+    val notes: String?,
+    val createdBy: String
 )

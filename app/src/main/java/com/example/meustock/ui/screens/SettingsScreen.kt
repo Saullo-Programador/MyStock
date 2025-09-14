@@ -1,7 +1,8 @@
 package com.example.meustock.ui.screens
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +23,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -96,6 +96,7 @@ fun SettingsContent(
         Column(
             modifier = Modifier
                 .padding(padding)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(bottom = 40.dp)
                 .verticalScroll(rememberScrollState())
                 .fillMaxSize()
@@ -108,13 +109,14 @@ fun SettingsContent(
                     .clickable() { /* Abrir edição de perfil */ }
                     .padding(16.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable._4),
+                Icon(
+                    painter = painterResource(id = R.drawable.icon_person),
                     contentDescription = "Foto de perfil",
-                    contentScale = ContentScale.Crop,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
+                        .border(1.dp, MaterialTheme.colorScheme.primary)
                         .size(56.dp)
-                        .clip(CircleShape)
+                        .clip(CircleShape),
                 )
                 Spacer(Modifier.width(16.dp))
                 Column {
@@ -240,7 +242,7 @@ fun SettingsItem(
         Icon(icon, contentDescription = null, modifier = Modifier.size(24.dp), tint = colorIcon)
         Spacer(Modifier.width(16.dp))
         Column {
-            Text(title,  fontWeight = FontWeight.Medium)
+            Text(title,  fontWeight = FontWeight.Medium, color = colorText)
             if (subtitle != null) {
                 Text(subtitle, style = MaterialTheme.typography.bodySmall)
             }

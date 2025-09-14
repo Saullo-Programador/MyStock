@@ -98,7 +98,7 @@ fun SignInContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.TopCenter
     ) {
         Box(
@@ -205,7 +205,7 @@ fun SignInForm(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Você não tem uma conta?", color = Color.Gray)
+            Text("Você não tem uma conta?", color = MaterialTheme.colorScheme.onSurfaceVariant)
             TextButton(onClick = onSignUpClick) {
                 Text("Cadastre-se", color = MaterialTheme.colorScheme.primary)
             }

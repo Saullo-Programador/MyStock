@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -51,15 +52,15 @@ fun HomeScreen(
 ){
     val dashboardEvent by viewModel.dashboardEvent.collectAsState()
 
-    when(dashboardEvent){
+    when(val event =dashboardEvent){
         DashboardEvent.Loading -> LoadingScreen()
         is DashboardEvent.Success -> {
-            val state = (dashboardEvent as DashboardEvent.Success).uiState
-            DashboardScreen(state)
+            DashboardScreen(event.uiState)
         }
         is DashboardEvent.Error -> {
-            val message = (dashboardEvent as DashboardEvent.Error).message
-            ErrorScreen(message = message) { viewModel.retry() }
+            ErrorScreen(
+                message = event.message ?: "Erro desconhecido",
+            ){ viewModel.retry() }
         }
         DashboardEvent.Idle -> {}
     }
@@ -82,18 +83,13 @@ fun DashboardScreen(state: DashboardUiState) {
                 .verticalScroll(scrollState)
                 .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 80.dp)
         ) {
-            Text(
-                text = "Dashboard",
-                style = MaterialTheme.typography.headlineSmall
-            )
-
             Spacer(modifier = Modifier.height(16.dp))
 
             ImgComposable(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp),
-                img = R.raw.codingslide
+                    .height(300.dp),
+                img = R.raw.test
             )
 
             Spacer(modifier = Modifier.height(36.dp))
@@ -200,10 +196,10 @@ fun DashboardSummaryCard(
 }
 
 @Composable
-fun ImgComposable(img: Int, modifier: Modifier = Modifier) {
+fun ImgComposable(img: Int, user: String? = null, modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center
+        modifier = modifier
+            .fillMaxWidth(),
     ){
         val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(img) )
         LottieAnimation(
@@ -211,6 +207,28 @@ fun ImgComposable(img: Int, modifier: Modifier = Modifier) {
             iterations = LottieConstants.IterateForever,
             modifier = Modifier.fillMaxWidth()
         )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.Top
+        ) {
+            Text(
+                text = "Seja Bem Vindo!",
+                style = MaterialTheme.typography.displaySmall,
+                color = MaterialTheme.colorScheme.onBackground,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+            Text(
+                text = user ?: "Usuario",
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 6.dp)
+            )
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 <component name="ProjectDictionaryState">
   <dictionary name="project">
     <words>
+      <w>abrir</w>
       <w>abstrair</w>
       <w>aceite</w>
       <w>adiciona</w>
@@ -8,7 +9,9 @@
       <w>adicionar</w>
       <w>adição</w>
       <w>aguarda</w>
+      <w>alterar</w>
       <w>alterações</w>
+      <w>apagar</w>
       <w>aplica</w>
       <w>aplicar</w>
       <w>aplicação</w>
@@ -23,10 +26,12 @@
       <w>atualizar</w>
       <w>atualização</w>
       <w>atualizações</w>
+      <w>autenticado</w>
       <w>automaticamente</w>
       <w>auxiliar</w>
       <w>ação</w>
       <w>barras</w>
+      <w>biometria</w>
       <w>botão</w>
       <w>busca</w>
       <w>buscar</w>
@@ -72,12 +77,14 @@
       <w>deleta</w>
       <w>deletar</w>
       <w>deleção</w>
+      <w>desbloqueio</w>
       <w>desconhecido</w>
       <w>descrição</w>
       <w>destaque</w>
       <w>detalhes</w>
       <w>deve</w>
       <w>digite</w>
+      <w>disponível</w>
       <w>documento</w>
       <w>documentos</w>
       <w>domínio</w>
@@ -139,6 +146,7 @@
       <w>histórico</w>
       <w>identificação</w>
       <w>imagem</w>
+      <w>implementar</w>
       <w>implementação</w>
       <w>inativo</w>
       <w>incrementa</w>
@@ -196,6 +204,7 @@
       <w>passo</w>
       <w>pegar</w>
       <w>pelo</w>
+      <w>perfil</w>
       <w>pesquisa</w>
       <w>pesquise</w>
       <w>precisa</w>
@@ -203,6 +212,7 @@
       <w>preencha</w>
       <w>preenche</w>
       <w>preenchidos</w>
+      <w>preferências</w>
       <w>preço</w>
       <w>prioriza</w>
       <w>privada</w>
@@ -243,20 +253,24 @@
       <w>resumo</w>
       <w>retirada</w>
       <w>retirar</w>
+      <w>sair</w>
       <w>salva</w>
       <w>salvamento</w>
       <w>salvando</w>
       <w>saídas</w>
+      <w>segurança</w>
       <w>seja</w>
       <w>seleção</w>
       <w>senha</w>
       <w>senhas</w>
+      <w>sobre</w>
       <w>suas</w>
       <w>subcoleções</w>
       <w>substitua</w>
       <w>sucesso</w>
       <w>sugestões</w>
       <w>suspende</w>
+      <w>tema</w>
       <w>tentar</w>
       <w>termos</w>
       <w>transação</w>
@@ -265,6 +279,7 @@
       <w>usada</w>
       <w>usam</w>
       <w>usando</w>
+      <w>usuario</w>
       <w>usuário</w>
       <w>validação</w>
       <w>valores</w>
@@ -273,6 +288,7 @@
       <w>vazios</w>
       <w>verifica</w>
       <w>verifique</w>
+      <w>versão</w>
       <w>vibrantes</w>
       <w>único</w>
     </words>
