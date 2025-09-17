@@ -2,14 +2,17 @@ package com.example.meustock.ui.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.meustock.authentication.FirebaseAuthManager
 import com.example.meustock.domain.repository.ProductMovementRepository
 import com.example.meustock.domain.repository.ProductRepository
+import com.example.meustock.ui.states.AuthUiState
 import com.example.meustock.ui.states.DashboardUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,14 +31,33 @@ sealed class DashboardEvent {
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val productRepository: ProductRepository,
-    private val productMovementRepository: ProductMovementRepository
+    private val productMovementRepository: ProductMovementRepository,
+    private val authManager: FirebaseAuthManager
 ) : ViewModel() {
 
     private val _dashboardEvent = MutableStateFlow<DashboardEvent>(DashboardEvent.Idle)
     val dashboardEvent: StateFlow<DashboardEvent> = _dashboardEvent.asStateFlow()
+    private val _uiStateAuth = MutableStateFlow(AuthUiState())
+    val uiStateAuth: StateFlow<AuthUiState> = _uiStateAuth.asStateFlow()
+
+    init {
+        loadUser()
+    }
 
     init {
         loadDashboardData()
+    }
+
+    fun loadUser(){
+        val currentUser = authManager.getCurrentUser()
+        if (currentUser != null) {
+            viewModelScope.launch {
+                val userData = authManager.getUserData(currentUser.uid)
+                _uiStateAuth.update {
+                    it.copy(user = currentUser, username = userData?.get("username") as? String)
+                }
+            }
+        }
     }
 
     fun loadDashboardData() {
@@ -60,7 +82,7 @@ class DashboardViewModel @Inject constructor(
                         totalStockValue = totalStockValue,
                         lowStockItems = lowStockItems,
                         restockProducts = restockProducts,
-                        lastMovements = movements
+                        lastMovements = movements,
                     )
 
                 }.collect { uiState ->

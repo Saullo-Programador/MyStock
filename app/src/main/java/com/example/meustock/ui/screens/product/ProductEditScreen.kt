@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -37,12 +40,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.meustock.R
 import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.CameraScreen
-import com.example.meustock.ui.components.LoadingScreen
 import com.example.meustock.ui.components.TextFeldComponent
 import com.example.meustock.ui.components.TopBar
 import com.example.meustock.ui.components.ViewReact
@@ -152,7 +155,7 @@ fun ProductEditContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (uiState.isLoading) {
-            LoadingScreen(mensagem = "Carregando produto...")
+            ViewReact(type = "Loading", mensagem = "Carregando produto...")
         } else {
             ProductEditFrom(
                 viewModel = viewModel,
@@ -358,36 +361,52 @@ private fun CardImgCameraEdit(
     Card(
         modifier = Modifier
             .fillMaxWidth()
+            .height(250.dp)
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(15.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        imgUrl?.let { imageUrl ->
-            if (imageUrl.isNotBlank()) {
-                val bitmap = ImageUtils.base64ToBitmap(imageUrl)
-                Image(
-                    painter = rememberAsyncImagePainter(bitmap),
-                    contentDescription = "Imagem do produto $descImg",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(shape = RoundedCornerShape(15.dp))
-                        .height(250.dp)
-                )
+        Box(
+            modifier = Modifier
+                .fillMaxSize() ,
+            contentAlignment = Alignment.Center
+        ) {
+            imgUrl?.let { imageUrl ->
+                if (imageUrl.isNotBlank()) {
+                    val bitmap = ImageUtils.base64ToBitmap(imageUrl)
+                    Image(
+                        painter = rememberAsyncImagePainter(bitmap),
+                        contentDescription = "Imagem do produto $descImg",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(shape = RoundedCornerShape(15.dp))
+                            .height(250.dp)
+                    )
 
+                }
+            } ?: run {
+                // Se a URL da imagem estiver vazia ou nula, mostre uma imagem padrão
+                Icon(
+                    painter = painterResource(id = R.drawable.icon_image),
+                    contentDescription = "Imagem do produto $descImg",
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(15.dp))
+                        .size(150.dp)
+                )
             }
-        } ?: run {
-            // Se a URL da imagem estiver vazia ou nula, mostre uma imagem padrão
-            Image(
-                painter = painterResource(id = R.drawable._4),
-                contentDescription = "Imagem do produto $descImg",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(shape = RoundedCornerShape(15.dp))
-                    .height(250.dp)
-            )
         }
     }
+}
+
+@Preview
+@Composable
+fun Preview(){
+    CardImgCameraEdit(
+        imgUrl = null,
+        descImg = "Nome do Produto",
+        onClick = {}
+    )
 }

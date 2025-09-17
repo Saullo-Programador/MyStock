@@ -2,6 +2,7 @@ package com.example.meustock.ui.screens.product
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,12 +11,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -71,7 +74,8 @@ fun ProductDetailScreen(
                                 onEditProduct(id)
                             }
                         },
-                        trailingIconPainter = painterResource(R.drawable.icon_edit)
+                        trailingIconPainter = painterResource(R.drawable.icon_edit),
+                        colorTrailingIcon = MaterialTheme.colorScheme.primary
                     )
                 },
                 modifier = Modifier.fillMaxSize(),
@@ -101,32 +105,42 @@ fun ProductDetailContent(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        product.imageUrl?.let { imageUrl ->
-            if (imageUrl.isNotBlank()) {
-                val bitmap = ImageUtils.base64ToBitmap(imageUrl)
-                Image(
-                    bitmap = bitmap?.asImageBitmap() ?: ImageBitmap(1, 1),
-                    contentDescription = "Imagem do produto ${product.name}",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(shape = RoundedCornerShape(15.dp))
-                        .height(250.dp)
-                )
-
-            }
-        } ?: run {
-            // Se a URL da imagem estiver vazia ou nula, mostre uma imagem padrão
-            Image(
-                painter = painterResource(id = R.drawable._4),
-                contentDescription = "Imagem do produto ${product.name}",
-                contentScale = ContentScale.Crop,
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp),
+            shape = RoundedCornerShape(15.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(shape = RoundedCornerShape(15.dp))
-                    .height(250.dp)
-            )
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                product.imageUrl?.let { imageUrl ->
+                    if (imageUrl.isNotBlank()) {
+                        val bitmap = ImageUtils.base64ToBitmap(imageUrl)
+                        Image(
+                            bitmap = bitmap?.asImageBitmap() ?: ImageBitmap(1, 1),
+                            contentDescription = "Imagem do produto ${product.name}",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(shape = RoundedCornerShape(15.dp))
+                        )
+                    }
+                } ?: run {
+                    // Se a URL da imagem estiver vazia ou nula, mostre uma imagem padrão
+                    Icon(
+                        painter = painterResource(id = R.drawable.icon_image),
+                        contentDescription = "Imagem do produto ${product.name}",
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier
+                            .size(150.dp)
+                    )
+                }
+            }
         }
 
         // Nome do Produto em destaque

@@ -20,6 +20,22 @@ class SettingsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
+    init {
+        loadUser()
+    }
+
+    fun loadUser(){
+        val currentUser = authManager.getCurrentUser()
+        if (currentUser != null) {
+            viewModelScope.launch {
+                val userData = authManager.getUserData(currentUser.uid)
+                _uiState.update {
+                    it.copy(user = currentUser, username = userData?.get("username") as? String)
+                }
+            }
+        }
+    }
+
 
     fun signOut() {
         viewModelScope.launch {

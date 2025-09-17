@@ -30,6 +30,7 @@ fun TopBar(
     onNavigationIconClick: () -> Unit= {},
     trailingIconVector: ImageVector? = null,
     trailingIconPainter: Painter? = null,
+    colorTrailingIcon: Color = MaterialTheme.colorScheme.onBackground,
     onTrailingIconClick: () -> Unit = {},
     colorBackground: Color = MaterialTheme.colorScheme.primary
 ) {
@@ -64,13 +65,13 @@ fun TopBar(
                 if (trailingIconVector != null) {
                     Icon(
                         imageVector = trailingIconVector,
-                        tint = MaterialTheme.colorScheme.onBackground,
+                        tint = colorTrailingIcon,
                         contentDescription = "onTrailingIconClick TopBar"
                     )
                 } else if (trailingIconPainter != null) {
                     Icon(
                         painter = trailingIconPainter,
-                        tint = MaterialTheme.colorScheme.onBackground,
+                        tint = colorTrailingIcon,
                         contentDescription = "onTrailingIconClick TopBar"
                     )
                 }

@@ -40,6 +40,7 @@ import com.example.meustock.ui.viewModel.ProductMovementViewModel
 import com.example.meustock.ui.viewModel.ProductStockViewModel
 import com.example.meustock.ui.viewModel.RegisterProductFormViewModel
 import com.example.meustock.ui.viewModel.SettingsViewModel
+import com.example.meustock.ui.viewModel.UserUpdateViewModel
 
 @Composable
 fun AppNavigation(
@@ -170,9 +171,10 @@ fun AppNavigation(
 
         composable(Screen.Setting.route) {
             val viewModel: SettingsViewModel = hiltViewModel()
+            val viewModelUser: UserUpdateViewModel = hiltViewModel()
             SettingsScreen(
-                onScreenNotification = {},
                 viewModel = viewModel,
+                viewModelUser = viewModelUser,
                 onSignOutClick = {
                     navController.navigate(Screen.SignIn.route){
                         popUpTo(Screen.Home.route){

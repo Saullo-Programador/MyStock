@@ -2,6 +2,7 @@ package com.example.meustock.ui.states
 
 import com.example.meustock.domain.model.Product
 import com.example.meustock.domain.model.ProductMovement
+import com.google.firebase.auth.FirebaseUser
 
 data class DashboardUiState(
     val totalProducts: Int = 0,

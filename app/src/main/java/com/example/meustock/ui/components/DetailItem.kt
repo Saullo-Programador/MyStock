@@ -23,7 +23,7 @@ fun DetailItem(label: String, value: String, valueColor: Color = MaterialTheme.c
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge.copy(color = valueColor),
-            modifier = Modifier.weight(1f, fill = false) // Para evitar que o texto 'value' quebre a linha se for muito longo
+            modifier = Modifier.weight(1f, fill = false)
         )
     }
 }

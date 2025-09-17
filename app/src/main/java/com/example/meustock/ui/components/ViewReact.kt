@@ -1,13 +1,16 @@
 package com.example.meustock.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,6 +26,7 @@ import com.example.meustock.R
 fun ViewReact(
     type: String,
     onFinished: (() -> Unit)? = null,
+    mensagem: String = "Carregando..."
 ) {
     when(type){
         "Delete" -> {
@@ -35,7 +39,9 @@ fun ViewReact(
             ImgLottie(img = R.raw.lottie_error, onFinished = onFinished)
         }
         "Loading" -> {
-            LoadingScreen()
+            LoadingScreen(
+                mensagem = mensagem
+            )
         }
 
     }
@@ -44,13 +50,20 @@ fun ViewReact(
 }
 
 @Composable
-fun LoadingScreen(){
-    Box(
+private fun LoadingScreen(
+    mensagem: String = "Carregando..."
+) {
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
-        contentAlignment = Alignment.Center
-    ){
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = mensagem,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
         CircularProgressIndicator()
     }
 }

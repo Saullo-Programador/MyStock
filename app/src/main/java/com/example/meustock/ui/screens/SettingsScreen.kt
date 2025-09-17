@@ -16,7 +16,10 @@ import com.example.meustock.R
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.*
@@ -30,18 +33,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.meustock.ui.components.AlertDialogComponent
+import com.example.meustock.ui.components.BottomSheetPassword
+import com.example.meustock.ui.components.BottomSheetUser
+import com.example.meustock.ui.components.TextFeldComponent
+import com.example.meustock.ui.components.ViewReact
+import com.example.meustock.ui.states.UserUiState
 import com.example.meustock.ui.viewModel.SettingsViewModel
+import com.example.meustock.ui.viewModel.UserEvent
+import com.example.meustock.ui.viewModel.UserUpdateViewModel
 
 @Composable
 fun SettingsScreen(
-    onScreenNotification: () -> Unit = {},
     viewModel: SettingsViewModel,
+    viewModelUser: UserUpdateViewModel,
     onSignOutClick: () -> Unit = {}
 ) {
     SettingsContent(
-        onScreenNotification = onScreenNotification,
         viewModel = viewModel,
         onSignOutClick = onSignOutClick,
+        viewModelUser = viewModelUser
     )
 }
 
@@ -49,15 +60,46 @@ fun SettingsScreen(
 @Composable
 fun SettingsContent(
     onSignOutClick: () -> Unit = {},
-    deleteConta: () -> Unit = {},
-    onScreenNotification: () -> Unit = {},
-    viewModel: SettingsViewModel
+    viewModel: SettingsViewModel,
+    viewModelUser: UserUpdateViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var darkMode by remember { mutableStateOf(false) }
-    var notificationsEnabled by remember { mutableStateOf(true) }
-    var biometricEnabled by remember { mutableStateOf(false) }
+    val uiStateUser by viewModelUser.uiState.collectAsState()
+    var showSheetPassword by remember { mutableStateOf(false) }
+    val sheetStatePassword = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showSheetPerfil by remember { mutableStateOf(false) }
+    val sheetStatePerfil = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val dialogState = remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val event by viewModelUser.userEvent.collectAsState()
+
+    when (event) {
+        UserEvent.Loading -> {
+            CircularProgressIndicator()
+        }
+        is UserEvent.Error -> {
+            Toast.makeText(
+                context,
+                (event as UserEvent.Error).message,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        is UserEvent.Success -> {
+            // Exemplo: feedback visual ou mensagem
+            Toast.makeText(
+                context,
+                "Operação realizada com sucesso!",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        UserEvent.Idle -> {
+            // Estado inicial, não faz nada
+        }
+    }
+
+
+
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let { error ->
@@ -106,22 +148,29 @@ fun SettingsContent(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .clickable() { /* Abrir edição de perfil */ }
+                    .clickable() { showSheetPerfil = true }
                     .padding(16.dp)
+                    .fillMaxWidth()
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.icon_person),
-                    contentDescription = "Foto de perfil",
-                    tint = MaterialTheme.colorScheme.primary,
+                Box(
                     modifier = Modifier
-                        .border(1.dp, MaterialTheme.colorScheme.primary)
-                        .size(56.dp)
-                        .clip(CircleShape),
-                )
+                        .size(40.dp)
+                        .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.icon_person),
+                        contentDescription = "Foto de perfil",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clip(CircleShape),
+                    )
+                }
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = uiState.user?.displayName ?: "Usuário",
+                        text = uiState.username ?: "Usuário",
                         fontWeight = FontWeight.Bold
                     )
                     Text(
@@ -134,7 +183,7 @@ fun SettingsContent(
             SettingsItem(
                 icon = painterResource(R.drawable.icon_lock),
                 title = "Alterar senha",
-                onClick = { /* Implementar */ }
+                onClick = { dialogState.value = true }
             )
             SettingsItem(
                 icon = painterResource(R.drawable.icon_logout),
@@ -147,47 +196,14 @@ fun SettingsContent(
 
             // ===== Preferências =====
             SettingSection(title = "Preferências") {
-                SettingsSwitch(
-                    icon = if(darkMode == true){
-                        painterResource(R.drawable.icon_dark_mode)
-                    }else{
-                        painterResource(R.drawable.icon_light_mode)
-                    },
-                    title = "Tema escuro",
-                    checked = darkMode,
-                    onCheckedChange = { darkMode = it }
-                )
-                SettingsItem(
-                    icon = if (notificationsEnabled == true){
-                        painterResource(R.drawable.icon_notifications_active)
-                    }else{
-                        painterResource(R.drawable.icon_notifications_off)
-                    },
-                    title = "Notificações",
-                    onClick = { onScreenNotification() }
-                )
-
+                // Definir tema
             }
             HorizontalDivider(thickness = DividerDefaults.Thickness, color = MaterialTheme.colorScheme.surfaceVariant)
 
             // ===== Segurança =====
             SettingSection(title = "Segurança") {
-                SettingsSwitch(
-                    icon = if(biometricEnabled == true){
-                        painterResource(R.drawable.icon_biometria)
-                    }else{
-                        painterResource(R.drawable.icon_biometria_off)
-                    },
-                    title = "Desbloqueio por biometria",
-                    checked = biometricEnabled,
-                    onCheckedChange = { biometricEnabled = it }
-                )
-                SettingsItem(
-                    icon = painterResource(R.drawable.icon_delete),
-                    title = "Apagar conta",
-                    onClick = { deleteConta() }
-                )
-
+                // Ativar biometria
+                //
             }
             HorizontalDivider(thickness = DividerDefaults.Thickness, color = MaterialTheme.colorScheme.surfaceVariant)
 
@@ -203,6 +219,54 @@ fun SettingsContent(
                 )
             }
             Spacer(modifier = Modifier.height(35.dp))
+        }
+        if (dialogState.value) {
+            DialogSenha(
+                onDismiss = { dialogState.value = false },
+                onConfirm = {
+                    viewModelUser.verifyPassword(
+                        onSuccess = {
+                            showSheetPassword = true
+                            dialogState.value = false
+                        }
+                    )
+                },
+                uiState = uiStateUser
+            )
+        }
+        if ( showSheetPassword ) {
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showSheetPassword = false
+                },
+                sheetState = sheetStatePassword
+            ) {
+                BottomSheetPassword(
+                    uiState = uiStateUser,
+                    onDismiss = { showSheetPassword = false },
+                    onConfirm = {
+                        viewModelUser.updateSenha()
+                        showSheetPassword = false
+                    }
+                )
+            }
+        }
+        if(showSheetPerfil){
+            ModalBottomSheet(
+                onDismissRequest = {
+                    showSheetPerfil = false
+                },
+                sheetState = sheetStatePerfil
+            ) {
+                BottomSheetUser(
+                    uiState = uiStateUser,
+                    onDismiss = { showSheetPerfil = false },
+                    onConfirm = {
+                        viewModelUser.updatePerfil()
+                        showSheetPerfil = false
+                    }
+                )
+            }
         }
     }
 }
@@ -274,3 +338,36 @@ fun SettingsSwitch(
     }
 }
 
+@Composable
+fun DialogSenha(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+    uiState: UserUiState
+){
+    AlertDialogComponent(
+        onDismissRequest = { onDismiss() },
+        textDismiss = "Cancelar",
+        onConfirmation = { onConfirm() },
+        textConfirmation = "Ok",
+        dialogTitle = "Digite sua senha",
+        dialogText = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                TextFeldComponent(
+                    value = uiState.passwordCurrent,
+                    onValueChange = { uiState.onPasswordCurrentChange(it) },
+                    label = "Senha",
+                    placeholder = "Digite sua senha",
+                    trailingIcon = Icons.Default.Clear,
+                    isPasswordField = true,
+                    shape = RoundedCornerShape(20.dp),
+                    modifier = Modifier.fillMaxWidth().border(1.dp, MaterialTheme.colorScheme.onBackground, RoundedCornerShape(20.dp))
+                )
+            }
+        },
+        icon = painterResource(R.drawable.icon_lock)
+    )
+}

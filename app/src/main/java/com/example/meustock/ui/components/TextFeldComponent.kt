@@ -38,7 +38,17 @@ fun TextFeldComponent(
     isPasswordField: Boolean = false,
     shape: RoundedCornerShape = RoundedCornerShape(8.dp),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    keyboardActions: KeyboardActions = KeyboardActions.Default
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    colors: TextFieldColors = TextFieldDefaults.colors(
+        cursorColor = MaterialTheme.colorScheme.primary,
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+        errorContainerColor = MaterialTheme.colorScheme.error,
+        errorIndicatorColor = MaterialTheme.colorScheme.error
+    )
 ) {
     var passwordVisibility by remember { mutableStateOf(!isPasswordField) }
 
@@ -78,16 +88,7 @@ fun TextFeldComponent(
         },
         singleLine = true,
         shape = shape,
-        colors = TextFieldDefaults.colors(
-            cursorColor = MaterialTheme.colorScheme.primary,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-            errorContainerColor = MaterialTheme.colorScheme.error,
-            errorIndicatorColor = MaterialTheme.colorScheme.error
-        )
+        colors = colors
     )
 
     if (isError && !errorMessage.isNullOrEmpty()) {

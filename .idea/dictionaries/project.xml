@@ -19,6 +19,7 @@
       <w>após</w>
       <w>aqui</w>
       <w>armazém</w>
+      <w>atividade</w>
       <w>ativo</w>
       <w>atuais</w>
       <w>atualiza</w>
@@ -35,6 +36,7 @@
       <w>botão</w>
       <w>busca</w>
       <w>buscar</w>
+      <w>cabeçalho</w>
       <w>cada</w>
       <w>cadastrado</w>
       <w>cadastrar</w>
@@ -43,6 +45,7 @@
       <w>cancelada</w>
       <w>cancelar</w>
       <w>capturada</w>
+      <w>capturar</w>
       <w>caracteres</w>
       <w>carrega</w>
       <w>carregando</w>
@@ -80,6 +83,7 @@
       <w>desbloqueio</w>
       <w>desconhecido</w>
       <w>descrição</w>
+      <w>desenha</w>
       <w>destaque</w>
       <w>detalhes</w>
       <w>deve</w>
@@ -113,6 +117,7 @@
       <w>estão</w>
       <w>evento</w>
       <w>eventos</w>
+      <w>evitar</w>
       <w>exceção</w>
       <w>excluir</w>
       <w>exclusão</w>
@@ -134,6 +139,7 @@
       <w>formulário</w>
       <w>fornecedor</w>
       <w>foto</w>
+      <w>fundo</w>
       <w>função</w>
       <w>funções</w>
       <w>garantir</w>
@@ -173,10 +179,12 @@
       <w>mapeia</w>
       <w>medida</w>
       <w>meio</w>
+      <w>mensagem</w>
       <w>mesmo</w>
       <w>metadados</w>
       <w>metodo</w>
       <w>modelo</w>
+      <w>moldura</w>
       <w>mostre</w>
       <w>movimentação</w>
       <w>movimentações</w>
@@ -198,8 +206,10 @@
       <w>observações</w>
       <w>obter</w>
       <w>obtém</w>
+      <w>opcional</w>
       <w>operação</w>
       <w>operações</w>
+      <w>opções</w>
       <w>ordenar</w>
       <w>passo</w>
       <w>pegar</w>
@@ -213,6 +223,7 @@
       <w>preenche</w>
       <w>preenchidos</w>
       <w>preferências</w>
+      <w>preto</w>
       <w>preço</w>
       <w>prioriza</w>
       <w>privada</w>
@@ -223,15 +234,20 @@
       <w>quanto</w>
       <w>querer</w>
       <w>quilo</w>
+      <w>reabastecer</w>
       <w>realizada</w>
       <w>realizado</w>
       <w>reativa</w>
+      <w>reautenticação</w>
       <w>recebe</w>
       <w>receber</w>
       <w>recebeu</w>
       <w>recebido</w>
       <w>recebidos</w>
+      <w>recente</w>
       <w>recentes</w>
+      <w>recorta</w>
+      <w>recorte</w>
       <w>recuperado</w>
       <w>recuperar</w>
       <w>recuperação</w>
@@ -253,6 +269,7 @@
       <w>resumo</w>
       <w>retirada</w>
       <w>retirar</w>
+      <w>retângulo</w>
       <w>sair</w>
       <w>salva</w>
       <w>salvamento</w>
@@ -273,7 +290,12 @@
       <w>tema</w>
       <w>tentar</w>
       <w>termos</w>
+      <w>texto</w>
+      <w>tipo</w>
+      <w>tirar</w>
       <w>transação</w>
+      <w>transparente</w>
+      <w>tudo</w>
       <w>título</w>
       <w>unidade</w>
       <w>usada</w>

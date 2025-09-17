@@ -16,15 +16,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.example.meustock.R
 import com.example.meustock.ui.utils.ImageUtils
 
@@ -52,26 +51,32 @@ fun ItemProduct(
     ) {
         Column {
             Box {
-                if (imageUri != null){
-                    val bitmap = ImageUtils.base64ToBitmap(imageUri)
-                    Image(
-                        bitmap = bitmap?.asImageBitmap() ?: ImageBitmap(1, 1),
-                        contentDescription = "Imagem do produto $nameProduct",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(130.dp)
-                    )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .height(130.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (imageUri != null) {
+                        val bitmap = ImageUtils.base64ToBitmap(imageUri)
+                        Image(
+                            bitmap = bitmap?.asImageBitmap() ?: ImageBitmap(1, 1),
+                            contentDescription = "Imagem do produto $nameProduct",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        )
 
-                }else{
-                    Image(
-                        painter = painterResource(id = R.drawable._4),
-                        contentDescription = "Imagem do produto $nameProduct",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(130.dp)
-                    )
+                    } else {
+                        Icon(
+                            painter = painterResource(id = R.drawable.icon_image),
+                            contentDescription = "Imagem do produto $nameProduct",
+                            tint = MaterialTheme.colorScheme.onBackground,
+                            modifier = Modifier
+                                .size(100.dp)
+                        )
+                    }
                 }
 
                 Box(

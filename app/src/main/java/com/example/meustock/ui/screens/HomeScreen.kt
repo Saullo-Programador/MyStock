@@ -39,9 +39,9 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.meustock.R
 import com.example.meustock.ui.components.ButtonComponent
-import com.example.meustock.ui.components.LoadingScreen
 import com.example.meustock.ui.components.RecentActivityCard
 import com.example.meustock.ui.components.RestockProductsCard
+import com.example.meustock.ui.components.ViewReact
 import com.example.meustock.ui.states.DashboardUiState
 import com.example.meustock.ui.viewModel.DashboardEvent
 import com.example.meustock.ui.viewModel.DashboardViewModel
@@ -53,9 +53,12 @@ fun HomeScreen(
     val dashboardEvent by viewModel.dashboardEvent.collectAsState()
 
     when(val event =dashboardEvent){
-        DashboardEvent.Loading -> LoadingScreen()
+        DashboardEvent.Loading -> ViewReact("Loading")
         is DashboardEvent.Success -> {
-            DashboardScreen(event.uiState)
+            DashboardScreen(
+                state = event.uiState,
+                viewModel = viewModel
+            )
         }
         is DashboardEvent.Error -> {
             ErrorScreen(
@@ -68,11 +71,16 @@ fun HomeScreen(
 }
 
 @Composable
-fun DashboardScreen(state: DashboardUiState) {
+fun DashboardScreen(
+    state: DashboardUiState,
+    viewModel: DashboardViewModel
+) {
 
     val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("pt", "BR"))
     val formattedValue = currencyFormatter.format(state.totalStockValue)
     val scrollState = rememberScrollState()
+
+    val uiState by viewModel.uiStateAuth.collectAsState()
 
 
     Scaffold { innerPadding ->
@@ -89,7 +97,8 @@ fun DashboardScreen(state: DashboardUiState) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(300.dp),
-                img = R.raw.test
+                img = R.raw.test,
+                user = uiState.username ?: "Usurio"
             )
 
             Spacer(modifier = Modifier.height(36.dp))
@@ -222,12 +231,15 @@ fun ImgComposable(img: Int, user: String? = null, modifier: Modifier = Modifier)
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 16.dp)
             )
-            Text(
-                text = user ?: "Usuario",
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(start = 6.dp)
-            )
+            if (!user.isNullOrBlank()) {
+                Text(
+                    text = user,
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(start = 6.dp)
+                )
+            }
         }
     }
 }

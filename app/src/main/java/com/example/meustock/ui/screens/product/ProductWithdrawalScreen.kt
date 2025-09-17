@@ -16,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -233,15 +234,19 @@ fun ProductCard(
             modifier = Modifier.padding(16.dp)
         ) {
             // Imagem do produto
-            Image(
-                painter = painterResource(id = R.drawable._4), // substitua por a imagem real
-                contentDescription = null,
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
-            )
+                    .height(120.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.icon_image), // substitua por a imagem real
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(100.dp),
+                )
+            }
 
             Spacer(Modifier.height(8.dp))
 
