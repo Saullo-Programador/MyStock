@@ -45,6 +45,7 @@ fun ItemProduct(
         shape = RoundedCornerShape(15.dp),
         modifier = Modifier
             .fillMaxWidth()
+            .padding(vertical = 6.dp)
             .clickable(onClick = detailItemProduct)
             .height(190.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -98,6 +99,7 @@ fun ItemProduct(
                             )
                     )
                     DropdownMenu(
+                        containerColor = MaterialTheme.colorScheme.background,
                         expanded = menuExpanded,
                         onDismissRequest = { menuExpanded = false }
                     ) {

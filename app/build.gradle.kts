@@ -45,6 +45,8 @@ android {
 }
 
 dependencies {
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
 
     //Worker
     implementation(libs.androidx.hilt.work)

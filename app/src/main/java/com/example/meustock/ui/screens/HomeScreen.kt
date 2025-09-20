@@ -29,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -175,12 +176,14 @@ fun DashboardSummaryCard(
                 width = 1.dp,
                 color = colorIcon,
                 shape = RoundedCornerShape(15.dp)
-            )
+            ),
+        shape = RoundedCornerShape(15.dp),
     ) {
         Column(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
+                .clip(RoundedCornerShape(15.dp))
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center
         ) {

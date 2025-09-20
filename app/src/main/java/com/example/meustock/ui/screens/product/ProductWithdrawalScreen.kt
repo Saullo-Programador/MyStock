@@ -1,7 +1,6 @@
 package com.example.meustock.ui.screens.product
 
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
@@ -29,9 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -193,6 +191,7 @@ fun ProductStockContent(
                 fontColor = Color(0xFF4CAF50),
                 onClick = onEntradaClick,
                 cornerRadius = 14,
+                elevation = ButtonDefaults.buttonElevation( defaultElevation = 5.dp, pressedElevation = 4.dp),
                 modifier = Modifier
                     .weight(1f)
             )
@@ -202,6 +201,7 @@ fun ProductStockContent(
                 fontColor = Color(0xFFF44336),
                 onClick = onSaidaClick,
                 cornerRadius = 14,
+                elevation = ButtonDefaults.buttonElevation( defaultElevation = 5.dp, pressedElevation = 4.dp),
                 modifier = Modifier
                     .weight(1f)
             )
@@ -209,7 +209,8 @@ fun ProductStockContent(
         ButtonComponent(
             text = "Ver Movimentações",
             colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surface),
-            fontColor = Color.White,
+            fontColor = MaterialTheme.colorScheme.onBackground,
+            elevation = ButtonDefaults.buttonElevation( defaultElevation = 5.dp, pressedElevation = 4.dp),
             cornerRadius = 14,
             onClick = { onNavMovements() }
         )
@@ -220,11 +221,12 @@ fun ProductStockContent(
 @Composable
 fun ProductCard(
     name: String,
-    brand: String,
+    brand: String?,
     price: Double,
     stock: Int,
 ) {
     Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
@@ -244,7 +246,7 @@ fun ProductCard(
                     painter = painterResource(id = R.drawable.icon_image), // substitua por a imagem real
                     contentDescription = null,
                     modifier = Modifier
-                        .height(100.dp),
+                        .size(100.dp),
                 )
             }
 
@@ -258,7 +260,7 @@ fun ProductCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
-                Text(brand, fontSize = 14.sp, color = Color.Gray)
+                Text(brand ?: "Indefinida", fontSize = 14.sp, color = Color.Gray)
                 Text("R$ %.2f".format(price), fontSize = 14.sp, color = Color.Gray)
                 Text("Estoque: $stock", fontSize = 14.sp, color = Color.Gray)
             }

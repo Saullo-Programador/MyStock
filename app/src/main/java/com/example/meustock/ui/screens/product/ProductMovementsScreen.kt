@@ -47,7 +47,8 @@ fun ProductMovementsScreen(
                 title = "Movimentações",
                 onNavigationIconClick = {
                     onBack()
-                }
+                },
+                colorBackground = Color.Transparent,
             )
         }
     ) { padding ->
@@ -60,7 +61,7 @@ fun ProductMovementsScreen(
         ){
 
             if ( movements.isEmpty()) {
-                Text("Produto não encontrado")
+                Text("Nenhuma movimentação encontrada")
             }else {
                 LazyColumn {
                     items(movements) { movement ->
@@ -83,6 +84,7 @@ fun MovementItem(movement: ProductMovement) {
             .padding(8.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {

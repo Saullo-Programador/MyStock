@@ -19,6 +19,7 @@ fun AlertDialogComponent(
     onDismissRequest: () -> Unit,
     textDismiss: String,
     onConfirmation: () -> Unit,
+    containerColor: Color = MaterialTheme.colorScheme.background,
     textConfirmation: String,
     dialogTitle: String,
     dialogText: @Composable () -> Unit,
@@ -27,6 +28,7 @@ fun AlertDialogComponent(
     colorButtonConfirmation: Color = MaterialTheme.colorScheme.primary,
 ){
     AlertDialog(
+        containerColor = containerColor,
         icon = {
             Icon(
                 icon,

@@ -1,5 +1,6 @@
 package com.example.meustock.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,6 +10,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
@@ -58,9 +60,17 @@ fun SearchComponents(
                     )
                 },
                 trailingIcon = trailingIcon,
+                colors = SearchBarDefaults.inputFieldColors(
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                )
             ) 
         },
         modifier = modifier,
+        colors = SearchBarDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
         expanded = expanded,
         onExpandedChange = onExpandedChange,
         shape = RoundedCornerShape(cornerRadius.dp),

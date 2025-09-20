@@ -1,5 +1,6 @@
 [versions]
 accompanistSystemuicontroller = "0.36.0"
+datastorePreferences = "1.1.7"
 agp = "8.12.1"
 barcodeScanning = "17.3.0"
 cameraCamera2 = "1.4.2"
@@ -79,6 +80,7 @@ retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit
 text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "textRecognition" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtxVersion" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

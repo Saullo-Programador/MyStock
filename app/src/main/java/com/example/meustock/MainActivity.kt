@@ -26,6 +26,7 @@ import com.example.meustock.ui.navigation.MainScreenWithBottomBar
 import com.example.meustock.ui.navigation.Screen
 import com.example.meustock.ui.theme.MeuStockTheme
 import com.example.meustock.ui.viewModel.AppViewModel
+import com.example.meustock.ui.viewModel.SettingsViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +37,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var isSystemTheme by rememberSaveable { mutableStateOf(true) }
+            val isSystemThemeViewModel: SettingsViewModel = hiltViewModel()
+            val isSystemTheme = isSystemThemeViewModel.isDarkMode.collectAsState(initial = false).value
             FirebaseFirestore.setLoggingEnabled(true)
             MeuStockTheme(
                 dynamicColor = false,
@@ -48,11 +50,11 @@ class MainActivity : ComponentActivity() {
                 val state by appViewModel.uiState.collectAsState()
                 SideEffect {
                     systemUiController.setStatusBarColor(
-                        color = if(isSystemTheme) Color(0xFF000000) else Color(0xFFFFFFFF),
+                        color = if(isSystemTheme) Color(0xFF121212) else Color(0xFFFFFFFF),
                         darkIcons = isSystemTheme
                     )
                     systemUiController.setNavigationBarColor(
-                        color = if (isSystemTheme) Color(0xFF000000) else Color(0xFFFFFFFF),
+                        color = if (isSystemTheme) Color(0xFF121212) else Color(0xFFFFFFFF),
                         darkIcons = isSystemTheme
                     )
 

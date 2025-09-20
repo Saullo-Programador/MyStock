@@ -37,7 +37,6 @@ import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.BottomSheetPassword
 import com.example.meustock.ui.components.BottomSheetUser
 import com.example.meustock.ui.components.TextFeldComponent
-import com.example.meustock.ui.components.ViewReact
 import com.example.meustock.ui.states.UserUiState
 import com.example.meustock.ui.viewModel.SettingsViewModel
 import com.example.meustock.ui.viewModel.UserEvent
@@ -116,6 +115,7 @@ fun SettingsContent(
 
 
     Scaffold(
+        /*
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -134,6 +134,8 @@ fun SettingsContent(
                 },
             )
         }
+
+         */
     ) { padding ->
         Column(
             modifier = Modifier
@@ -196,7 +198,14 @@ fun SettingsContent(
 
             // ===== Preferências =====
             SettingSection(title = "Preferências") {
-                // Definir tema
+                SettingsSwitch(
+                    icon = painterResource(R.drawable.icon_dark_mode),
+                    title = "Tema escuro",
+                    checked = viewModel.isDarkMode.collectAsState(initial = false).value,
+                    onCheckedChange = { isDarkMode ->
+                        viewModel.setDarkMode(isDarkMode)
+                    }
+                )
             }
             HorizontalDivider(thickness = DividerDefaults.Thickness, color = MaterialTheme.colorScheme.surfaceVariant)
 
@@ -236,6 +245,7 @@ fun SettingsContent(
         }
         if ( showSheetPassword ) {
             ModalBottomSheet(
+                containerColor = MaterialTheme.colorScheme.background,
                 onDismissRequest = {
                     showSheetPassword = false
                 },
@@ -253,6 +263,7 @@ fun SettingsContent(
         }
         if(showSheetPerfil){
             ModalBottomSheet(
+                containerColor = MaterialTheme.colorScheme.background,
                 onDismissRequest = {
                     showSheetPerfil = false
                 },
@@ -334,7 +345,17 @@ fun SettingsSwitch(
             modifier = Modifier.weight(1f),
             fontWeight = FontWeight.Medium
         )
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colorScheme.onBackground,
+                checkedTrackColor = MaterialTheme.colorScheme.primary,
+                uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+                uncheckedBorderColor = MaterialTheme.colorScheme.surfaceVariant
+            )
+        )
     }
 }
 

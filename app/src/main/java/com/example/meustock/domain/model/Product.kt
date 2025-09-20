@@ -6,7 +6,7 @@ data class Product(
     val idProduct: String,
     val imageUrl: String? = null,
     val imagePublicId: String? = null,
-    val name: String,
+    val name: String = "Indefinido",
     val description: String? = null,
     val barcodeSku: String? = null,
     val costPrice: Double,

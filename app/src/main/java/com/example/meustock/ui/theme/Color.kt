@@ -12,8 +12,8 @@ val BlueSecondary = Color(0xFF082A5C)// destaque (links, ícones, botões secund
 // =====================
 // LIGHT MODE
 // =====================
-val BackgroundLight = Color(0xFFF8FAFD)     // fundo geral bem claro
-val SurfaceLight = Color(0xFFFFFFFF)        // cartões, inputs, fundo de listas
+val BackgroundLight = Color(0xFFFFFFFF)     // fundo geral bem claro
+val SurfaceLight = Color(0xFFF8FAFD)        // cartões, inputs, fundo de listas
 val InputBackgroundLight = Color(0xFFF1F4F9) // campos de texto
 val TextPrimaryLight = Color(0xFF1C1C1C)    // texto principal
 val TextSecondaryLight = Color(0xFF4B4B4B)  // texto secundário

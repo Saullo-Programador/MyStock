@@ -3,6 +3,7 @@ package com.example.meustock.ui.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.meustock.authentication.FirebaseAuthManager
+import com.example.meustock.data.repository.ThemeSystemRepository
 import com.example.meustock.ui.states.AuthUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +15,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val authManager: FirebaseAuthManager
+    private val authManager: FirebaseAuthManager,
+    private val themeDataStoreRepository: ThemeSystemRepository
 ) : ViewModel() {
+
+    val isDarkMode = themeDataStoreRepository.isDarkMode
 
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
@@ -48,6 +52,12 @@ class SettingsViewModel @Inject constructor(
                 _uiState.update { it.copy(error = e.message) }
                 _uiState.update { it.copy(isLoading = false) }
             }
+        }
+    }
+
+    fun setDarkMode(isDarkMode: Boolean) {
+        viewModelScope.launch {
+            themeDataStoreRepository.setDarkMode(isDarkMode)
         }
     }
 

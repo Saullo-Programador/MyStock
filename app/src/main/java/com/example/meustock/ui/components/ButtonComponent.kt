@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,10 +50,12 @@ fun ButtonComponent(
     iconPosition: ButtonIconPosition = ButtonIconPosition.START,
     colors: ButtonColors = ButtonDefaults.buttonColors(),
     fontColor: Color = Color.White,
-    cornerRadius: Int = 15
+    cornerRadius: Int = 15,
+    elevation: ButtonElevation = ButtonDefaults.buttonElevation( defaultElevation = 2.dp, pressedElevation = 2.dp)
 ) {
 
     Button(
+        elevation = elevation,
         onClick = { if (!isLoading) onClick() },
         modifier = modifier
             .height(50.dp)
