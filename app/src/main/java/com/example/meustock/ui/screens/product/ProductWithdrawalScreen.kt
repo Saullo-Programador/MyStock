@@ -1,6 +1,7 @@
 package com.example.meustock.ui.screens.product
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +30,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,11 +40,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.meustock.R
 import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.SearchComponents
 import com.example.meustock.ui.components.ViewReact
+import com.example.meustock.ui.utils.ImageUtils
 import com.example.meustock.ui.viewModel.ProductStockViewModel
 import com.example.meustock.ui.viewModel.WithdrawalScreenEvent
 
@@ -121,6 +126,8 @@ fun ProductWithdrawalScreen(
                         }
                     } else {
                         ProductStockContent(
+                            imgUrl = uiState.selectedProduct!!.imageUrl,
+                            descImg = uiState.selectedProduct!!.name,
                             name = uiState.selectedProduct!!.name,
                             brand = uiState.selectedProduct!!.brand ?: "",
                             price = uiState.selectedProduct!!.sellingPrice,
@@ -159,6 +166,8 @@ fun ProductWithdrawalScreen(
 
 @Composable
 fun ProductStockContent(
+    imgUrl: String?,
+    descImg: String,
     name: String,
     brand: String,
     price: Double,
@@ -175,6 +184,8 @@ fun ProductStockContent(
     ) {
 
         ProductCard(
+            imgUrl = imgUrl,
+            descImg = descImg,
             name = name,
             brand = brand,
             price = price,
@@ -220,6 +231,8 @@ fun ProductStockContent(
 
 @Composable
 fun ProductCard(
+    imgUrl: String?,
+    descImg: String,
     name: String,
     brand: String?,
     price: Double,
@@ -242,12 +255,28 @@ fun ProductCard(
                     .height(120.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.icon_image), // substitua por a imagem real
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(100.dp),
-                )
+                imgUrl?.let { imageUrl ->
+                    if (imageUrl.isNotBlank()) {
+                        val bitmap = ImageUtils.base64ToBitmap(imageUrl)
+                        Image(
+                            painter = rememberAsyncImagePainter(bitmap),
+                            contentDescription = "Imagem do produto $descImg",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(shape = RoundedCornerShape(15.dp))
+                                .height(250.dp)
+                        )
+
+                    }
+                } ?: run {
+                    Icon(
+                        painter = painterResource(id = R.drawable.icon_image), // substitua por a imagem real
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(100.dp),
+                    )
+                }
             }
 
             Spacer(Modifier.height(8.dp))
