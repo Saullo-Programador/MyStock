@@ -40,7 +40,7 @@ fun BottomSheetPassword(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
         )
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.password,
             onValueChange = { uiState.onPasswordChange(it) },
             label = "Senha",
@@ -49,7 +49,7 @@ fun BottomSheetPassword(
             isPasswordField = true,
             shape = RoundedCornerShape(20.dp)
         )
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.passwordConfirm,
             onValueChange = { uiState.onPasswordConfirmChange(it) },
             label = "Confirmar Senha",
@@ -104,7 +104,7 @@ fun BottomSheetUser(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
         )
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.empresa,
             onValueChange = { uiState.onEmpresaChange(it) },
             label = "Nome da Empresa",
@@ -113,7 +113,7 @@ fun BottomSheetUser(
             onTrailingIconClick = { uiState.onEmpresaChange("") },
             shape = RoundedCornerShape(20.dp)
         )
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.username,
             onValueChange = { uiState.onUserNameChange(it) },
             label = "Nome de Usuário",
@@ -122,7 +122,7 @@ fun BottomSheetUser(
             onTrailingIconClick = { uiState.onUserNameChange("") },
             shape = RoundedCornerShape(20.dp)
         )
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.email,
             onValueChange = { uiState.onEmailChange(it) },
             label = "E-mail",

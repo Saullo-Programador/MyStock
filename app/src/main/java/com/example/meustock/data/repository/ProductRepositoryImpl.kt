@@ -131,8 +131,12 @@ class ProductRepositoryImpl @Inject constructor(
      * Usa o mesmo metodo `set` com o ID do documento.
      */
     override suspend fun updateProduct(product: Product) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+            ?: throw Exception("Usuário não autenticado")
+        val productWithUser = product.copy(createdBy = uid)
+
         collection.document(product.idProduct)
-            .set(product.toDto())
+            .set(productWithUser.toDto())
             .await()
     }
 

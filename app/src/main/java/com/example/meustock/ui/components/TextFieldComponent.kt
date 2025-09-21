@@ -22,7 +22,7 @@ import androidx.compose.ui.res.painterResource
 import com.example.meustock.R
 
 @Composable
-fun TextFeldComponent(
+fun TextFieldComponent(
     value: String?,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -109,7 +109,7 @@ fun CustomTextFieldPreview() {
 
     MaterialTheme {
         Column(modifier = Modifier.padding(16.dp).fillMaxSize()) {
-            TextFeldComponent(
+            TextFieldComponent(
                 value = text,
                 onValueChange = { text = it },
                 label = "Nome",
@@ -119,7 +119,7 @@ fun CustomTextFieldPreview() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            TextFeldComponent(
+            TextFieldComponent(
                 value = text,
                 onValueChange = { text = it },
                 label = "Senha",
@@ -129,7 +129,7 @@ fun CustomTextFieldPreview() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            TextFeldComponent(
+            TextFieldComponent(
                 value = text,
                 onValueChange = { text = it },
                 label = "E-mail",

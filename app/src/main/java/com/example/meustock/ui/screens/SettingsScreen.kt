@@ -28,15 +28,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.BottomSheetPassword
 import com.example.meustock.ui.components.BottomSheetUser
-import com.example.meustock.ui.components.TextFeldComponent
+import com.example.meustock.ui.components.TextFieldComponent
 import com.example.meustock.ui.states.UserUiState
 import com.example.meustock.ui.viewModel.SettingsViewModel
 import com.example.meustock.ui.viewModel.UserEvent
@@ -114,29 +111,7 @@ fun SettingsContent(
     }
 
 
-    Scaffold(
-        /*
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.onBackground,
-                ),
-                title = {
-                    Text(
-                        text = "Configurações",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = TextStyle(
-                            fontSize = 22.sp,
-                        )
-                    )
-                },
-            )
-        }
-
-         */
-    ) { padding ->
+    Scaffold{ padding ->
         Column(
             modifier = Modifier
                 .padding(padding)
@@ -150,7 +125,7 @@ fun SettingsContent(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .clickable() { showSheetPerfil = true }
+                    .clickable { showSheetPerfil = true }
                     .padding(16.dp)
                     .fillMaxWidth()
             ) {
@@ -212,7 +187,6 @@ fun SettingsContent(
             // ===== Segurança =====
             SettingSection(title = "Segurança") {
                 // Ativar biometria
-                //
             }
             HorizontalDivider(thickness = DividerDefaults.Thickness, color = MaterialTheme.colorScheme.surfaceVariant)
 
@@ -377,7 +351,7 @@ fun DialogSenha(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                TextFeldComponent(
+                TextFieldComponent(
                     value = uiState.passwordCurrent,
                     onValueChange = { uiState.onPasswordCurrentChange(it) },
                     label = "Senha",

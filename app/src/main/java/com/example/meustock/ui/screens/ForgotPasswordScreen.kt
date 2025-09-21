@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.meustock.R
 import com.example.meustock.ui.components.ButtonGradient
-import com.example.meustock.ui.components.TextFeldComponent
+import com.example.meustock.ui.components.TextFieldComponent
 import com.example.meustock.ui.components.TopBar
 import com.example.meustock.ui.components.ViewReact
 import com.example.meustock.ui.states.ForgotPasswordUiState
@@ -145,7 +145,7 @@ fun ForgotPasswordFormScreen(
             textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.email ,
             onValueChange = { uiState.onEmailChange(it) },
             label = "E-mail",

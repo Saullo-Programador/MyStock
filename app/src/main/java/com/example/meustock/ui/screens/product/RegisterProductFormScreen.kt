@@ -44,7 +44,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.meustock.R
 import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.CameraScreen
-import com.example.meustock.ui.components.TextFeldComponent
+import com.example.meustock.ui.components.TextFieldComponent
 import com.example.meustock.ui.components.TopBar
 import com.example.meustock.ui.components.ViewReact
 import com.example.meustock.ui.states.ProductUiState
@@ -156,7 +156,7 @@ fun RegisterProductFrom(
         )
         Spacer(modifier = Modifier.height(4.dp))
         // Nome do Produto
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.nameProduct, // Lê do uiState
             onValueChange = uiState.onNameProductChange, // Chama a função do ViewModel
             label = "Nome do Produto*",
@@ -167,7 +167,7 @@ fun RegisterProductFrom(
         )
 
         // Descrição do Produto
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.description,
             onValueChange = uiState.onDescriptionChange,
             label = "Descrição do Produto",
@@ -178,7 +178,7 @@ fun RegisterProductFrom(
         )
 
         // Código de Barras
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.barcodeSku,
             onValueChange = uiState.onBarcodeSkuChange,
             label = "Código de Barras / SKU",
@@ -190,7 +190,7 @@ fun RegisterProductFrom(
 
         // Preço de Custo e Venda (em uma Row)
         Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            TextFeldComponent(
+            TextFieldComponent(
                 value = uiState.costPrice,
                 onValueChange = uiState.onCostPriceChange,
                 label = "Preço de Custo*",
@@ -199,7 +199,7 @@ fun RegisterProductFrom(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(20.dp)
             )
-            TextFeldComponent(
+            TextFieldComponent(
                 value = uiState.sellingPrice,
                 onValueChange = uiState.onSellingPriceChange,
                 label = "Preço de Venda*",
@@ -212,7 +212,7 @@ fun RegisterProductFrom(
 
         // Estoque Atual e Mínimo (em uma Row)
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            TextFeldComponent(
+            TextFieldComponent(
                 value = uiState.currentStock,
                 onValueChange = uiState.onCurrentStockChange,
                 label = "Estoque Atual*",
@@ -221,7 +221,7 @@ fun RegisterProductFrom(
                 modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(20.dp)
             )
-            TextFeldComponent(
+            TextFieldComponent(
                 value = uiState.minimumStock,
                 onValueChange = uiState.onMinimumStockChange,
                 label = "Estoque Mínimo*",
@@ -233,7 +233,7 @@ fun RegisterProductFrom(
         }
 
         // Categoria
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.category,
             onValueChange = uiState.onCategoryChange,
             label = "Categoria*",
@@ -244,7 +244,7 @@ fun RegisterProductFrom(
         )
 
         // Marca
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.brand,
             onValueChange = uiState.onBrandChange,
             label = "Marca",
@@ -255,7 +255,7 @@ fun RegisterProductFrom(
         )
 
         // Unidade de Medida
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.unitOfMeasurement,
             onValueChange = uiState.onUnitOfMeasurementChange,
             label = "Unidade de Medida*",
@@ -266,7 +266,7 @@ fun RegisterProductFrom(
         )
 
         // Fornecedor
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.supplier,
             onValueChange = uiState.onSupplierChange,
             label = "Fornecedor",
@@ -277,7 +277,7 @@ fun RegisterProductFrom(
         )
 
         // Localização no Estoque
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.stockLocation,
             onValueChange = uiState.onStockLocationChange,
             label = "Localização no Estoque",
@@ -288,7 +288,7 @@ fun RegisterProductFrom(
         )
 
         // Observações
-        TextFeldComponent(
+        TextFieldComponent(
             value = uiState.notes,
             onValueChange = uiState.onNotesChange,
             label = "Observações",

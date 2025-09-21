@@ -30,7 +30,4 @@ val TextSecondaryDark = Color(0xFFB0B0B0)    // texto secundário
 // =====================
 // CORES DE APOIO (opcional)
 // =====================
-val SuccessGreen = Color(0xFF4CAF50)   // usado em entradas de estoque
 val DangerRed = Color(0xFFE53935)      // usado em saídas/alertas
-val WarningOrange = Color(0xFFFFA726)  // usado em avisos
-val NeutralGrey = Color(0xFF9E9E9E)    // ícones, divisores, bordas

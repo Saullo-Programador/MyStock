@@ -1,6 +1,5 @@
 package com.example.meustock.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,9 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -84,7 +80,7 @@ fun SearchComponents(
                     leadingContent = leadingContent,
                     colors = ListItemDefaults.colors(containerColor = Color.Transparent),
                     modifier = modifier
-                        .clickable() {
+                        .clickable {
                             onResultClick(resultText)
                             expanded
                         }

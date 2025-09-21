@@ -38,11 +38,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.meustock.R
 import com.example.meustock.ui.components.ButtonGradient
-import com.example.meustock.ui.components.TextFeldComponent
-import com.example.meustock.ui.components.ViewReact
+import com.example.meustock.ui.components.TextFieldComponent
 import com.example.meustock.ui.states.SignInUiState
 import com.example.meustock.ui.viewModel.AuthViewModel
 
@@ -155,7 +154,7 @@ fun SignInForm(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            TextFeldComponent(
+            TextFieldComponent(
                 value = uiState.email,
                 onValueChange = { uiState.onEmailChange(it) },
                 label = "E-mail",
@@ -165,7 +164,7 @@ fun SignInForm(
                 onTrailingIconClick = { uiState.onEmailChange("") },
                 shape = RoundedCornerShape(12.dp)
             )
-            TextFeldComponent(
+            TextFieldComponent(
                 value = uiState.password,
                 onValueChange = { uiState.onPasswordChange(it) },
                 label = "Senha",

@@ -63,7 +63,7 @@ fun HomeScreen(
         }
         is DashboardEvent.Error -> {
             ErrorScreen(
-                message = event.message ?: "Erro desconhecido",
+                message = event.message,
             ){ viewModel.retry() }
         }
         DashboardEvent.Idle -> {}
@@ -248,13 +248,13 @@ fun ImgComposable(img: Int, user: String? = null, modifier: Modifier = Modifier)
 }
 
 @Composable
-fun ErrorScreen(message: String, onRetry: () -> Unit) {
+fun ErrorScreen(message: String?, onRetry: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = message, color = Color.Red)
+        Text(text = message ?: "Erro desconhecido", color = Color.Red)
         Spacer(modifier = Modifier.height(8.dp))
         ButtonComponent(
             text = "Tentar Novamente",

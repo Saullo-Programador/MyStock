@@ -9,16 +9,19 @@
       <w>adicionar</w>
       <w>adição</w>
       <w>aguarda</w>
+      <w>alertas</w>
       <w>alterar</w>
       <w>alterações</w>
       <w>apagar</w>
       <w>aplica</w>
       <w>aplicar</w>
       <w>aplicação</w>
+      <w>apoio</w>
       <w>apresentar</w>
       <w>após</w>
       <w>aqui</w>
       <w>armazém</w>
+      <w>ativar</w>
       <w>atividade</w>
       <w>ativo</w>
       <w>atuais</w>
@@ -34,6 +37,7 @@
       <w>barras</w>
       <w>biometria</w>
       <w>botão</w>
+      <w>botões</w>
       <w>busca</w>
       <w>buscar</w>
       <w>cabeçalho</w>
@@ -50,6 +54,7 @@
       <w>carrega</w>
       <w>carregando</w>
       <w>carregar</w>
+      <w>cartões</w>
       <w>caso</w>
       <w>chamaria</w>
       <w>classificação</w>
@@ -88,6 +93,7 @@
       <w>detalhes</w>
       <w>deve</w>
       <w>digite</w>
+      <w>diminui</w>
       <w>disponível</w>
       <w>documento</w>
       <w>documentos</w>
@@ -172,6 +178,7 @@
       <w>lança</w>
       <w>lista</w>
       <w>listagem</w>
+      <w>listas</w>
       <w>litro</w>
       <w>localização</w>
       <w>logado</w>
@@ -209,11 +216,13 @@
       <w>observações</w>
       <w>obter</w>
       <w>obtém</w>
+      <w>ocultar</w>
       <w>opcional</w>
       <w>operação</w>
       <w>operações</w>
       <w>opções</w>
       <w>ordenar</w>
+      <w>painéis</w>
       <w>passo</w>
       <w>pegar</w>
       <w>pelo</w>
@@ -233,6 +242,7 @@
       <w>produto</w>
       <w>produtos</w>
       <w>promoção</w>
+      <w>quadrado</w>
       <w>quantidade</w>
       <w>quanto</w>
       <w>querer</w>
@@ -278,6 +288,8 @@
       <w>salvamento</w>
       <w>salvando</w>
       <w>saídas</w>
+      <w>secundário</w>
+      <w>secundários</w>
       <w>segurança</w>
       <w>seja</w>
       <w>seleção</w>
@@ -302,9 +314,11 @@
       <w>título</w>
       <w>unidade</w>
       <w>usada</w>
+      <w>usado</w>
       <w>usam</w>
       <w>usando</w>
       <w>usuario</w>
+      <w>usurio</w>
       <w>usuário</w>
       <w>validação</w>
       <w>valores</w>
@@ -315,6 +329,8 @@
       <w>verifique</w>
       <w>versão</w>
       <w>vibrantes</w>
+      <w>vindo</w>
+      <w>ícones</w>
       <w>único</w>
     </words>
   </dictionary>
