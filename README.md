@@ -46,7 +46,24 @@ Ele permite **cadastrar, listar, editar e movimentar produtos** (entrada e saíd
 
 ## 📱 Demonstração
 
-🚧 *Em breve: GIFs e screenshots da aplicação em funcionamento.*  
+1. Cadastrar Produtos
+2. Movimentação de Produto (Entrada e Saida) 
+
+<div style="display: flex; align-items: center;flex-direction: center; "> 
+  <img src="https://github.com/user-attachments/assets/dc9c7e90-81a8-4519-a307-c9a62725da0e" width="190px" name="Splash-Black">
+  <img src="https://github.com/user-attachments/assets/00bca229-480c-4736-aec2-13c220b567d4" width="190px" name="SingIn-Black">
+  <img src="https://github.com/user-attachments/assets/e16a0a5d-0143-4c49-a0ed-9000a458efca" width="190px" name="SingUp-Black">
+  <img src="https://github.com/user-attachments/assets/01f03a6e-6277-4c26-b85d-42d652c2edae" width="190px" name="Forgot-Black">
+  <img src="https://github.com/user-attachments/assets/3a95b3cb-bb6d-4d34-976e-36b3ecb002da" width="190px" name="Dashboard-Black">
+<div/>
+  
+<div style="display: flex; align-items: center;flex-direction: center; "> 
+  <img src="https://github.com/user-attachments/assets/fa3eee3e-4cf8-4bff-b173-7b0c04bae85a" width="190px" name="Splash-Black">
+  <img src="https://github.com/user-attachments/assets/0aae15a5-0343-4bc8-93b8-a5478f4b4cc5" width="190px" name="SingIn-Black">
+  <img src="https://github.com/user-attachments/assets/f85f45fb-e809-4e11-abec-56740451c297" width="190px" name="SingUp-Black">
+  <img src="https://github.com/user-attachments/assets/da97a97d-fa47-4a0d-93fb-999352569eaa" width="190px" name="Forgot-Black">
+  <img src="https://github.com/user-attachments/assets/df79e326-086d-4a46-a568-62461db385af" width="190px" name="Dashboard-Black">
+<div/>
 
 ---
 
@@ -55,3 +72,5 @@ Ele permite **cadastrar, listar, editar e movimentar produtos** (entrada e saíd
 1. Clone este repositório:  
    ```bash
    git clone https://github.com/Saullo-Programador/MyStock.git
+
+2. Abra ele no seu Android Studio e Run 'app'
