@@ -2,6 +2,7 @@ package com.example.meustock.ui.screens.product
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -46,6 +48,8 @@ import com.example.meustock.ui.components.AlertDialogComponent
 import com.example.meustock.ui.components.ButtonComponent
 import com.example.meustock.ui.components.SearchComponents
 import com.example.meustock.ui.components.ViewReact
+import com.example.meustock.ui.theme.DangerRed
+import com.example.meustock.ui.theme.SuccessGreen
 import com.example.meustock.ui.utils.ImageUtils
 import com.example.meustock.ui.viewModel.ProductStockViewModel
 import com.example.meustock.ui.viewModel.WithdrawalScreenEvent
@@ -73,7 +77,7 @@ fun ProductWithdrawalScreen(
                 type = "Success",
                 onFinished = {
                     Toast.makeText(context, "Movimentação realizada com sucesso!", Toast.LENGTH_SHORT).show()
-                    viewModel.resetEvent() // 🔥 reset aqui
+                    viewModel.resetEvent()
                 }
             )
         }
@@ -88,7 +92,6 @@ fun ProductWithdrawalScreen(
             )
         }
         WithdrawalScreenEvent.Idle -> {
-            // Layout normal da tela
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
@@ -112,7 +115,7 @@ fun ProductWithdrawalScreen(
                     modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize()
-                        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 80.dp),
+                        .padding(horizontal = 20.dp, vertical = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     if (uiState.selectedProduct == null) {
@@ -120,9 +123,21 @@ fun ProductWithdrawalScreen(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Text("Pesquise o Produto para continuar",
-                                style = MaterialTheme.typography.titleMedium
-                            )
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.icon_search),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp),
+                                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                                )
+                                Spacer(Modifier.height(16.dp))
+                                Text(
+                                    "Pesquise um produto para\ngerenciar o estoque",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                )
+                            }
                         }
                     } else {
                         ProductStockContent(
@@ -162,8 +177,6 @@ fun ProductWithdrawalScreen(
     }
 }
 
-
-
 @Composable
 fun ProductStockContent(
     imgUrl: String?,
@@ -180,9 +193,8 @@ fun ProductStockContent(
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-
         ProductCard(
             imgUrl = imgUrl,
             descImg = descImg,
@@ -192,42 +204,52 @@ fun ProductStockContent(
             stock = stock
         )
 
-        Row(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            ButtonComponent(
-                text = "Entrada",
-                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surface),
-                fontColor = Color(0xFF4CAF50),
-                onClick = onEntradaClick,
-                cornerRadius = 14,
-                elevation = ButtonDefaults.buttonElevation( defaultElevation = 5.dp, pressedElevation = 4.dp),
-                modifier = Modifier
-                    .weight(1f)
+            Text(
+                "Ações de Estoque",
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(start = 4.dp)
             )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                ButtonComponent(
+                    text = "Entrada",
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surface),
+                    fontColor = SuccessGreen,
+                    onClick = onEntradaClick,
+                    cornerRadius = 16,
+                    elevation = ButtonDefaults.buttonElevation( defaultElevation = 4.dp),
+                    modifier = Modifier.weight(1f)
+                )
+                ButtonComponent(
+                    text = "Saida",
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surface),
+                    fontColor = DangerRed,
+                    onClick = onSaidaClick,
+                    cornerRadius = 16,
+                    elevation = ButtonDefaults.buttonElevation( defaultElevation = 4.dp),
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
             ButtonComponent(
-                text = "Saida",
+                text = "Ver Movimentações",
                 colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surface),
-                fontColor = Color(0xFFF44336),
-                onClick = onSaidaClick,
-                cornerRadius = 14,
-                elevation = ButtonDefaults.buttonElevation( defaultElevation = 5.dp, pressedElevation = 4.dp),
-                modifier = Modifier
-                    .weight(1f)
+                fontColor = MaterialTheme.colorScheme.onBackground,
+                elevation = ButtonDefaults.buttonElevation( defaultElevation = 4.dp),
+                cornerRadius = 16,
+                onClick = { onNavMovements() }
             )
         }
-        ButtonComponent(
-            text = "Ver Movimentações",
-            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.surface),
-            fontColor = MaterialTheme.colorScheme.onBackground,
-            elevation = ButtonDefaults.buttonElevation( defaultElevation = 5.dp, pressedElevation = 4.dp),
-            cornerRadius = 14,
-            onClick = { onNavMovements() }
-        )
     }
 }
-
 
 @Composable
 fun ProductCard(
@@ -239,20 +261,20 @@ fun ProductCard(
     stock: Int,
 ) {
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(15.dp)
+        shape = RoundedCornerShape(24.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(20.dp)
         ) {
-            // Imagem do produto
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp),
+                    .height(200.dp),
                 contentAlignment = Alignment.Center
             ) {
                 imgUrl?.let { imageUrl ->
@@ -264,34 +286,58 @@ fun ProductCard(
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clip(shape = RoundedCornerShape(15.dp))
-                                .height(250.dp)
+                                .clip(shape = RoundedCornerShape(16.dp))
+                                .height(200.dp)
                         )
-
                     }
                 } ?: run {
-                    Icon(
-                        painter = painterResource(id = R.drawable.icon_image), // substitua por a imagem real
-                        contentDescription = null,
+                    Box(
                         modifier = Modifier
-                            .size(100.dp),
-                    )
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(16.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.icon_image),
+                            contentDescription = null,
+                            modifier = Modifier.size(80.dp),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                        )
+                    }
                 }
             }
 
+            Spacer(Modifier.height(20.dp))
+
+            Text(
+                text = name,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
             Spacer(Modifier.height(8.dp))
 
-            Text(name, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color.White, maxLines = 1, overflow = TextOverflow.Ellipsis)
             Row (
-                modifier = Modifier
-                    .padding(top = 8.dp, end = 8.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
-                Text(brand ?: "Indefinida", fontSize = 14.sp, color = Color.Gray)
-                Text("R$ %.2f".format(price), fontSize = 14.sp, color = Color.Gray)
-                Text("Estoque: $stock", fontSize = 14.sp, color = Color.Gray)
+                Column {
+                    Text("Marca", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(brand ?: "Indefinida", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Medium)
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text("Preço", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("R$ %.2f".format(price), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text("Estoque", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("$stock un", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                }
             }
         }
     }
@@ -312,14 +358,16 @@ fun QuantityDialog(
         textConfirmation = if (isEntrada) "Adicionar" else "Retirar",
         dialogTitle = if (isEntrada) "Adicionar ao Estoque" else "Retirar do Estoque",
         icon = if (isEntrada) painterResource(id = R.drawable.icon_register_add) else painterResource(id = R.drawable.icon_remove),
-        tint = if (isEntrada) Color(0xFF4CAF50) else Color(0xFFF44336),
-        colorButtonConfirmation = if (isEntrada) Color(0xFF4CAF50) else Color(0xFFF44336),
+        tint = if (isEntrada) SuccessGreen else DangerRed,
+        colorButtonConfirmation = if (isEntrada) SuccessGreen else DangerRed,
         dialogText = {
             OutlinedTextField(
                 value = quantity,
                 onValueChange = onQuantityChange,
                 label = { Text("Quantidade") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             )
         }
     )
