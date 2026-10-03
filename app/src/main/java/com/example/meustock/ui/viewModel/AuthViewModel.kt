@@ -142,8 +142,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-
-
     // Forgot Password
     fun forgotPassword() {
         viewModelScope.launch {
@@ -174,4 +172,26 @@ class AuthViewModel @Inject constructor(
         _uiState.update { it.copy(error = null) }
     }
 
+    // Helpers for testing
+    fun signInStateUpdate(email: String, password: String) {
+        _signIn.value = _signIn.value.copy(email = email, password = password)
+    }
+
+    fun signUpStateUpdate(
+        empresaName: String,
+        username: String,
+        email: String,
+        password: String,
+        passwordConfirmation: String,
+        check: Boolean
+    ) {
+        _signUp.value = _signUp.value.copy(
+            empresaName = empresaName,
+            username = username,
+            email = email,
+            password = password,
+            passwordConfirmation = passwordConfirmation,
+            check = check
+        )
+    }
 }

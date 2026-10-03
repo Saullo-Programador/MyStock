@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val isSystemThemeViewModel: SettingsViewModel = hiltViewModel()
+            val isSystemThemeViewModel: SettingsViewModel = androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel()
             val isSystemTheme = isSystemThemeViewModel.isDarkMode.collectAsState(initial = false).value
             FirebaseFirestore.setLoggingEnabled(true)
             MeuStockTheme(
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 val navController = rememberNavController()
                 val systemUiController = rememberSystemUiController()
-                val appViewModel: AppViewModel = hiltViewModel()
+                val appViewModel: AppViewModel = androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel()
                 val state by appViewModel.uiState.collectAsState()
                 SideEffect {
                     systemUiController.setStatusBarColor(
